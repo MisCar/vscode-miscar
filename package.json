@@ -1,0 +1,118 @@
+{
+    "name": "vscode-miscar",
+    "displayName": "MisCar",
+    "description": "Faster FRC development",
+    "publisher": "miscar",
+    "version": "2022.0.0",
+    "license": "MIT",
+    "icon": "icon.png",
+    "engines": {
+        "vscode": "^1.62.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "workspaceContains:.wpilib/wpilib_preferences.json",
+        "workspaceContains:BUILD",
+        "workspaceContains:WORKSPACE",
+        "onCommand:miscar.openCommandPalette",
+        "onCommand:miscar.buildLocal",
+        "onCommand:miscar.buildRoboRIO",
+        "onCommand:miscar.test",
+        "onCommand:miscar.deploy",
+        "onCommand:miscar.runSimulation",
+        "onCommand:miscar.startTool",
+        "onCommand:miscar.createCompileFlags"
+    ],
+    "main": "./dist/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "miscar.buildLocal",
+                "title": "MisCar: Build Local"
+            },
+            {
+                "command": "miscar.buildRoboRIO",
+                "title": "MisCar: Build RoboRIO"
+            },
+            {
+                "command": "miscar.test",
+                "title": "MisCar: Test"
+            },
+            {
+                "command": "miscar.deploy",
+                "title": "MisCar: Deploy",
+                "icon": "$(cloud-upload)"
+            },
+            {
+                "command": "miscar.runSimulation",
+                "title": "MisCar: Run Simulation",
+                "icon": "$(debug-alt)"
+            },
+            {
+                "command": "miscar.openCommandPalette",
+                "title": "MisCar: Open Command Palette",
+                "icon": "icon.png"
+            },
+            {
+                "command": "miscar.startTool",
+                "title": "MisCar: Start Tool"
+            },
+            {
+                "command": "miscar.createCompileFlags",
+                "title": "MisCar: Create Compile Flags"
+            }
+        ],
+        "menus": {
+            "editor/title": [
+                {
+                    "command": "miscar.openCommandPalette",
+                    "group": "navigation@7"
+                },
+                {
+                    "command": "miscar.deploy",
+                    "group": "navigation@8"
+                },
+                {
+                    "command": "miscar.runSimulation",
+                    "group": "navigation@9"
+                }
+            ]
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run package",
+        "compile": "webpack",
+        "watch": "webpack --watch",
+        "package": "webpack --mode production --devtool hidden-source-map",
+        "compile-tests": "tsc -p . --outDir out",
+        "watch-tests": "tsc -p . -w --outDir out",
+        "pretest": "npm run compile-tests && npm run compile && npm run lint",
+        "lint": "eslint src --ext ts",
+        "test": "node ./out/test/runTest.js"
+    },
+    "devDependencies": {
+        "@types/glob": "^7.1.4",
+        "@types/mocha": "^9.0.0",
+        "@types/node": "14.x",
+        "@types/vscode": "^1.62.0",
+        "@typescript-eslint/eslint-plugin": "^5.1.0",
+        "@typescript-eslint/parser": "^5.1.0",
+        "@vscode/test-electron": "^1.6.2",
+        "eslint": "^8.1.0",
+        "glob": "^7.1.7",
+        "mocha": "^9.1.3",
+        "ts-loader": "^9.2.5",
+        "typescript": "^4.4.4",
+        "webpack": "^5.52.1",
+        "webpack-cli": "^4.8.0"
+    },
+    "prettier": {
+        "semi": false,
+        "singleQuote": false,
+        "tabWidth": 4
+    },
+    "repository": "https://github.com/miscar/vscode-miscar",
+    "homepage": "https://github.com/miscar/vscode-miscar"
+}

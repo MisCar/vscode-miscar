@@ -4,7 +4,6 @@ import {
     existsSync,
     mkdirSync,
     rmSync,
-    readdirSync,
     writeFileSync,
 } from "fs"
 import { join } from "path"
@@ -12,6 +11,7 @@ import { get as httpGet } from "http"
 import { get as httpsGet } from "https"
 import { execSync } from "child_process"
 import { IncomingMessage } from "http"
+import vendordeps from "../vendordeps"
 
 const NI_VERSION = "2022.2.3"
 const WPILIB_VERSION = "2022.1.1-beta-3"
@@ -26,262 +26,6 @@ const WPILIB_LIBRARIES = [
     "cameraserver",
     "wpilibNewCommands",
 ]
-
-const PHOENIX_VENDORDEP = {
-    fileName: "Phoenix.json",
-    name: "CTRE-Phoenix",
-    version: "5.20.0-beta-1",
-    uuid: "ab676553-b602-441f-a38d-f1296eff6537",
-    mavenUrls: ["https://maven.ctr-electronics.com/release/"],
-    jsonUrl:
-        "https://maven.ctr-electronics.com/release/com/ctre/phoenix/Phoenix-latest.json",
-    javaDependencies: [
-        {
-            groupId: "com.ctre.phoenix",
-            artifactId: "api-java",
-            version: "5.20.0",
-        },
-        {
-            groupId: "com.ctre.phoenix",
-            artifactId: "wpiapi-java",
-            version: "5.20.0",
-        },
-    ],
-    jniDependencies: [
-        {
-            groupId: "com.ctre.phoenix",
-            artifactId: "cci",
-            version: "5.20.0",
-            isJar: false,
-            skipInvalidPlatforms: true,
-            validPlatforms: ["linuxathena"],
-        },
-        {
-            groupId: "com.ctre.phoenix.sim",
-            artifactId: "cci-sim",
-            version: "5.20.0",
-            isJar: false,
-            skipInvalidPlatforms: true,
-            validPlatforms: ["windowsx86-64", "linuxx86-64", "osxx86-64"],
-        },
-        {
-            groupId: "com.ctre.phoenix.sim",
-            artifactId: "simTalonSRX",
-            version: "5.20.0",
-            isJar: false,
-            skipInvalidPlatforms: true,
-            validPlatforms: ["windowsx86-64", "linuxx86-64", "osxx86-64"],
-        },
-        {
-            groupId: "com.ctre.phoenix.sim",
-            artifactId: "simTalonFX",
-            version: "5.20.0",
-            isJar: false,
-            skipInvalidPlatforms: true,
-            validPlatforms: ["windowsx86-64", "linuxx86-64", "osxx86-64"],
-        },
-        {
-            groupId: "com.ctre.phoenix.sim",
-            artifactId: "simVictorSPX",
-            version: "5.20.0",
-            isJar: false,
-            skipInvalidPlatforms: true,
-            validPlatforms: ["windowsx86-64", "linuxx86-64", "osxx86-64"],
-        },
-        {
-            groupId: "com.ctre.phoenix.sim",
-            artifactId: "simPigeonIMU",
-            version: "5.20.0",
-            isJar: false,
-            skipInvalidPlatforms: true,
-            validPlatforms: ["windowsx86-64", "linuxx86-64", "osxx86-64"],
-        },
-        {
-            groupId: "com.ctre.phoenix.sim",
-            artifactId: "simCANCoder",
-            version: "5.20.0",
-            isJar: false,
-            skipInvalidPlatforms: true,
-            validPlatforms: ["windowsx86-64", "linuxx86-64", "osxx86-64"],
-        },
-    ],
-    cppDependencies: [
-        {
-            groupId: "com.ctre.phoenix",
-            artifactId: "wpiapi-cpp",
-            version: "5.20.0",
-            libName: "CTRE_Phoenix_WPI",
-            headerClassifier: "headers",
-            sharedLibrary: true,
-            skipInvalidPlatforms: true,
-            binaryPlatforms: [
-                "linuxathena",
-                "windowsx86-64",
-                "linuxx86-64",
-                "osxx86-64",
-            ],
-        },
-        {
-            groupId: "com.ctre.phoenix",
-            artifactId: "api-cpp",
-            version: "5.20.0",
-            libName: "CTRE_Phoenix",
-            headerClassifier: "headers",
-            sharedLibrary: true,
-            skipInvalidPlatforms: true,
-            binaryPlatforms: [
-                "linuxathena",
-                "windowsx86-64",
-                "linuxx86-64",
-                "osxx86-64",
-            ],
-        },
-        {
-            groupId: "com.ctre.phoenix",
-            artifactId: "cci",
-            version: "5.20.0",
-            libName: "CTRE_PhoenixCCI",
-            headerClassifier: "headers",
-            sharedLibrary: true,
-            skipInvalidPlatforms: true,
-            binaryPlatforms: ["linuxathena"],
-        },
-        {
-            groupId: "com.ctre.phoenix.sim",
-            artifactId: "cci-sim",
-            version: "5.20.0",
-            libName: "CTRE_PhoenixCCISim",
-            headerClassifier: "headers",
-            sharedLibrary: true,
-            skipInvalidPlatforms: true,
-            binaryPlatforms: ["windowsx86-64", "linuxx86-64", "osxx86-64"],
-        },
-        {
-            groupId: "com.ctre.phoenix.sim",
-            artifactId: "simTalonSRX",
-            version: "5.20.0",
-            libName: "CTRE_SimTalonSRX",
-            headerClassifier: "headers",
-            sharedLibrary: true,
-            skipInvalidPlatforms: true,
-            binaryPlatforms: ["windowsx86-64", "linuxx86-64", "osxx86-64"],
-        },
-        {
-            groupId: "com.ctre.phoenix.sim",
-            artifactId: "simTalonFX",
-            version: "5.20.0",
-            libName: "CTRE_SimTalonFX",
-            headerClassifier: "headers",
-            sharedLibrary: true,
-            skipInvalidPlatforms: true,
-            binaryPlatforms: ["windowsx86-64", "linuxx86-64", "osxx86-64"],
-        },
-        {
-            groupId: "com.ctre.phoenix.sim",
-            artifactId: "simVictorSPX",
-            version: "5.20.0",
-            libName: "CTRE_SimVictorSPX",
-            headerClassifier: "headers",
-            sharedLibrary: true,
-            skipInvalidPlatforms: true,
-            binaryPlatforms: ["windowsx86-64", "linuxx86-64", "osxx86-64"],
-        },
-        {
-            groupId: "com.ctre.phoenix.sim",
-            artifactId: "simPigeonIMU",
-            version: "5.20.0",
-            libName: "CTRE_SimPigeonIMU",
-            headerClassifier: "headers",
-            sharedLibrary: true,
-            skipInvalidPlatforms: true,
-            binaryPlatforms: ["windowsx86-64", "linuxx86-64", "osxx86-64"],
-        },
-        {
-            groupId: "com.ctre.phoenix.sim",
-            artifactId: "simCANCoder",
-            version: "5.20.0",
-            libName: "CTRE_SimCANCoder",
-            headerClassifier: "headers",
-            sharedLibrary: true,
-            skipInvalidPlatforms: true,
-            binaryPlatforms: ["windowsx86-64", "linuxx86-64", "osxx86-64"],
-        },
-    ],
-}
-
-const REVLIB_VENDORDEP = {
-    fileName: "REVLib.json",
-    name: "REVLib",
-    version: "2022.0.0",
-    uuid: "3f48eb8c-50fe-43a6-9cb7-44c86353c4cb",
-    mavenUrls: ["https://maven.revrobotics.com/"],
-    jsonUrl: "https://software-metadata.revrobotics.com/REVLib.json",
-    javaDependencies: [
-        {
-            groupId: "com.revrobotics.frc",
-            artifactId: "REVLib-java",
-            version: "2022.0.0",
-        },
-    ],
-    jniDependencies: [
-        {
-            groupId: "com.revrobotics.frc",
-            artifactId: "REVLib-driver",
-            version: "2022.0.0",
-            skipInvalidPlatforms: true,
-            isJar: false,
-            validPlatforms: [
-                "windowsx86-64",
-                "windowsx86",
-                "linuxaarch64bionic",
-                "linuxx86-64",
-                "linuxathena",
-                "linuxraspbian",
-                "osxx86-64",
-            ],
-        },
-    ],
-    cppDependencies: [
-        {
-            groupId: "com.revrobotics.frc",
-            artifactId: "REVLib-cpp",
-            version: "2022.0.0",
-            libName: "REVLib",
-            headerClassifier: "headers",
-            sharedLibrary: false,
-            skipInvalidPlatforms: true,
-            binaryPlatforms: [
-                "windowsx86-64",
-                "windowsx86",
-                "linuxaarch64bionic",
-                "linuxx86-64",
-                "linuxathena",
-                "linuxraspbian",
-                "osxx86-64",
-            ],
-        },
-        {
-            groupId: "com.revrobotics.frc",
-            artifactId: "REVLib-driver",
-            version: "2022.0.0",
-            libName: "REVLibDriver",
-            headerClassifier: "headers",
-            sharedLibrary: false,
-            skipInvalidPlatforms: true,
-            binaryPlatforms: [
-                "windowsx86-64",
-                "windowsx86",
-                "linuxaarch64bionic",
-                "linuxx86-64",
-                "linuxathena",
-                "linuxraspbian",
-                "osxx86-64",
-            ],
-        },
-    ],
-}
-
-const VENDORDEPS = [PHOENIX_VENDORDEP, REVLIB_VENDORDEP]
 
 let libraries: string[] = []
 
@@ -328,12 +72,13 @@ const getLibrary = (
         getWithRedirects(
             `${base}/${library}/${version}/${library}-${version}-headers.zip`,
             (response) => {
-                const zip = join(root, library, "headers.zip")
-                response.pipe(createWriteStream(zip))
-                response.on("end", () => {
+                const zipPath = join(root, library, "headers.zip")
+                const stream = createWriteStream(zipPath)
+                response.pipe(stream)
+                stream.on("finish", () => {
                     try {
-                        execSync("tar -xf " + zip, { cwd: libraryPath })
-                        rmSync(zip)
+                        execSync(`tar -xf "${zipPath}"`, { cwd: libraryPath })
+                        rmSync(zipPath)
                     } catch (_) {}
 
                     libraries.push(libraryPath)
@@ -375,7 +120,7 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
         )
     }
 
-    for (const vendordep of VENDORDEPS) {
+    for (const vendordep of vendordeps) {
         for (const dependency of vendordep.cppDependencies) {
             promises.push(
                 getLibrary(
@@ -404,8 +149,9 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
         .join("\n")
     const compileFlags = libraryIncludes + "\n-std=c++17\n-xc++"
     for (const folder of libraries) {
-        console.log(join(folder, "compile_flags.txt"))
-        writeFileSync(join(folder, "compile_flags.txt"), compileFlags)
+        try {
+            writeFileSync(join(folder, "compile_flags.txt"), compileFlags)
+        } catch (_) {}
     }
     vscode.window.showInformationMessage("Succesfully created compile flags")
 }

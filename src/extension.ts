@@ -10,9 +10,15 @@ import createCompileFlags from "./tasks/createCompileFlags"
 import { ChildProcess, exec } from "child_process"
 
 let process: ChildProcess | undefined
+let status: vscode.StatusBarItem
+let log: vscode.OutputChannel
 
 export const activate = (context: vscode.ExtensionContext) => {
-    const log = vscode.window.createOutputChannel("MisCar")
+    log = vscode.window.createOutputChannel("MisCar")
+    status = vscode.window.createStatusBarItem(
+        vscode.StatusBarAlignment.Left,
+        0
+    )
 
     context.subscriptions.push(
         vscode.commands.registerCommand(
@@ -27,26 +33,42 @@ export const activate = (context: vscode.ExtensionContext) => {
         vscode.commands.registerCommand("miscar.startTool", startTool),
         vscode.commands.registerCommand("miscar.createCompileFlags", () =>
             createCompileFlags(context)
-        )
+        ),
+        status
     )
 
-    vscode.workspace.onDidSaveTextDocument(() => {
-        if (process) {
-            process.kill()
-        }
+    status.command = "miscar.buildRoboRIO"
 
-        if (vscode.workspace.workspaceFolders) {
-            process = exec("bazel build //... --config=for-roborio", {
-                cwd: vscode.workspace.workspaceFolders[0].uri.fsPath,
-            })
-
-            process.stdout?.setEncoding("utf8")
-            process.stderr?.setEncoding("utf8")
-
-            process.stdout?.on("data", (message) => log.append(message))
-            process.stderr?.on("data", (message) => log.append(message))
-        }
-    })
+    vscode.workspace.onDidSaveTextDocument(buildRoboRIOSilent)
+    buildRoboRIOSilent()
+    status.show()
 }
 
 export const deactivate = () => {}
+
+const buildRoboRIOSilent = () => {
+    status.text = "$(sync~spin) miscar: building"
+    if (process) {
+        process.kill()
+    }
+
+    if (vscode.workspace.workspaceFolders) {
+        process = exec("bazel build //... --config=for-roborio", {
+            cwd: vscode.workspace.workspaceFolders[0].uri.fsPath,
+        })
+
+        process.stdout?.setEncoding("utf8")
+        process.stderr?.setEncoding("utf8")
+
+        process.stdout?.on("data", (message) => log.append(message))
+        process.stderr?.on("data", (message) => log.append(message))
+
+        process.addListener("exit", (code, __) => {
+            if (code == 0) {
+                status.text = "$(testing-passed-icon) miscar: ready"
+            } else {
+                status.text = "$(testing-failed-icon) miscar: failing"
+            }
+        })
+    }
+}

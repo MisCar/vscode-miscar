@@ -19,7 +19,11 @@ const buildLocal = async () => {
         folders[0],
         "Build Local",
         "vscode-miscar",
-        new vscode.ShellExecution("bazel build //... --config=for-" + platform)
+        new vscode.ShellExecution(
+            platform === "windows"
+                ? "bazel build //... --config=for-" + platform
+                : "bazel build //..."
+        )
     )
 
     task.presentationOptions.clear = false

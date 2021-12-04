@@ -1,6 +1,7 @@
 import * as vscode from "vscode"
 
-const buildRoboRIO = async () => {
+const buildRoboRIO = async (status: vscode.StatusBarItem) => {
+    status.text = "$(sync~spin) miscar: building"
     const folders = vscode.workspace.workspaceFolders
     if (folders === undefined) {
         return

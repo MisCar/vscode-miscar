@@ -13,6 +13,10 @@ let process: ChildProcess | undefined
 let status: vscode.StatusBarItem
 let log: vscode.OutputChannel
 
+const STATUS_BUILDING = "$(sync~spin) miscar: building"
+const STATUS_READY = "$(testing-passed-icon) miscar: ready"
+const STATUS_FAILED = "$(testing-failed-icon) miscar: failing"
+
 export const activate = (context: vscode.ExtensionContext) => {
     log = vscode.window.createOutputChannel("MisCar")
     status = vscode.window.createStatusBarItem(
@@ -26,7 +30,9 @@ export const activate = (context: vscode.ExtensionContext) => {
             openCommandPalette
         ),
         vscode.commands.registerCommand("miscar.buildLocal", buildLocal),
-        vscode.commands.registerCommand("miscar.buildRoboRIO", buildRoboRIO),
+        vscode.commands.registerCommand("miscar.buildRoboRIO", () =>
+            buildRoboRIO(status)
+        ),
         vscode.commands.registerCommand("miscar.test", test),
         vscode.commands.registerCommand("miscar.deploy", deploy),
         vscode.commands.registerCommand("miscar.runSimulation", runSimulation),
@@ -34,6 +40,21 @@ export const activate = (context: vscode.ExtensionContext) => {
         vscode.commands.registerCommand("miscar.createCompileFlags", () =>
             createCompileFlags(context)
         ),
+        vscode.tasks.onDidStartTask((event) => {
+            if (
+                event.execution.task.definition.type === "miscar.buildRoboRIO"
+            ) {
+                status.text = STATUS_BUILDING
+            }
+        }),
+        vscode.tasks.onDidEndTaskProcess((event) => {
+            if (
+                event.execution.task.definition.type === "miscar.buildRoboRIO"
+            ) {
+                status.text =
+                    event.exitCode === 0 ? STATUS_READY : STATUS_FAILED
+            }
+        }),
         status
     )
 
@@ -47,10 +68,10 @@ export const activate = (context: vscode.ExtensionContext) => {
 export const deactivate = () => {}
 
 const buildRoboRIOSilent = () => {
-    status.text = "$(sync~spin) miscar: building"
     if (process) {
         process.kill()
     }
+    status.text = STATUS_BUILDING
 
     if (vscode.workspace.workspaceFolders) {
         process = exec("bazel build //... --config=for-roborio", {
@@ -64,11 +85,7 @@ const buildRoboRIOSilent = () => {
         process.stderr?.on("data", (message) => log.append(message))
 
         process.addListener("exit", (code, __) => {
-            if (code == 0) {
-                status.text = "$(testing-passed-icon) miscar: ready"
-            } else {
-                status.text = "$(testing-failed-icon) miscar: failing"
-            }
+            status.text = code === 0 ? STATUS_READY : STATUS_FAILED
         })
     }
 }

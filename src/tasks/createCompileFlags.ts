@@ -12,6 +12,7 @@ import { get as httpsGet } from "https"
 import { execSync } from "child_process"
 import { IncomingMessage } from "http"
 import vendordeps from "../vendordeps"
+import { platform } from "../utilities"
 
 const NI_VERSION = "2022.2.3"
 const WPILIB_VERSION = "2022.1.1-beta-3"
@@ -77,9 +78,13 @@ const getLibrary = (
                 response.pipe(stream)
                 stream.on("finish", () => {
                     try {
-                        execSync(`tar -xf "${zipPath}"`, { cwd: libraryPath })
+                        if (platform === "windows") {
+                            execSync(`tar -xf "${zipPath}"`, { cwd: libraryPath })
+                        } else {
+                            execSync(`unzip ${zipPath}`, { cwd: libraryPath })
+                        }
                         rmSync(zipPath)
-                    } catch (_) {}
+                    } catch (_) { }
 
                     libraries.push(libraryPath)
                     resolve()
@@ -115,7 +120,7 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
                 library + "-cpp",
                 WPILIB_VERSION,
                 "https://frcmaven.wpi.edu/ui/api/v1/download?repoKey=release&path=edu/wpi/first/" +
-                    library
+                library
             )
         )
     }
@@ -128,7 +133,7 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
                     dependency.artifactId,
                     dependency.version,
                     vendordep.mavenUrls[0] +
-                        dependency.groupId.replace(/\./g, "/")
+                    dependency.groupId.replace(/\./g, "/")
                 )
             )
         }
@@ -151,7 +156,7 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
     for (const folder of libraries) {
         try {
             writeFileSync(join(folder, "compile_flags.txt"), compileFlags)
-        } catch (_) {}
+        } catch (_) { }
     }
     vscode.window.showInformationMessage("Succesfully created compile flags")
 }

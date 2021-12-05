@@ -20,7 +20,9 @@ const runSimulation = async () => {
         "Simulation",
         "vscode-miscar",
         new vscode.ShellExecution(
-            "bazel run robot.simulation.all --config=for-" + platform
+            platform === "windows"
+                ? "bazel build //... --config=for-" + platform
+                : "bazel build //..."
         )
     )
 

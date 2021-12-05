@@ -1,6 +1,6 @@
 import * as vscode from "vscode"
 import buildLocal from "./tasks/buildLocal"
-import buildRoboRIO from "./tasks/buildRoborio"
+import buildRoboRIO from "./tasks/buildRoboRIO"
 import test from "./tasks/test"
 import deploy from "./tasks/deploy"
 import openCommandPalette from "./tasks/openCommandPalette"
@@ -40,6 +40,7 @@ export const activate = (context: vscode.ExtensionContext) => {
         vscode.commands.registerCommand("miscar.createCompileFlags", () =>
             createCompileFlags(context)
         ),
+        vscode.commands.registerCommand("miscar.showOutput", () => log.show()),
         vscode.tasks.onDidStartTask((event) => {
             if (
                 event.execution.task.definition.type === "miscar.buildRoboRIO"
@@ -58,14 +59,14 @@ export const activate = (context: vscode.ExtensionContext) => {
         status
     )
 
-    status.command = "miscar.buildRoboRIO"
+    status.command = "miscar.showOutput"
 
     vscode.workspace.onDidSaveTextDocument(buildRoboRIOSilent)
     buildRoboRIOSilent()
     status.show()
 }
 
-export const deactivate = () => {}
+export const deactivate = () => { }
 
 const buildRoboRIOSilent = () => {
     if (process) {

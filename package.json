@@ -3,7 +3,7 @@
     "displayName": "MisCar",
     "description": "Faster FRC development",
     "publisher": "miscar",
-    "version": "2022.0.1",
+    "version": "2022.0.2",
     "license": "MIT",
     "icon": "icon.png",
     "engines": {
@@ -23,7 +23,8 @@
         "onCommand:miscar.deploy",
         "onCommand:miscar.runSimulation",
         "onCommand:miscar.startTool",
-        "onCommand:miscar.createCompileFlags"
+        "onCommand:miscar.createCompileFlags",
+        "onCommand:miscar.showOutput"
     ],
     "main": "./dist/extension.js",
     "contributes": {
@@ -62,6 +63,10 @@
             {
                 "command": "miscar.createCompileFlags",
                 "title": "MisCar: Create Compile Flags"
+            },
+            {
+                "command": "miscar.showOutput",
+                "title": "MisCar: Show Output"
             }
         ],
         "menus": {

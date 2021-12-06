@@ -1,5 +1,5 @@
 import * as vscode from "vscode"
-import { platform } from "../utilities"
+import { platformArguments } from "../utilities"
 
 const buildLocal = async () => {
     const folders = vscode.workspace.workspaceFolders
@@ -19,11 +19,7 @@ const buildLocal = async () => {
         folders[0],
         "Build Local",
         "vscode-miscar",
-        new vscode.ShellExecution(
-            platform === "windows"
-                ? "bazel build //... --config=for-" + platform
-                : "bazel build //..."
-        )
+        new vscode.ShellExecution("bazel build //..." + platformArguments)
     )
 
     task.presentationOptions.clear = false

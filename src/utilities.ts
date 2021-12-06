@@ -6,3 +6,8 @@ export const platform =
         : processPlatform === "darwin"
         ? "mac"
         : "linux"
+
+export const platformArguments =
+    platform == "windows"
+        ? "--config=for-windows --output_user_root=C:\\bazelroot"
+        : ""

@@ -3,7 +3,7 @@
     "displayName": "MisCar",
     "description": "Faster FRC development",
     "publisher": "miscar",
-    "version": "2022.0.2",
+    "version": "2022.0.3",
     "license": "MIT",
     "icon": "icon.png",
     "engines": {
@@ -13,7 +13,8 @@
         "Other"
     ],
     "activationEvents": [
-        "workspaceContains:.wpilib/wpilib_preferences.json",
+        "workspaceContains:.styleguide",
+        "workspaceContains:.styleguide-license",
         "workspaceContains:BUILD",
         "workspaceContains:WORKSPACE",
         "onCommand:miscar.openCommandPalette",
@@ -24,7 +25,8 @@
         "onCommand:miscar.runSimulation",
         "onCommand:miscar.startTool",
         "onCommand:miscar.createCompileFlags",
-        "onCommand:miscar.showOutput"
+        "onCommand:miscar.showOutput",
+        "onCommand:miscar.newClass"
     ],
     "main": "./dist/extension.js",
     "contributes": {
@@ -67,6 +69,10 @@
             {
                 "command": "miscar.showOutput",
                 "title": "MisCar: Show Output"
+            },
+            {
+                "command": "miscar.newClass",
+                "title": "MisCar: New Class"
             }
         ],
         "menus": {
@@ -82,6 +88,12 @@
                 {
                     "command": "miscar.runSimulation",
                     "group": "navigation@9"
+                }
+            ],
+            "explorer/context": [
+                {
+                    "command": "miscar.newClass",
+                    "group": "miscar"
                 }
             ]
         }

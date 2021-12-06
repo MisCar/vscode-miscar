@@ -8,6 +8,7 @@ import runSimulation from "./tasks/runSimulation"
 import startTool from "./tasks/startTool"
 import createCompileFlags from "./tasks/createCompileFlags"
 import { ChildProcess, exec } from "child_process"
+import newClass from "./tasks/newClass"
 
 let process: ChildProcess | undefined
 let status: vscode.StatusBarItem
@@ -37,10 +38,21 @@ export const activate = (context: vscode.ExtensionContext) => {
         vscode.commands.registerCommand("miscar.deploy", deploy),
         vscode.commands.registerCommand("miscar.runSimulation", runSimulation),
         vscode.commands.registerCommand("miscar.startTool", startTool),
+        vscode.commands.registerCommand("miscar.newClass", newClass),
         vscode.commands.registerCommand("miscar.createCompileFlags", () =>
             createCompileFlags(context)
         ),
-        vscode.commands.registerCommand("miscar.showOutput", () => log.show()),
+        vscode.commands.registerCommand("miscar.showOutput", () => {
+            if (
+                vscode.window.activeTextEditor?.document.fileName.startsWith(
+                    "extension-output-miscar.vscode-miscar"
+                )
+            ) {
+                log.hide()
+            } else {
+                log.show()
+            }
+        }),
         vscode.tasks.onDidStartTask((event) => {
             if (
                 event.execution.task.definition.type === "miscar.buildRoboRIO"
@@ -66,7 +78,7 @@ export const activate = (context: vscode.ExtensionContext) => {
     status.show()
 }
 
-export const deactivate = () => { }
+export const deactivate = () => {}
 
 const buildRoboRIOSilent = () => {
     if (process) {

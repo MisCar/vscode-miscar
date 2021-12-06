@@ -1,5 +1,5 @@
 import * as vscode from "vscode"
-import { platform } from "../utilities"
+import { platformArguments } from "../utilities"
 
 const runSimulation = async () => {
     const folders = vscode.workspace.workspaceFolders
@@ -19,11 +19,7 @@ const runSimulation = async () => {
         folders[0],
         "Simulation",
         "vscode-miscar",
-        new vscode.ShellExecution(
-            platform === "windows"
-                ? "bazel build //... --config=for-" + platform
-                : "bazel build //..."
-        )
+        new vscode.ShellExecution("bazel build //..." + platformArguments)
     )
 
     task.presentationOptions.clear = false

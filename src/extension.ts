@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/semi */
 import * as vscode from "vscode"
 import buildLocal from "./tasks/buildLocal"
 import buildRoboRIO from "./tasks/buildRoboRIO"
@@ -9,6 +10,7 @@ import startTool from "./tasks/startTool"
 import createCompileFlags from "./tasks/createCompileFlags"
 import { ChildProcess, exec } from "child_process"
 import newClass from "./tasks/newClass"
+import wpiformat from "./tasks/wpiformat"
 
 let process: ChildProcess | undefined
 let status: vscode.StatusBarItem
@@ -42,6 +44,7 @@ export const activate = (context: vscode.ExtensionContext) => {
         vscode.commands.registerCommand("miscar.createCompileFlags", () =>
             createCompileFlags(context)
         ),
+        vscode.commands.registerCommand("miscar.wpiformat", wpiformat),
         vscode.commands.registerCommand("miscar.showOutput", () => {
             if (
                 vscode.window.activeTextEditor?.document.fileName.startsWith(
@@ -68,12 +71,14 @@ export const activate = (context: vscode.ExtensionContext) => {
                     event.exitCode === 0 ? STATUS_READY : STATUS_FAILED
             }
         }),
+
         status
     )
 
     status.command = "miscar.showOutput"
 
     vscode.workspace.onDidSaveTextDocument(buildRoboRIOSilent)
+    vscode.workspace.onDidSaveTextDocument(wpiformat)
     buildRoboRIOSilent()
     status.show()
 }

@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/semi */
+import { log } from "console"
 import * as vscode from "vscode"
-import { platformArguments } from "../utilities"
 
-const buildLocal = async () => {
+const wpiformat = async () => {
     const folders = vscode.workspace.workspaceFolders
     if (folders === undefined) {
         return
@@ -10,17 +9,16 @@ const buildLocal = async () => {
 
     vscode.tasks.taskExecutions
         .filter(
-            (execution) =>
-                execution.task.definition.type === "miscar.buildLocal"
+            (execution) => execution.task.definition.type === "miscar.wpiformat"
         )
         .forEach((execution) => execution.terminate())
 
     const task = new vscode.Task(
-        { type: "bazelrio.buildLocal" },
+        { type: "miscar.wpiformat" },
         folders[0],
-        "Build Local",
+        "wpiformat",
         "vscode-miscar",
-        new vscode.ShellExecution("bazel build //..." + platformArguments)
+        new vscode.ShellExecution("wpiformat")
     )
 
     task.presentationOptions.clear = false
@@ -28,6 +26,7 @@ const buildLocal = async () => {
     task.presentationOptions.showReuseMessage = false
 
     vscode.tasks.executeTask(task)
+    console.log("I have run this thing ")
 }
 
-export default buildLocal
+export default wpiformat

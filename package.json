@@ -26,7 +26,8 @@
         "onCommand:miscar.startTool",
         "onCommand:miscar.createCompileFlags",
         "onCommand:miscar.showOutput",
-        "onCommand:miscar.newClass"
+        "onCommand:miscar.newClass",
+        "onCommand:miscar.wpiformat"
     ],
     "main": "./dist/extension.js",
     "contributes": {
@@ -73,6 +74,10 @@
             {
                 "command": "miscar.newClass",
                 "title": "MisCar: New Class"
+            },
+            {
+                "command": "miscar.wpiformat",
+                "title": "MisCar: wpiformat"
             }
         ],
         "menus": {

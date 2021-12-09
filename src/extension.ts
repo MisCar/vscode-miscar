@@ -9,10 +9,13 @@ import runSimulation from "./tasks/runSimulation"
 import startTool from "./tasks/startTool"
 import createCompileFlags from "./tasks/createCompileFlags"
 import { ChildProcess, exec } from "child_process"
+import { relative } from "path"
 import newClass from "./tasks/newClass"
 import wpiformat from "./tasks/wpiformat"
+import { bazel } from "./utilities"
 
-let process: ChildProcess | undefined
+let buildRoboRIOProcess: ChildProcess | undefined
+let wpiformatProcess: ChildProcess | undefined
 let status: vscode.StatusBarItem
 let log: vscode.OutputChannel
 
@@ -78,32 +81,50 @@ export const activate = (context: vscode.ExtensionContext) => {
     status.command = "miscar.showOutput"
 
     vscode.workspace.onDidSaveTextDocument(buildRoboRIOSilent)
-    vscode.workspace.onDidSaveTextDocument(wpiformat)
+    vscode.workspace.onDidSaveTextDocument(wpiformatSilent)
     buildRoboRIOSilent()
     status.show()
 }
 
-export const deactivate = () => {}
+export const deactivate = () => { }
 
 const buildRoboRIOSilent = () => {
-    if (process) {
-        process.kill()
+    if (buildRoboRIOProcess) {
+        buildRoboRIOProcess.kill()
     }
     status.text = STATUS_BUILDING
 
     if (vscode.workspace.workspaceFolders) {
-        process = exec("bazel build //... --config=for-roborio", {
+        buildRoboRIOProcess = exec(bazel + "build //... --config=for-roborio", {
             cwd: vscode.workspace.workspaceFolders[0].uri.fsPath,
         })
 
-        process.stdout?.setEncoding("utf8")
-        process.stderr?.setEncoding("utf8")
+        buildRoboRIOProcess.stdout?.setEncoding("utf8")
+        buildRoboRIOProcess.stderr?.setEncoding("utf8")
 
-        process.stdout?.on("data", (message) => log.append(message))
-        process.stderr?.on("data", (message) => log.append(message))
+        buildRoboRIOProcess.stdout?.on("data", (message) => log.append(message))
+        buildRoboRIOProcess.stderr?.on("data", (message) => log.append(message))
 
-        process.addListener("exit", (code, __) => {
+        buildRoboRIOProcess.addListener("exit", (code, __) => {
             status.text = code === 0 ? STATUS_READY : STATUS_FAILED
+        })
+    }
+}
+
+const wpiformatSilent = () => {
+    if (wpiformatProcess) {
+        wpiformatProcess.kill()
+    }
+
+    if (vscode.workspace.workspaceFolders) {
+        wpiformatProcess = exec("wpiformat -f " + relative(vscode.workspace.workspaceFolders[0].uri.fsPath, vscode.window.activeTextEditor?.document.fileName ?? ""), {
+            cwd: vscode.workspace.workspaceFolders[0].uri.fsPath,
+        })
+
+        wpiformatProcess.addListener("exit", (code, __) => {
+            if (code !== 0) {
+                vscode.window.showWarningMessage("WPIFormat failed")
+            }
         })
     }
 }

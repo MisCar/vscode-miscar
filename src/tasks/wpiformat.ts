@@ -1,4 +1,3 @@
-import { log } from "console"
 import * as vscode from "vscode"
 
 const wpiformat = async () => {
@@ -16,7 +15,7 @@ const wpiformat = async () => {
     const task = new vscode.Task(
         { type: "miscar.wpiformat" },
         folders[0],
-        "wpiformat",
+        "WPIFormat",
         "vscode-miscar",
         new vscode.ShellExecution("wpiformat")
     )
@@ -26,7 +25,6 @@ const wpiformat = async () => {
     task.presentationOptions.showReuseMessage = false
 
     vscode.tasks.executeTask(task)
-    console.log("I have run this thing ")
 }
 
 export default wpiformat

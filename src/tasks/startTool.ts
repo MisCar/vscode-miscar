@@ -1,4 +1,5 @@
 import * as vscode from "vscode"
+import { bazel } from "../utilities"
 
 const startTool = async () => {
     const folders = vscode.workspace.workspaceFolders
@@ -32,7 +33,7 @@ const startTool = async () => {
             "Start Tool",
             "vscode-miscar",
             new vscode.ShellExecution(
-                "bazel run @bazelrio//libraries/tools/" + tool.toLowerCase()
+                bazel + "run @bazelrio//libraries/tools/" + tool.toLowerCase()
             )
         )
 

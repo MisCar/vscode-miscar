@@ -1,4 +1,5 @@
 import * as vscode from "vscode"
+import { bazel } from "../utilities"
 
 const deploy = async () => {
     const folders = vscode.workspace.workspaceFolders
@@ -17,7 +18,7 @@ const deploy = async () => {
         folders[0],
         "Deploy",
         "vscode-miscar",
-        new vscode.ShellExecution("bazel run robot.deploy --config=for-roborio")
+        new vscode.ShellExecution(bazel + "run robot.deploy --config=for-roborio")
     )
 
     task.presentationOptions.clear = false

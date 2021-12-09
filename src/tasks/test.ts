@@ -1,5 +1,5 @@
 import * as vscode from "vscode"
-import { platformArguments } from "../utilities"
+import { bazel, platformArguments } from "../utilities"
 
 const test = async () => {
     const folders = vscode.workspace.workspaceFolders
@@ -16,7 +16,7 @@ const test = async () => {
         folders[0],
         "Test",
         "vscode-miscar",
-        new vscode.ShellExecution("bazel test //..." + platformArguments)
+        new vscode.ShellExecution(bazel + "test //..." + platformArguments)
     )
 
     task.presentationOptions.clear = false

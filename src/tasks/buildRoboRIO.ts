@@ -1,4 +1,5 @@
 import * as vscode from "vscode"
+import { bazel } from "../utilities"
 
 const buildRoboRIO = async (status: vscode.StatusBarItem) => {
     status.text = "$(sync~spin) miscar: building"
@@ -19,7 +20,7 @@ const buildRoboRIO = async (status: vscode.StatusBarItem) => {
         folders[0],
         "Build RoboRIO",
         "vscode-miscar",
-        new vscode.ShellExecution("bazel build //... --config=for-roborio")
+        new vscode.ShellExecution(bazel + "build //... --config=for-roborio")
     )
 
     task.presentationOptions.clear = false

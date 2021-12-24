@@ -3,7 +3,7 @@
     "displayName": "MisCar",
     "description": "Faster FRC development",
     "publisher": "miscar",
-    "version": "2022.0.3",
+    "version": "2022.0.5",
     "license": "MIT",
     "icon": "icon.png",
     "engines": {
@@ -27,7 +27,8 @@
         "onCommand:miscar.createCompileFlags",
         "onCommand:miscar.showOutput",
         "onCommand:miscar.newClass",
-        "onCommand:miscar.wpiformat"
+        "onCommand:miscar.wpiformat",
+        "onCommand:miscar.createIndex"
     ],
     "main": "./dist/extension.js",
     "contributes": {
@@ -78,6 +79,10 @@
             {
                 "command": "miscar.wpiformat",
                 "title": "MisCar: WPIFormat"
+            },
+            {
+                "command": "miscar.createIndex",
+                "title": "MisCar: Create Index"
             }
         ],
         "menus": {

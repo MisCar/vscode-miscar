@@ -13,6 +13,7 @@ import { relative } from "path"
 import newClass from "./tasks/newClass"
 import wpiformat from "./tasks/wpiformat"
 import { bazel } from "./utilities"
+import createIndex from "./tasks/createIndex"
 
 let buildRoboRIOProcess: ChildProcess | undefined
 let wpiformatProcess: ChildProcess | undefined
@@ -48,6 +49,7 @@ export const activate = (context: vscode.ExtensionContext) => {
             createCompileFlags(context)
         ),
         vscode.commands.registerCommand("miscar.wpiformat", wpiformat),
+        vscode.commands.registerCommand("miscar.createIndex", createIndex),
         vscode.commands.registerCommand("miscar.showOutput", () => {
             if (
                 vscode.window.activeTextEditor?.document.fileName.startsWith(
@@ -86,7 +88,7 @@ export const activate = (context: vscode.ExtensionContext) => {
     status.show()
 }
 
-export const deactivate = () => { }
+export const deactivate = () => {}
 
 const buildRoboRIOSilent = () => {
     if (buildRoboRIOProcess) {
@@ -117,9 +119,16 @@ const wpiformatSilent = () => {
     }
 
     if (vscode.workspace.workspaceFolders) {
-        wpiformatProcess = exec("wpiformat -f " + relative(vscode.workspace.workspaceFolders[0].uri.fsPath, vscode.window.activeTextEditor?.document.fileName ?? ""), {
-            cwd: vscode.workspace.workspaceFolders[0].uri.fsPath,
-        })
+        wpiformatProcess = exec(
+            "wpiformat -f " +
+                relative(
+                    vscode.workspace.workspaceFolders[0].uri.fsPath,
+                    vscode.window.activeTextEditor?.document.fileName ?? ""
+                ),
+            {
+                cwd: vscode.workspace.workspaceFolders[0].uri.fsPath,
+            }
+        )
 
         wpiformatProcess.addListener("exit", (code, __) => {
             if (code !== 0) {

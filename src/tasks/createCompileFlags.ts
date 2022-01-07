@@ -15,7 +15,7 @@ import vendordeps from "../vendordeps"
 import { platform } from "../utilities"
 
 const NI_VERSION = "2022.2.3"
-const WPILIB_VERSION = "2022.1.1-beta-3"
+const WPILIB_VERSION = "2022.1.1"
 const NI_LIBRARIES = ["visa", "netcomm", "chipobject"]
 const WPILIB_LIBRARIES = [
     "wpilibc",

@@ -20,7 +20,7 @@ const buildLocal = async () => {
         folders[0],
         "Build Local",
         "vscode-miscar",
-        new vscode.ShellExecution(bazel + " build //..." + platformArguments)
+        new vscode.ShellExecution(bazel + " build //... " + platformArguments)
     )
 
     task.presentationOptions.clear = false

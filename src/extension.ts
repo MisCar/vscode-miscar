@@ -14,6 +14,7 @@ import newClass from "./tasks/newClass"
 import wpiformat from "./tasks/wpiformat"
 import { bazel } from "./utilities"
 import createIndex from "./tasks/createIndex"
+import clearCompileFlags from "./tasks/clearCompileFlags"
 
 let buildRoboRIOProcess: ChildProcess | undefined
 let wpiformatProcess: ChildProcess | undefined
@@ -50,6 +51,9 @@ export const activate = (context: vscode.ExtensionContext) => {
         ),
         vscode.commands.registerCommand("miscar.wpiformat", wpiformat),
         vscode.commands.registerCommand("miscar.createIndex", createIndex),
+        vscode.commands.registerCommand("miscar.clearCompileFlags", () =>
+            clearCompileFlags(context)
+        ),
         vscode.commands.registerCommand("miscar.showOutput", () => {
             if (
                 vscode.window.activeTextEditor?.document.fileName.startsWith(

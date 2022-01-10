@@ -16,7 +16,8 @@ import { bazel } from "./utilities"
 import createIndex from "./tasks/createIndex"
 import clearCompileFlags from "./tasks/clearCompileFlags"
 
-let buildRoboRIOProcess: ChildProcess | undefined
+export let buildRoboRIOProcess: ChildProcess | undefined
+export let roboRIOKilledProcesses: ChildProcess[] = []
 let wpiformatProcess: ChildProcess | undefined
 let status: vscode.StatusBarItem
 let log: vscode.OutputChannel
@@ -92,11 +93,12 @@ export const activate = (context: vscode.ExtensionContext) => {
     status.show()
 }
 
-export const deactivate = () => {}
+export const deactivate = () => { }
 
 const buildRoboRIOSilent = () => {
     if (buildRoboRIOProcess) {
         buildRoboRIOProcess.kill()
+        roboRIOKilledProcesses.push(buildRoboRIOProcess)
     }
     status.text = STATUS_BUILDING
 
@@ -111,7 +113,13 @@ const buildRoboRIOSilent = () => {
         buildRoboRIOProcess.stdout?.on("data", (message) => log.append(message))
         buildRoboRIOProcess.stderr?.on("data", (message) => log.append(message))
 
+        const thisProcess = buildRoboRIOProcess // We don't want the captured one to change
+
         buildRoboRIOProcess.addListener("exit", (code, __) => {
+            if (roboRIOKilledProcesses.includes(thisProcess)) {
+                return
+            }
+
             status.text = code === 0 ? STATUS_READY : STATUS_FAILED
         })
     }
@@ -125,10 +133,10 @@ const wpiformatSilent = () => {
     if (vscode.workspace.workspaceFolders) {
         wpiformatProcess = exec(
             "wpiformat -f " +
-                relative(
-                    vscode.workspace.workspaceFolders[0].uri.fsPath,
-                    vscode.window.activeTextEditor?.document.fileName ?? ""
-                ),
+            relative(
+                vscode.workspace.workspaceFolders[0].uri.fsPath,
+                vscode.window.activeTextEditor?.document.fileName ?? ""
+            ),
             {
                 cwd: vscode.workspace.workspaceFolders[0].uri.fsPath,
             }

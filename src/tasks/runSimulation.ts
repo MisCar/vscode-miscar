@@ -22,7 +22,7 @@ const runSimulation = async () => {
         new vscode.ShellExecution(bazel + "build //..." + platformArguments)
     )
 
-    task.presentationOptions.clear = false
+    task.presentationOptions.clear = true
     task.presentationOptions.echo = false
     task.presentationOptions.showReuseMessage = false
 

@@ -37,7 +37,7 @@ const startTool = async () => {
             )
         )
 
-        task.presentationOptions.clear = false
+        task.presentationOptions.clear = true
         task.presentationOptions.echo = false
         task.presentationOptions.showReuseMessage = false
 

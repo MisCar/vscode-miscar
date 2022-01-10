@@ -19,7 +19,7 @@ const test = async () => {
         new vscode.ShellExecution(bazel + "test //..." + platformArguments)
     )
 
-    task.presentationOptions.clear = false
+    task.presentationOptions.clear = true
     task.presentationOptions.echo = false
     task.presentationOptions.showReuseMessage = false
 

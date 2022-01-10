@@ -1,7 +1,13 @@
 import * as vscode from "vscode"
+import { buildRoboRIOProcess, roboRIOKilledProcesses } from "../extension"
 import { bazel } from "../utilities"
 
 const buildRoboRIO = async (status: vscode.StatusBarItem) => {
+    if (buildRoboRIOProcess) {
+        buildRoboRIOProcess.kill()
+        roboRIOKilledProcesses.push(buildRoboRIOProcess)
+    }
+
     status.text = "$(sync~spin) miscar: building"
     const folders = vscode.workspace.workspaceFolders
     if (folders === undefined) {
@@ -23,7 +29,7 @@ const buildRoboRIO = async (status: vscode.StatusBarItem) => {
         new vscode.ShellExecution(bazel + "build //... --config=for-roborio")
     )
 
-    task.presentationOptions.clear = false
+    task.presentationOptions.clear = true
     task.presentationOptions.echo = false
     task.presentationOptions.showReuseMessage = false
 

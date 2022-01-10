@@ -21,7 +21,7 @@ const deploy = async () => {
         new vscode.ShellExecution(bazel + "run robot.deploy --config=for-roborio")
     )
 
-    task.presentationOptions.clear = false
+    task.presentationOptions.clear = true
     task.presentationOptions.echo = false
     task.presentationOptions.showReuseMessage = false
 

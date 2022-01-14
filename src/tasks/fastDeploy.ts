@@ -1,7 +1,7 @@
 import * as vscode from "vscode"
 import { bazel } from "../utilities"
 
-const deploy = async () => {
+const fastDeploy = async () => {
     const folders = vscode.workspace.workspaceFolders
     if (folders === undefined) {
         return
@@ -14,11 +14,11 @@ const deploy = async () => {
         .forEach((execution) => execution.terminate())
 
     const task = new vscode.Task(
-        { type: "miscar.deploy" },
+        { type: "miscar.fastDeploy" },
         folders[0],
-        "Deploy",
+        "Fast Deploy",
         "vscode-miscar",
-        new vscode.ShellExecution(bazel + "run robot.deploy --config=for-roborio --ui_event_filters=-info")
+        new vscode.ShellExecution(bazel + "run robot.deploy --config=for-roborio --ui_event_filters=-info -- -- --fast_unsafe_deploy")
     )
 
     task.presentationOptions.clear = true
@@ -28,4 +28,4 @@ const deploy = async () => {
     vscode.tasks.executeTask(task)
 }
 
-export default deploy
+export default fastDeploy

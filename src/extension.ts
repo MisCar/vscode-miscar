@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/semi */
 import * as vscode from "vscode"
 import buildLocal from "./tasks/buildLocal"
 import buildRoboRIO from "./tasks/buildRoboRIO"
@@ -15,6 +14,7 @@ import wpiformat from "./tasks/wpiformat"
 import { bazel } from "./utilities"
 import createIndex from "./tasks/createIndex"
 import clearCompileFlags from "./tasks/clearCompileFlags"
+import fastDeploy from "./tasks/fastDeploy"
 
 export let buildRoboRIOProcess: ChildProcess | undefined
 export let roboRIOKilledProcesses: ChildProcess[] = []
@@ -25,6 +25,7 @@ let log: vscode.OutputChannel
 const STATUS_BUILDING = "$(sync~spin) miscar: building"
 const STATUS_READY = "$(testing-passed-icon) miscar: ready"
 const STATUS_FAILED = "$(testing-failed-icon) miscar: failing"
+let buildRoboRIOSilentFirstTime = true
 
 export const activate = (context: vscode.ExtensionContext) => {
     log = vscode.window.createOutputChannel("MisCar")
@@ -44,6 +45,7 @@ export const activate = (context: vscode.ExtensionContext) => {
         ),
         vscode.commands.registerCommand("miscar.test", test),
         vscode.commands.registerCommand("miscar.deploy", deploy),
+        vscode.commands.registerCommand("miscar.fastDeploy", fastDeploy),
         vscode.commands.registerCommand("miscar.runSimulation", runSimulation),
         vscode.commands.registerCommand("miscar.startTool", startTool),
         vscode.commands.registerCommand("miscar.newClass", newClass),
@@ -81,7 +83,6 @@ export const activate = (context: vscode.ExtensionContext) => {
                     event.exitCode === 0 ? STATUS_READY : STATUS_FAILED
             }
         }),
-
         status
     )
 
@@ -103,7 +104,7 @@ const buildRoboRIOSilent = () => {
     status.text = STATUS_BUILDING
 
     if (vscode.workspace.workspaceFolders) {
-        buildRoboRIOProcess = exec(bazel + "build //... --config=for-roborio", {
+        buildRoboRIOProcess = exec(bazel + "build //... --config=for-roborio" + (buildRoboRIOSilentFirstTime ? " --jobs 2 --local_ram_resources=HOST_RAM*0.5" : ""), {
             cwd: vscode.workspace.workspaceFolders[0].uri.fsPath,
         })
 
@@ -122,6 +123,10 @@ const buildRoboRIOSilent = () => {
 
             status.text = code === 0 ? STATUS_READY : STATUS_FAILED
         })
+    }
+
+    if (buildRoboRIOSilentFirstTime) {
+        buildRoboRIOSilentFirstTime = false
     }
 }
 

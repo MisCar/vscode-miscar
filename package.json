@@ -22,6 +22,7 @@
         "onCommand:miscar.buildRoboRIO",
         "onCommand:miscar.test",
         "onCommand:miscar.deploy",
+        "onCommand:miscar.fastDeploy",
         "onCommand:miscar.runSimulation",
         "onCommand:miscar.startTool",
         "onCommand:miscar.createCompileFlags",
@@ -48,7 +49,11 @@
             },
             {
                 "command": "miscar.deploy",
-                "title": "MisCar: Deploy",
+                "title": "MisCar: Deploy"
+            },
+            {
+                "command": "miscar.fastDeploy",
+                "title": "MisCar: Fast Deploy",
                 "icon": "$(cloud-upload)"
             },
             {
@@ -97,7 +102,7 @@
                     "group": "navigation@7"
                 },
                 {
-                    "command": "miscar.deploy",
+                    "command": "miscar.fastDeploy",
                     "group": "navigation@8"
                 },
                 {

@@ -18,7 +18,7 @@ const fastDeploy = async () => {
         folders[0],
         "Fast Deploy",
         "vscode-miscar",
-        new vscode.ShellExecution(bazel + "run robot.deploy --config=for-roborio --ui_event_filters=-info -- -- --fast_unsafe_deploy")
+        new vscode.ShellExecution(bazel + "run robot.deploy --config=for-roborio --ui_event_filters=-info -- --skip_dynamic_libraries")
     )
 
     task.presentationOptions.clear = true

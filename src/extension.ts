@@ -83,13 +83,12 @@ export const activate = (context: vscode.ExtensionContext) => {
                     event.exitCode === 0 ? STATUS_READY : STATUS_FAILED
             }
         }),
-        status
+        status,
+        vscode.workspace.onDidSaveTextDocument(buildRoboRIOSilent),
     )
 
     status.command = "miscar.showOutput"
 
-    vscode.workspace.onDidSaveTextDocument(buildRoboRIOSilent)
-    vscode.workspace.onDidSaveTextDocument(wpiformatSilent)
     buildRoboRIOSilent()
     status.show()
 }
@@ -127,30 +126,5 @@ const buildRoboRIOSilent = () => {
 
     if (buildRoboRIOSilentFirstTime) {
         buildRoboRIOSilentFirstTime = false
-    }
-}
-
-const wpiformatSilent = () => {
-    if (wpiformatProcess) {
-        wpiformatProcess.kill()
-    }
-
-    if (vscode.workspace.workspaceFolders) {
-        wpiformatProcess = exec(
-            "wpiformat -f " +
-            relative(
-                vscode.workspace.workspaceFolders[0].uri.fsPath,
-                vscode.window.activeTextEditor?.document.fileName ?? ""
-            ),
-            {
-                cwd: vscode.workspace.workspaceFolders[0].uri.fsPath,
-            }
-        )
-
-        wpiformatProcess.addListener("exit", (code, __) => {
-            if (code !== 0) {
-                vscode.window.showWarningMessage("WPIFormat failed")
-            }
-        })
     }
 }

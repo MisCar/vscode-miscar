@@ -39,7 +39,6 @@ const startTool = async () => {
 
         task.presentationOptions.clear = true
         task.presentationOptions.echo = false
-        task.presentationOptions.showReuseMessage = false
 
         vscode.tasks.executeTask(task)
     }

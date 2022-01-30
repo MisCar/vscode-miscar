@@ -3,6 +3,8 @@ import * as vscode from "vscode"
 import { bazel, platformArguments } from "../utilities"
 
 const buildLocal = async () => {
+    await vscode.workspace.saveAll()
+
     const folders = vscode.workspace.workspaceFolders
     if (folders === undefined) {
         return
@@ -25,7 +27,6 @@ const buildLocal = async () => {
 
     task.presentationOptions.clear = true
     task.presentationOptions.echo = false
-    task.presentationOptions.showReuseMessage = false
 
     vscode.tasks.executeTask(task)
 }

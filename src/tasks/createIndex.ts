@@ -39,12 +39,18 @@ const createIndex = () => {
 
     writeFileSync(
         join(folders[0].uri.fsPath, "src", "main", "cpp", "IncludeAll.h"),
-        includes.map((file) => `#include <${file}>`).join("\n")
+        "#pragma once\n" + includes.filter((file) => file !== "ctre/Phoenix.h" && !file.startsWith("uv") && !file.startsWith("unsupported") && !file.startsWith("cscore") && !file.startsWith("Eigen")).map((file) => `#include <${file}>`).join("\n")
     )
 
-    execSync("clangd-indexer src/main/cpp/IncludeAll.h > clangd.idx", {
-        cwd: folders[0].uri.fsPath,
-    })
+    try {
+        execSync("clangd-indexer src/main/cpp/IncludeAll.h > clangd.idx", {
+            cwd: folders[0].uri.fsPath,
+        })
+    } catch (e: any) {
+        if (e.stderr.toString().includes("clangd-indexer: not found")) {
+            vscode.window.showErrorMessage("clangd indexer is not installed. Please install it from the clangd releases page.")
+        }
+    }
 }
 
 export default createIndex

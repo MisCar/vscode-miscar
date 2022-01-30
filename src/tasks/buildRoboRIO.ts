@@ -3,6 +3,8 @@ import { buildRoboRIOProcess, roboRIOKilledProcesses } from "../extension"
 import { bazel } from "../utilities"
 
 const buildRoboRIO = async (status: vscode.StatusBarItem) => {
+    await vscode.workspace.saveAll()
+
     if (buildRoboRIOProcess) {
         buildRoboRIOProcess.kill()
         roboRIOKilledProcesses.push(buildRoboRIOProcess)
@@ -31,7 +33,6 @@ const buildRoboRIO = async (status: vscode.StatusBarItem) => {
 
     task.presentationOptions.clear = true
     task.presentationOptions.echo = false
-    task.presentationOptions.showReuseMessage = false
 
     vscode.tasks.executeTask(task)
 }

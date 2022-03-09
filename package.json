@@ -3,7 +3,7 @@
     "displayName": "MisCar",
     "description": "Faster FRC development",
     "publisher": "miscar",
-    "version": "2022.0.9",
+    "version": "2022.1.1",
     "license": "MIT",
     "icon": "icon.png",
     "engines": {
@@ -41,7 +41,8 @@
             },
             {
                 "command": "miscar.buildRoboRIO",
-                "title": "MisCar: Build RoboRIO"
+                "title": "MisCar: Build RoboRIO",
+                "icon": "$(wrench)"
             },
             {
                 "command": "miscar.test",
@@ -54,7 +55,7 @@
             {
                 "command": "miscar.fastDeploy",
                 "title": "MisCar: Fast Deploy",
-                "icon": "$(cloud-upload)"
+                "icon": "$(rocket)"
             },
             {
                 "command": "miscar.runSimulation",
@@ -99,15 +100,15 @@
             "editor/title": [
                 {
                     "command": "miscar.openCommandPalette",
-                    "group": "navigation@7"
+                    "group": "navigation@1"
+                },
+                {
+                    "command": "miscar.buildRoboRIO",
+                    "group": "navigation@2"
                 },
                 {
                     "command": "miscar.fastDeploy",
-                    "group": "navigation@8"
-                },
-                {
-                    "command": "miscar.runSimulation",
-                    "group": "navigation@9"
+                    "group": "navigation@3"
                 }
             ],
             "explorer/context": [

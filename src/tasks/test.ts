@@ -16,7 +16,7 @@ const test = async () => {
         folders[0],
         "Test",
         "vscode-miscar",
-        new vscode.ShellExecution(bazel + "test //..." + platformArguments)
+        new vscode.ShellExecution(bazel + "test //... " + platformArguments)
     )
 
     task.presentationOptions.clear = true

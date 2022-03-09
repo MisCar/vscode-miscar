@@ -7,25 +7,22 @@ import openCommandPalette from "./tasks/openCommandPalette"
 import runSimulation from "./tasks/runSimulation"
 import startTool from "./tasks/startTool"
 import createCompileFlags from "./tasks/createCompileFlags"
-import { ChildProcess, exec } from "child_process"
-import { relative } from "path"
+import { ChildProcess } from "child_process"
 import newClass from "./tasks/newClass"
 import wpiformat from "./tasks/wpiformat"
-import { bazel } from "./utilities"
 import createIndex from "./tasks/createIndex"
 import clearCompileFlags from "./tasks/clearCompileFlags"
 import fastDeploy from "./tasks/fastDeploy"
 
 export let buildRoboRIOProcess: ChildProcess | undefined
 export let roboRIOKilledProcesses: ChildProcess[] = []
-let wpiformatProcess: ChildProcess | undefined
 let status: vscode.StatusBarItem
 let log: vscode.OutputChannel
 
 const STATUS_BUILDING = "$(sync~spin) miscar: building"
-const STATUS_READY = "$(testing-passed-icon) miscar: ready"
-const STATUS_FAILED = "$(testing-failed-icon) miscar: failing"
-let buildRoboRIOSilentFirstTime = true
+const STATUS_READY = "$(pass) miscar: ready"
+const STATUS_FAILED = "$(close) miscar: failing"
+const STATUS_UNKNOWN = "$(watch) miscar: unknown"
 
 export const activate = (context: vscode.ExtensionContext) => {
     log = vscode.window.createOutputChannel("MisCar")
@@ -84,47 +81,15 @@ export const activate = (context: vscode.ExtensionContext) => {
             }
         }),
         status,
-        vscode.workspace.onDidSaveTextDocument(buildRoboRIOSilent),
+        vscode.workspace.onDidSaveTextDocument(() => {
+            status.text = STATUS_UNKNOWN
+        })
     )
 
-    status.command = "miscar.showOutput"
+    status.command = "miscar.buildRoboRIO"
+    status.text = STATUS_UNKNOWN
 
-    buildRoboRIOSilent()
     status.show()
 }
 
-export const deactivate = () => { }
-
-const buildRoboRIOSilent = () => {
-    if (buildRoboRIOProcess) {
-        buildRoboRIOProcess.kill()
-        roboRIOKilledProcesses.push(buildRoboRIOProcess)
-    }
-    status.text = STATUS_BUILDING
-
-    if (vscode.workspace.workspaceFolders) {
-        buildRoboRIOProcess = exec(bazel + "build //... --config=for-roborio" + (buildRoboRIOSilentFirstTime ? " --jobs 2 --local_ram_resources=HOST_RAM*0.5" : ""), {
-            cwd: vscode.workspace.workspaceFolders[0].uri.fsPath,
-        })
-
-        buildRoboRIOProcess.stdout?.setEncoding("utf8")
-        buildRoboRIOProcess.stderr?.setEncoding("utf8")
-
-        buildRoboRIOProcess.stdout?.on("data", (message) => log.append(message))
-        buildRoboRIOProcess.stderr?.on("data", (message) => log.append(message))
-
-        const thisProcess = buildRoboRIOProcess // We don't want the captured one to change
-
-        buildRoboRIOProcess.addListener("exit", (code, __) => {
-            if (roboRIOKilledProcesses.includes(thisProcess)) {
-                return
-            }
-
-            status.text = code === 0 ? STATUS_READY : STATUS_FAILED
-        })
-    }
-
-    if (buildRoboRIOSilentFirstTime) {
-        buildRoboRIOSilentFirstTime = false
-    }
-}
+export const deactivate = () => {}

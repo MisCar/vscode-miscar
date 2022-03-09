@@ -19,7 +19,7 @@ const runSimulation = async () => {
         folders[0],
         "Simulation",
         "vscode-miscar",
-        new vscode.ShellExecution(bazel + "build //..." + platformArguments)
+        new vscode.ShellExecution(bazel + "build //... " + platformArguments)
     )
 
     task.presentationOptions.clear = true

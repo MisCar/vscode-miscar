@@ -35,10 +35,13 @@ const newClass = async (path: vscode.Uri | undefined) => {
         placeHolder: "Enter the name of the class",
     })
 
-    const type = await vscode.window.showQuickPick(
-        ["Class", "Command", "Subsystem"],
-        { placeHolder: "Select the type of the class" }
-    )
+    const type = path?.fsPath.includes("commands")
+        ? "Command"
+        : path?.fsPath.includes("subsystems")
+        ? "Subsystem"
+        : await vscode.window.showQuickPick(["Class", "Command", "Subsystem"], {
+              placeHolder: "Select the type of the class",
+          })
 
     const classPath = path.fsPath
         .split(join("src", "main", "cpp"))[1]
@@ -113,7 +116,7 @@ void ${className}::Periodic() {}
             .join("\n")
         const subsystemMembers = usesSubsystems
             .map((subsystem) => `${subsystem}& m_${subsystem.toLowerCase()};`)
-            .join("\n  ")
+            .join("\n    ")
         const subsystemReferences = usesSubsystems
             .map((subsystem) => `${subsystem}& ${subsystem.toLowerCase()}`)
             .join(", ")
@@ -132,11 +135,19 @@ void ${className}::Periodic() {}
                       .map((subsystem) => "&" + subsystem.toLowerCase())
                       .join(", ") +
                   " });\n"
-
-        writeFile(
-            join(path.fsPath, className + ".h"),
-            `#pragma once
-
+        switch (
+            await vscode.window.showQuickPick(
+                ["Basic Command", "Sequential Command Group"],
+                {
+                    title: "Select subsystems to require",
+                }
+            )
+        ) {
+            case "Basic Command":
+                writeFile(
+                    join(path.fsPath, className + ".h"),
+                    `#pragma once
+                
 #include <frc2/command/CommandBase.h>
 #include <frc2/command/CommandHelper.h>
 
@@ -144,28 +155,28 @@ ${subsystemIncludes}
 
 class ${className}
     : public frc2::CommandHelper<frc2::CommandBase, ${className}> {
- public:
-  ${className}(${subsystemReferences});
+  public:
+    ${className}(${subsystemReferences});
 
-  void Initialize() override;
+    void Initialize() override;
 
-  void Execute() override;
+    void Execute() override;
 
-  void End(bool interrupted) override;
+    void End(bool interrupted) override;
 
-  bool IsFinished() override;
+    bool IsFinished() override;
 
- private:
-  ${subsystemMembers}
+  private:
+    ${subsystemMembers}
 };
-`,
-            () => {}
-        )
+                `,
+                    () => {}
+                )
 
-        writeFile(
-            join(path.fsPath, className + ".cpp"),
-            `#include "${classPath}/${className}.h"
-
+                writeFile(
+                    join(path.fsPath, className + ".cpp"),
+                    `#include "${classPath}/${className}.h"
+                
 ${className}::${className}(${subsystemReferences}): ${subsystemInitializers} {${constructorContents}}
 
 void ${className}::Initialize() {}
@@ -177,9 +188,44 @@ void ${className}::End(bool interrupted) {}
 bool ${className}::IsFinished() {
     return false;
 }
-`,
-            () => {}
-        )
+                `,
+                    () => {}
+                )
+                break
+            case "Sequential Command Group":
+                writeFile(
+                    join(path.fsPath, className + ".h"),
+                    `#pragma once
+                
+#include <frc2/command/CommandHelper.h>
+#include <frc2/command/SequentialCommandGroup.h>
+
+${subsystemIncludes}
+
+class ${className}
+    : public frc2::CommandHelper<frc2::SequentialCommandGroup, ${className}> {
+  public:
+    ${className}(${subsystemReferences});
+
+  private:
+    ${subsystemMembers}
+};
+                `,
+                    () => {}
+                )
+
+                writeFile(
+                    join(path.fsPath, className + ".cpp"),
+                    `#include "${classPath}/${className}.h"
+                
+${className}::${className}(${subsystemReferences}): ${subsystemInitializers} {${constructorContents}
+    AddCommands();
+}
+                `,
+                    () => {}
+                )
+                break
+        }
     }
 }
 

@@ -16,7 +16,9 @@ import { platform } from "../utilities"
 
 const NI_VERSION = "2022.4.0"
 const WPILIB_VERSION = "2022.4.1"
-const NI_LIBRARIES = ["visa", "netcomm", "chipobject"]
+const OPENCV_VERSION = "4.5.2-1"
+const TOOLCHAIN_VERSION = '7.3.0'
+const NI_LIBRARIES = ["visa", "netcomm", "chipobject", "runtime"]
 const WPILIB_LIBRARIES = [
     "wpilibc",
     "wpiutil",
@@ -34,6 +36,8 @@ const getWithRedirects = (
     url: string,
     callback: (message: IncomingMessage) => void
 ) => {
+    console.log(url)
+
     // REV has a certificate issue
     let get = httpsGet
     if (url.startsWith("https://maven.revrobotics.com")) {
@@ -55,11 +59,16 @@ const getWithRedirects = (
     })
 }
 
+const formatMavenUrl = (library: string,
+    version: string,
+    base: string, type = 'headers') => {
+    return `${base}/${library}/${version}/${library}-${version}-${type}.zip`
+}
+
 const getLibrary = (
     root: string,
     library: string,
-    version: string,
-    base: string
+    url: string
 ) => {
     return new Promise<void>((resolve, reject) => {
         const libraryPath = join(root, library)
@@ -71,7 +80,7 @@ const getLibrary = (
 
         mkdirSync(libraryPath)
         getWithRedirects(
-            `${base}/${library}/${version}/${library}-${version}-headers.zip`,
+            url,
             (response) => {
                 const zipPath = join(root, library, "headers.zip")
                 const stream = createWriteStream(zipPath)
@@ -98,44 +107,97 @@ const getLibrary = (
 
 const createCompileFlags = async (context: vscode.ExtensionContext) => {
     libraries = []
-    const root = context.globalStorageUri.fsPath
-    if (!existsSync(root)) {
-        mkdirSync(root)
+    if (!existsSync(context.globalStorageUri.fsPath)) {
+        mkdirSync(context.globalStorageUri.fsPath)
+    }
+    const headersRoot = join(context.globalStorageUri.fsPath, "headers")
+    const localRoot = join(context.globalStorageUri.fsPath, "local")
+    if (!existsSync(headersRoot)) {
+        mkdirSync(headersRoot)
+    }
+
+    if (!existsSync(localRoot)) {
+        mkdirSync(localRoot)
     }
 
     const promises: Promise<void>[] = []
     for (const library of NI_LIBRARIES) {
         promises.push(
             getLibrary(
-                root,
+                headersRoot,
                 library,
-                NI_VERSION,
-                "https://frcmaven.wpi.edu/ui/api/v1/download?repoKey=release&path=edu/wpi/first/ni-libraries"
+                formatMavenUrl(library, NI_VERSION, "https://frcmaven.wpi.edu/ui/api/v1/download?repoKey=release&path=edu/wpi/first/ni-libraries")
             )
         )
+
     }
 
     for (const library of WPILIB_LIBRARIES) {
         promises.push(
             getLibrary(
-                root,
+                headersRoot,
                 library + "-cpp",
-                WPILIB_VERSION,
-                "https://frcmaven.wpi.edu/ui/api/v1/download?repoKey=release&path=edu/wpi/first/" +
-                library
+                formatMavenUrl(library + "-cpp", WPILIB_VERSION, "https://frcmaven.wpi.edu/ui/api/v1/download?repoKey=release&path=edu/wpi/first/" + library)
+            )
+        )
+        promises.push(
+            getLibrary(
+                localRoot,
+                library,
+                formatMavenUrl(library + "-cpp", WPILIB_VERSION, "https://frcmaven.wpi.edu/ui/api/v1/download?repoKey=release&path=edu/wpi/first/" + library, 'windowsx86-64')
             )
         )
     }
+    promises.push(
+        getLibrary(
+            headersRoot,
+            "opencv-cpp",
+            `https://frcmaven.wpi.edu/artifactory/release/edu/wpi/first/thirdparty/frc2022/opencv/opencv-cpp/${OPENCV_VERSION}/opencv-cpp-${OPENCV_VERSION}-headers.zip`
+        )
+    )
+    promises.push(
+        getLibrary(
+            localRoot,
+            "opencv-cpp",
+            `https://frcmaven.wpi.edu/artifactory/release/edu/wpi/first/thirdparty/frc2022/opencv/opencv-cpp/${OPENCV_VERSION}/opencv-cpp-${OPENCV_VERSION}-windowsx86-64.zip`
+        )
+    )
+
+    let toolChainUrl = ''
+    if (platform == "windows") {
+        toolChainUrl = `https://github.com/wpilibsuite/roborio-toolchain/releases/download/v2022-1/FRC-2022-Windows64-Toolchain-${TOOLCHAIN_VERSION}.zip`
+    } else if (platform == "linux") {
+        toolChainUrl = `https://github.com/wpilibsuite/roborio-toolchain/releases/download/v2022-1/FRC-2022-Linux-Toolchain-${TOOLCHAIN_VERSION}.zip`
+    } else {
+        toolChainUrl = `https://github.com/wpilibsuite/roborio-toolchain/releases/download/v2022-1/FRC-2022-Mac-Toolchain-${TOOLCHAIN_VERSION}.zip`
+    }
+
+    promises.push(
+        getLibrary(
+            headersRoot,
+            "tool-chain",
+            toolChainUrl
+        )
+    )
 
     for (const vendordep of vendordeps) {
         for (const dependency of vendordep.cppDependencies) {
             promises.push(
                 getLibrary(
-                    root,
+                    headersRoot,
                     dependency.artifactId,
-                    dependency.version,
-                    vendordep.mavenUrls[0] +
-                    dependency.groupId.replace(/\./g, "/")
+                    formatMavenUrl(dependency.artifactId, dependency.version,
+                        vendordep.mavenUrls[0] +
+                        dependency.groupId.replace(/\./g, "/"))
+                )
+            )
+            promises.push(
+                getLibrary(
+                    localRoot,
+                    dependency.artifactId,
+                    formatMavenUrl(dependency.artifactId, dependency.version,
+                        vendordep.mavenUrls[0] +
+                        dependency.groupId.replace(/\./g, "/"), 'windowsx86-64')
                 )
             )
         }

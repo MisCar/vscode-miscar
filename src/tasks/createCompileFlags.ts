@@ -216,6 +216,7 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
     const libraryIncludes = libraries
         .map((library) => "-I" + library.replace(/\\/g, "/"))
         .join("\n")
+    console.log(libraryIncludes)
     const compileFlags = libraryIncludes + "\n-std=c++17\n-xc++"
     for (const folder of libraries) {
         try {

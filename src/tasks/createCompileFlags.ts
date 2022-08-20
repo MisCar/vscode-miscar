@@ -37,7 +37,6 @@ const getWithRedirects = (
     url: string,
     callback: (message: IncomingMessage) => void
 ) => {
-    console.log(url)
 
     // REV has a certificate issue
     let get = httpsGet
@@ -80,12 +79,12 @@ const getLibrary = (root: string, library: string, url: string) => {
 
         mkdirSync(libraryPath)
         getWithRedirects(url, (response) => {
-            const zipPath = join(root, library, "headers.zip")
+            const zipPath = join(root, library, "download.zip")
             const stream = createWriteStream(zipPath)
             response.pipe(stream)
             stream.on("finish", () => {
                 try {
-                    if (platform === "windows") {
+                    if (platform === "windows" || url.endsWith(".tar.gz")) {
                         execSync(`tar -xf "${zipPath}"`, {
                             cwd: libraryPath,
                         })
@@ -184,12 +183,18 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
     if (platform == "windows") {
         toolChainUrl = `https://github.com/wpilibsuite/roborio-toolchain/releases/download/${TOOLCHAIN_VERSION}/FRC-2022-Windows64-Toolchain-${TOOLCHAIN_GCC_VERSION}.zip`
     } else if (platform == "linux") {
-        toolChainUrl = `https://github.com/wpilibsuite/roborio-toolchain/releases/download/${TOOLCHAIN_VERSION}/FRC-2022-Linux-Toolchain-${TOOLCHAIN_GCC_VERSION}.zip`
+        toolChainUrl = `https://github.com/wpilibsuite/roborio-toolchain/releases/download/${TOOLCHAIN_VERSION}/FRC-2022-Linux-Toolchain-${TOOLCHAIN_GCC_VERSION}.tar.gz`
     } else {
-        toolChainUrl = `https://github.com/wpilibsuite/roborio-toolchain/releases/download/${TOOLCHAIN_VERSION}/FRC-2022-Mac-Toolchain-${TOOLCHAIN_GCC_VERSION}.zip`
+        toolChainUrl = `https://github.com/wpilibsuite/roborio-toolchain/releases/download/${TOOLCHAIN_VERSION}/FRC-2022-Mac-Toolchain-${TOOLCHAIN_GCC_VERSION}.tar.gz`
     }
 
-    promises.push(getLibrary(headersRoot, "toolchain", toolChainUrl))
+    promises.push(
+        getLibrary(
+            context.globalStorageUri.fsPath,
+            "roborio-toolchain",
+            toolChainUrl
+        )
+    )
 
     for (const vendordep of vendordeps) {
         for (const dependency of vendordep.cppDependencies) {
@@ -205,19 +210,21 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
                     )
                 )
             )
-            promises.push(
-                getLibrary(
-                    localRoot,
-                    dependency.artifactId,
-                    formatMavenUrl(
+            if (dependency.binaryPlatforms.includes(localLibraryType)) {
+                promises.push(
+                    getLibrary(
+                        localRoot,
                         dependency.artifactId,
-                        dependency.version,
-                        vendordep.mavenUrls[0] +
-                            dependency.groupId.replace(/\./g, "/"),
-                        localLibraryType
+                        formatMavenUrl(
+                            dependency.artifactId,
+                            dependency.version,
+                            vendordep.mavenUrls[0] +
+                                dependency.groupId.replace(/\./g, "/"),
+                            localLibraryType
+                        )
                     )
                 )
-            )
+            }
         }
     }
 

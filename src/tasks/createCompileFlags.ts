@@ -19,7 +19,8 @@ import { status, STATUS_READY } from "../extension"
 const NI_VERSION = "2022.4.0"
 const WPILIB_VERSION = "2022.4.1"
 const OPENCV_VERSION = "4.5.2-1"
-const TOOLCHAIN_YEAR = "2022"
+const FRC_YEAR = "frc2022"
+
 const TOOLCHAIN_VERSION = "v2022-1"
 const TOOLCHAIN_GCC_VERSION = "7.3.0"
 const NI_LIBRARIES = ["visa", "netcomm", "chipobject", "runtime"]
@@ -212,17 +213,11 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
                 library
         )
     }
-
-    stage = "opencv"
-    for (const platform of ALL_PLATFORMS) {
-        await queuePromise(
-            getLibrary(
-                root[platform],
-                "opencv-cpp",
-                `https://frcmaven.wpi.edu/artifactory/release/edu/wpi/first/thirdparty/frc2022/opencv/opencv-cpp/${OPENCV_VERSION}/opencv-cpp-${OPENCV_VERSION}-${MAVEN_NAMES[platform]}.zip`
-            )
-        )
-    }
+    await installAll(
+        "opencv-cpp",
+        OPENCV_VERSION,
+        `https://frcmaven.wpi.edu/ui/api/v1/download?repoKey=release&path=edu/wpi/first/thirdparty/${FRC_YEAR}/opencv`
+    )
 
     stage = "toolchain"
     await queuePromise(
@@ -325,7 +320,7 @@ target_link_libraries(robot ${libraryName})`
             const toolchainRoot = join(
                 root.all,
                 "roborio-toolchain",
-                "frc" + TOOLCHAIN_YEAR,
+                FRC_YEAR,
                 "roborio"
             )
 
@@ -336,7 +331,7 @@ set(CMAKE_SYSTEM_VERSION 1)
 set(CMAKE_SYSTEM_PROCESSOR arm)
 set(CMAKE_SYSROOT "${join(
                     toolchainRoot,
-                    "arm-frc" + TOOLCHAIN_YEAR + "-linux-gnueabi"
+                    "arm-" + FRC_YEAR + "-linux-gnueabi"
                 )}")
 
 set(CMAKE_C_COMPILER "${toolchainRoot}/bin/arm-frc2022-linux-gnueabi-gcc")

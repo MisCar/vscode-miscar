@@ -15,6 +15,7 @@ import vendordeps from "../vendordeps"
 import { platform } from "../utilities"
 var fs = require("fs")
 const SOURCES = "${SOURCES}"
+const CMAKE_CXX_FLAGS = "${CMAKE_CXX_FLAGS}"
 const NI_VERSION = "2022.4.0"
 const WPILIB_VERSION = "2022.4.1"
 const OPENCV_VERSION = "4.5.2-1"
@@ -31,6 +32,7 @@ const WPILIB_LIBRARIES = [
     "cameraserver",
     "wpilibNewCommands",
 ]
+let errorCount = 0
 
 let libraries: string[] = []
 
@@ -55,6 +57,9 @@ const getWithRedirects = (
             callback(response)
         }
     }).addListener("error", (err) => {
+        errorCount += 1
+        console.log(errorCount)
+        console.log(url)
         console.error(err)
     })
 }
@@ -92,7 +97,7 @@ const getLibrary = (root: string, library: string, url: string) => {
                         execSync(`unzip "${zipPath}"`, { cwd: libraryPath })
                     }
                     rmSync(zipPath)
-                } catch (_) {}
+                } catch (_) { }
 
                 libraries.push(libraryPath)
                 resolve()
@@ -101,13 +106,21 @@ const getLibrary = (root: string, library: string, url: string) => {
     })
 }
 
+const queuePromise = async (p: Promise<void>, promises: Promise<void>[]) => {
+    promises.push(p)
+    if (promises.length >= 15) {
+        await Promise.all(promises)
+        promises.splice(0)
+    }
+}
+
 const createCompileFlags = async (context: vscode.ExtensionContext) => {
     const localLibraryType =
         platform === "windows"
             ? "windowsx86-64"
             : platform === "mac"
-            ? "osxx86-64"
-            : "linuxx86-64"
+                ? "osxx86-64"
+                : "linuxx86-64"
     libraries = []
     if (!existsSync(context.globalStorageUri.fsPath)) {
         mkdirSync(context.globalStorageUri.fsPath)
@@ -129,7 +142,7 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
 
     const promises: Promise<void>[] = []
     for (const library of NI_LIBRARIES) {
-        promises.push(
+        queuePromise(
             getLibrary(
                 headersRoot,
                 library,
@@ -138,9 +151,10 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
                     NI_VERSION,
                     "https://frcmaven.wpi.edu/ui/api/v1/download?repoKey=release&path=edu/wpi/first/ni-libraries"
                 )
-            )
+            ),
+            promises
         )
-        promises.push(
+        queuePromise(
             getLibrary(
                 roborioRoot,
                 library,
@@ -150,12 +164,13 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
                     "https://frcmaven.wpi.edu/ui/api/v1/download?repoKey=release&path=edu/wpi/first/ni-libraries",
                     "linuxathena"
                 )
-            )
+            ),
+            promises
         )
     }
 
     for (const library of WPILIB_LIBRARIES) {
-        promises.push(
+        await queuePromise(
             getLibrary(
                 headersRoot,
                 library + "-cpp",
@@ -163,11 +178,12 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
                     library + "-cpp",
                     WPILIB_VERSION,
                     "https://frcmaven.wpi.edu/ui/api/v1/download?repoKey=release&path=edu/wpi/first/" +
-                        library
+                    library
                 )
-            )
+            ),
+            promises
         )
-        promises.push(
+        await queuePromise(
             getLibrary(
                 localRoot,
                 library,
@@ -175,12 +191,13 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
                     library + "-cpp",
                     WPILIB_VERSION,
                     "https://frcmaven.wpi.edu/ui/api/v1/download?repoKey=release&path=edu/wpi/first/" +
-                        library,
+                    library,
                     localLibraryType
                 )
-            )
+            ),
+            promises
         )
-        promises.push(
+        await queuePromise(
             getLibrary(
                 roborioRoot,
                 library,
@@ -188,32 +205,36 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
                     library + "-cpp",
                     WPILIB_VERSION,
                     "https://frcmaven.wpi.edu/ui/api/v1/download?repoKey=release&path=edu/wpi/first/" +
-                        library,
+                    library,
                     "linuxathena"
                 )
-            )
+            ),
+            promises
         )
     }
-    promises.push(
+    await queuePromise(
         getLibrary(
             headersRoot,
             "opencv-cpp",
             `https://frcmaven.wpi.edu/artifactory/release/edu/wpi/first/thirdparty/frc2022/opencv/opencv-cpp/${OPENCV_VERSION}/opencv-cpp-${OPENCV_VERSION}-headers.zip`
-        )
+        ),
+        promises
     )
-    promises.push(
+    await queuePromise(
         getLibrary(
             localRoot,
             "opencv-cpp",
             `https://frcmaven.wpi.edu/artifactory/release/edu/wpi/first/thirdparty/frc2022/opencv/opencv-cpp/${OPENCV_VERSION}/opencv-cpp-${OPENCV_VERSION}-${localLibraryType}.zip`
-        )
+        ),
+        promises
     )
-    promises.push(
+    await queuePromise(
         getLibrary(
-            localRoot,
+            roborioRoot,
             "opencv-cpp",
             `https://frcmaven.wpi.edu/artifactory/release/edu/wpi/first/thirdparty/frc2022/opencv/opencv-cpp/${OPENCV_VERSION}/opencv-cpp-${OPENCV_VERSION}-linuxathena.zip`
-        )
+        ),
+        promises
     )
 
     let toolChainUrl = ""
@@ -225,17 +246,18 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
         toolChainUrl = `https://github.com/wpilibsuite/roborio-toolchain/releases/download/${TOOLCHAIN_VERSION}/FRC-2022-Mac-Toolchain-${TOOLCHAIN_GCC_VERSION}.tar.gz`
     }
 
-    promises.push(
+    await queuePromise(
         getLibrary(
             context.globalStorageUri.fsPath,
             "roborio-toolchain",
             toolChainUrl
-        )
+        ),
+        promises
     )
 
     for (const vendordep of vendordeps) {
         for (const dependency of vendordep.cppDependencies) {
-            promises.push(
+            await queuePromise(
                 getLibrary(
                     headersRoot,
                     dependency.artifactId,
@@ -243,12 +265,13 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
                         dependency.artifactId,
                         dependency.version,
                         vendordep.mavenUrls[0] +
-                            dependency.groupId.replace(/\./g, "/")
+                        dependency.groupId.replace(/\./g, "/")
                     )
-                )
+                ),
+                promises
             )
 
-            promises.push(
+            await queuePromise(
                 getLibrary(
                     localRoot,
                     dependency.artifactId,
@@ -256,14 +279,15 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
                         dependency.artifactId,
                         dependency.version,
                         vendordep.mavenUrls[0] +
-                            dependency.groupId.replace(/\./g, "/"),
+                        dependency.groupId.replace(/\./g, "/"),
                         localLibraryType
                     )
-                )
+                ),
+                promises
             )
 
             if (dependency.binaryPlatforms.includes("linuxathena")) {
-                promises.push(
+                await queuePromise(
                     getLibrary(
                         roborioRoot,
                         dependency.artifactId,
@@ -271,10 +295,11 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
                             dependency.artifactId,
                             dependency.version,
                             vendordep.mavenUrls[0] +
-                                dependency.groupId.replace(/\./g, "/"),
+                            dependency.groupId.replace(/\./g, "/"),
                             "linuxathena"
                         )
-                    )
+                    ),
+                    promises
                 )
             }
         }
@@ -306,7 +331,7 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
             } else if (folder.includes("local")) {
                 locallibrarys.push(folder)
             }
-        } catch (_) {}
+        } catch (_) { }
     }
 
     if (vscode.workspace.workspaceFolders) {
@@ -316,35 +341,30 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
                 CMAKE_PATH,
                 `cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CPP_STANDARD 17)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 project(robot)
 include_directories(src/main/cpp)
 
 ${headerslibrarys
-    .map((f) => `include_directories(${f})`.replace(/\\/g, "/"))
-    .join("\n")}
+                    .map((f) => `include_directories(${f})`.replace(/\\/g, "/"))
+                    .join("\n")}
 
                 ${fs
                     .readdirSync(
-                        "C:/Users/lior1/AppData/Roaming/Code/User/globalStorage/miscar.vscode-miscar/local"
+                        "C:/Users/progr/AppData/Roaming/Code/User/globalStorage/miscar.vscode-miscar/roborio"
                     )
                     .map((dir: string) => {
                         return fs
                             .readdirSync(
-                                "C:/Users/lior1/AppData/Roaming/Code/User/globalStorage/miscar.vscode-miscar/local/" +
-                                    dir +
-                                    "/windows/x86-64/shared"
+                                "C:/Users/progr/AppData/Roaming/Code/User/globalStorage/miscar.vscode-miscar/roborio/" +
+                                dir +
+                                "/linux/athena/shared"
                             )
                             .map((file: string) => {
-                                if (file.includes(".lib")) {
+                                if (file.includes(".so")) {
                                     console.log("zaks")
-                                    return `add_library(${dir}-${file.replace(
-                                        ".lib",
-                                        ""
-                                    )} STATIC IMPORTED)
-set_property(TARGET ${dir}-${file.replace(
-                                        ".lib",
-                                        ""
-                                    )} PROPERTY IMPORTED_LOCATION C:/Users/lior1/AppData/Roaming/Code/User/globalStorage/miscar.vscode-miscar/local/${dir}/windows/x86-64/shared/${file})
+                                    return `add_library(${dir}-${file.replace(".so", "").replace('.debug', "-debug")} STATIC IMPORTED)
+set_property(TARGET ${dir}-${file.replace(".so", "").replace('.debug', "-debug")} PROPERTY IMPORTED_LOCATION C:/Users/progr/AppData/Roaming/Code/User/globalStorage/miscar.vscode-miscar/roborio/${dir}/linux/athena/shared/${file})
  
 `
                                 }
@@ -361,32 +381,30 @@ file(GLOB_RECURSE SOURCES "src/main/cpp/*.cpp")
 add_executable(robot ${SOURCES})
 
 ${fs
-    .readdirSync(
-        "C:/Users/lior1/AppData/Roaming/Code/User/globalStorage/miscar.vscode-miscar/local"
-    )
-    .map((dir: string) => {
-        return fs
-            .readdirSync(
-                "C:/Users/lior1/AppData/Roaming/Code/User/globalStorage/miscar.vscode-miscar/local/" +
-                    dir +
-                    "/windows/x86-64/shared"
-            )
-            .map((file: string) => {
-                return `target_link_libraries(robot ${dir}-${
-                    file.split(".")[0]
-                })
-set_target_properties(${dir}-${
-                    file.split(".")[0]
-                } PROPERTIES LINKER_LANGUAGE CXX)
+                    .readdirSync(
+                        "C:/Users/progr/AppData/Roaming/Code/User/globalStorage/miscar.vscode-miscar/roborio"
+                    )
+                    .map((dir: string) => {
+                        return fs
+                            .readdirSync(
+                                "C:/Users/progr/AppData/Roaming/Code/User/globalStorage/miscar.vscode-miscar/roborio/" +
+                                dir +
+                                "/linux/athena/shared"
+                            )
+                            .map((file: string) => {
+                                return `target_link_libraries(robot ${dir}-${file.replace(".so", "").replace('.debug', "-debug")
+                                    })
+set_target_properties(${dir}-${file.replace(".so", "").replace('.debug', "-debug")
+                                    } PROPERTIES LINKER_LANGUAGE CXX)
 `
-            })
-            .filter((val: string) => {
-                console.log(val)
-                return val != ""
-            })
-            .join("")
-    })
-    .join("")}
+                            })
+                            .filter((val: string) => {
+                                console.log(val)
+                                return val != ""
+                            })
+                            .join("")
+                    })
+                    .join("")}
 
 target_compile_features(robot PRIVATE cxx_std_17)`
             )

@@ -3,22 +3,23 @@ import {
     createWriteStream,
     existsSync,
     mkdirSync,
+    readdirSync,
     rmSync,
     writeFileSync,
 } from "fs"
-import { join } from "path"
-import { get as httpGet } from "http"
-import { get as httpsGet } from "https"
+import { basename, join } from "path"
+// import { get as httpGet } from "http"
+import { get } from "https"
 import { execSync } from "child_process"
 import { IncomingMessage } from "http"
 import vendordeps from "../vendordeps"
 import { platform } from "../utilities"
-var fs = require("fs")
-const SOURCES = "${SOURCES}"
-const CMAKE_CXX_FLAGS = "${CMAKE_CXX_FLAGS}"
+import { status, STATUS_READY } from "../extension"
+
 const NI_VERSION = "2022.4.0"
 const WPILIB_VERSION = "2022.4.1"
 const OPENCV_VERSION = "4.5.2-1"
+const TOOLCHAIN_YEAR = "2022"
 const TOOLCHAIN_VERSION = "v2022-1"
 const TOOLCHAIN_GCC_VERSION = "7.3.0"
 const NI_LIBRARIES = ["visa", "netcomm", "chipobject", "runtime"]
@@ -32,7 +33,20 @@ const WPILIB_LIBRARIES = [
     "cameraserver",
     "wpilibNewCommands",
 ]
-let errorCount = 0
+
+const TOOLCHAIN_URL =
+    platform == "windows"
+        ? `https://github.com/wpilibsuite/roborio-toolchain/releases/download/${TOOLCHAIN_VERSION}/FRC-2022-Windows64-Toolchain-${TOOLCHAIN_GCC_VERSION}.zip`
+        : platform == "linux"
+        ? `https://github.com/wpilibsuite/roborio-toolchain/releases/download/${TOOLCHAIN_VERSION}/FRC-2022-Linux-Toolchain-${TOOLCHAIN_GCC_VERSION}.tar.gz`
+        : `https://github.com/wpilibsuite/roborio-toolchain/releases/download/${TOOLCHAIN_VERSION}/FRC-2022-Mac-Toolchain-${TOOLCHAIN_GCC_VERSION}.tar.gz`
+
+const localLibraryType =
+    platform === "windows"
+        ? "windowsx86-64"
+        : platform === "mac"
+        ? "osxx86-64"
+        : "linuxx86-64"
 
 let libraries: string[] = []
 
@@ -40,12 +54,14 @@ const getWithRedirects = (
     url: string,
     callback: (message: IncomingMessage) => void
 ) => {
-    // REV has a certificate issue
-    let get = httpsGet
-    if (url.startsWith("https://maven.revrobotics.com")) {
-        url = url.replace("https", "http")
-        get = httpGet
-    }
+    // REV has fixed its certificate issue
+
+    // let get = httpsGet
+    // if (url.startsWith("https://maven.revrobotics.com")) {
+    //     url = url.replace("https", "http")
+    //     get = httpGet
+    // }
+
     get(url, (response) => {
         if (
             response.statusCode &&
@@ -57,10 +73,7 @@ const getWithRedirects = (
             callback(response)
         }
     }).addListener("error", (err) => {
-        errorCount += 1
-        console.log(errorCount)
-        console.log(url)
-        console.error(err)
+        console.error(`Error fetching ${url}: ${err}`)
     })
 }
 
@@ -77,13 +90,27 @@ const getLibrary = (root: string, library: string, url: string) => {
     return new Promise<void>((resolve, reject) => {
         const libraryPath = join(root, library)
         if (existsSync(libraryPath)) {
-            libraries.push(libraryPath)
+            if (
+                readdirSync(libraryPath).filter((f) => f != "compile_flags.txt")
+                    .length > 0
+            ) {
+                libraries.push(libraryPath)
+            }
+
             resolve()
             return
         }
 
         mkdirSync(libraryPath)
         getWithRedirects(url, (response) => {
+            if (response.statusCode === 404) {
+                console.log(
+                    `WARNING: Skipping ${url} because server returned 404.`
+                )
+                console.log(libraries.includes(libraryPath))
+                resolve()
+                return
+            }
             const zipPath = join(root, library, "download.zip")
             const stream = createWriteStream(zipPath)
             response.pipe(stream)
@@ -97,7 +124,7 @@ const getLibrary = (root: string, library: string, url: string) => {
                         execSync(`unzip "${zipPath}"`, { cwd: libraryPath })
                     }
                     rmSync(zipPath)
-                } catch (_) { }
+                } catch (_) {}
 
                 libraries.push(libraryPath)
                 resolve()
@@ -106,7 +133,14 @@ const getLibrary = (root: string, library: string, url: string) => {
     })
 }
 
-const queuePromise = async (p: Promise<void>, promises: Promise<void>[]) => {
+let remainingLibraries = 0
+let stage = ""
+const queuePromise = async (p: Promise<void>) => {
+    remainingLibraries++
+    p.then(() => {
+        remainingLibraries--
+        status.text = `$(sync~spin) miscar: downloading ${stage} (${remainingLibraries} remaining)`
+    })
     promises.push(p)
     if (promises.length >= 15) {
         await Promise.all(promises)
@@ -114,299 +148,210 @@ const queuePromise = async (p: Promise<void>, promises: Promise<void>[]) => {
     }
 }
 
+const MAVEN_NAMES: any = {
+    header: "headers",
+    roborio: "linuxathena",
+    local: localLibraryType,
+}
+const ALL_PLATFORMS = ["header", "roborio", "local"]
+
+const installAll = async (
+    library: string,
+    version: string,
+    base: string,
+    platforms = ALL_PLATFORMS
+) => {
+    for (const platform of platforms) {
+        await queuePromise(
+            getLibrary(
+                root[platform],
+                library,
+                formatMavenUrl(library, version, base, MAVEN_NAMES[platform])
+            )
+        )
+    }
+}
+
+let root: { [key: string]: string } = {
+    header: "",
+    local: "",
+    roborio: "",
+}
+let promises: Promise<void>[] = []
+
 const createCompileFlags = async (context: vscode.ExtensionContext) => {
-    const localLibraryType =
-        platform === "windows"
-            ? "windowsx86-64"
-            : platform === "mac"
-                ? "osxx86-64"
-                : "linuxx86-64"
     libraries = []
-    if (!existsSync(context.globalStorageUri.fsPath)) {
-        mkdirSync(context.globalStorageUri.fsPath)
-    }
-    const headersRoot = join(context.globalStorageUri.fsPath, "headers")
-    const localRoot = join(context.globalStorageUri.fsPath, "local")
-    const roborioRoot = join(context.globalStorageUri.fsPath, "roborio")
-    if (!existsSync(headersRoot)) {
-        mkdirSync(headersRoot)
+
+    root.all = context.globalStorageUri.fsPath
+    root.header = join(context.globalStorageUri.fsPath, "headers")
+    root.local = join(context.globalStorageUri.fsPath, "local")
+    root.roborio = join(context.globalStorageUri.fsPath, "roborio")
+
+    for (const r of ["all", "header", "local", "roborio"]) {
+        if (!existsSync(root[r])) {
+            mkdirSync(root[r])
+        }
     }
 
-    if (!existsSync(localRoot)) {
-        mkdirSync(localRoot)
-    }
-
-    if (!existsSync(roborioRoot)) {
-        mkdirSync(roborioRoot)
-    }
-
-    const promises: Promise<void>[] = []
+    stage = "ni libraries"
     for (const library of NI_LIBRARIES) {
-        queuePromise(
-            getLibrary(
-                headersRoot,
-                library,
-                formatMavenUrl(
-                    library,
-                    NI_VERSION,
-                    "https://frcmaven.wpi.edu/ui/api/v1/download?repoKey=release&path=edu/wpi/first/ni-libraries"
-                )
-            ),
-            promises
-        )
-        queuePromise(
-            getLibrary(
-                roborioRoot,
-                library,
-                formatMavenUrl(
-                    library,
-                    NI_VERSION,
-                    "https://frcmaven.wpi.edu/ui/api/v1/download?repoKey=release&path=edu/wpi/first/ni-libraries",
-                    "linuxathena"
-                )
-            ),
-            promises
+        await installAll(
+            library,
+            NI_VERSION,
+            "https://frcmaven.wpi.edu/ui/api/v1/download?repoKey=release&path=edu/wpi/first/ni-libraries",
+            ["header", "roborio"]
         )
     }
 
+    stage = "wpilib"
     for (const library of WPILIB_LIBRARIES) {
-        await queuePromise(
-            getLibrary(
-                headersRoot,
-                library + "-cpp",
-                formatMavenUrl(
-                    library + "-cpp",
-                    WPILIB_VERSION,
-                    "https://frcmaven.wpi.edu/ui/api/v1/download?repoKey=release&path=edu/wpi/first/" +
-                    library
-                )
-            ),
-            promises
-        )
-        await queuePromise(
-            getLibrary(
-                localRoot,
-                library,
-                formatMavenUrl(
-                    library + "-cpp",
-                    WPILIB_VERSION,
-                    "https://frcmaven.wpi.edu/ui/api/v1/download?repoKey=release&path=edu/wpi/first/" +
-                    library,
-                    localLibraryType
-                )
-            ),
-            promises
-        )
-        await queuePromise(
-            getLibrary(
-                roborioRoot,
-                library,
-                formatMavenUrl(
-                    library + "-cpp",
-                    WPILIB_VERSION,
-                    "https://frcmaven.wpi.edu/ui/api/v1/download?repoKey=release&path=edu/wpi/first/" +
-                    library,
-                    "linuxathena"
-                )
-            ),
-            promises
+        await installAll(
+            library + "-cpp",
+            WPILIB_VERSION,
+            "https://frcmaven.wpi.edu/ui/api/v1/download?repoKey=release&path=edu/wpi/first/" +
+                library
         )
     }
-    await queuePromise(
-        getLibrary(
-            headersRoot,
-            "opencv-cpp",
-            `https://frcmaven.wpi.edu/artifactory/release/edu/wpi/first/thirdparty/frc2022/opencv/opencv-cpp/${OPENCV_VERSION}/opencv-cpp-${OPENCV_VERSION}-headers.zip`
-        ),
-        promises
-    )
-    await queuePromise(
-        getLibrary(
-            localRoot,
-            "opencv-cpp",
-            `https://frcmaven.wpi.edu/artifactory/release/edu/wpi/first/thirdparty/frc2022/opencv/opencv-cpp/${OPENCV_VERSION}/opencv-cpp-${OPENCV_VERSION}-${localLibraryType}.zip`
-        ),
-        promises
-    )
-    await queuePromise(
-        getLibrary(
-            roborioRoot,
-            "opencv-cpp",
-            `https://frcmaven.wpi.edu/artifactory/release/edu/wpi/first/thirdparty/frc2022/opencv/opencv-cpp/${OPENCV_VERSION}/opencv-cpp-${OPENCV_VERSION}-linuxathena.zip`
-        ),
-        promises
-    )
 
-    let toolChainUrl = ""
-    if (platform == "windows") {
-        toolChainUrl = `https://github.com/wpilibsuite/roborio-toolchain/releases/download/${TOOLCHAIN_VERSION}/FRC-2022-Windows64-Toolchain-${TOOLCHAIN_GCC_VERSION}.zip`
-    } else if (platform == "linux") {
-        toolChainUrl = `https://github.com/wpilibsuite/roborio-toolchain/releases/download/${TOOLCHAIN_VERSION}/FRC-2022-Linux-Toolchain-${TOOLCHAIN_GCC_VERSION}.tar.gz`
-    } else {
-        toolChainUrl = `https://github.com/wpilibsuite/roborio-toolchain/releases/download/${TOOLCHAIN_VERSION}/FRC-2022-Mac-Toolchain-${TOOLCHAIN_GCC_VERSION}.tar.gz`
+    stage = "opencv"
+    for (const platform of ALL_PLATFORMS) {
+        await queuePromise(
+            getLibrary(
+                root[platform],
+                "opencv-cpp",
+                `https://frcmaven.wpi.edu/artifactory/release/edu/wpi/first/thirdparty/frc2022/opencv/opencv-cpp/${OPENCV_VERSION}/opencv-cpp-${OPENCV_VERSION}-${MAVEN_NAMES[platform]}.zip`
+            )
+        )
     }
 
+    stage = "toolchain"
     await queuePromise(
         getLibrary(
             context.globalStorageUri.fsPath,
             "roborio-toolchain",
-            toolChainUrl
-        ),
-        promises
+            TOOLCHAIN_URL
+        )
     )
 
     for (const vendordep of vendordeps) {
+        stage = vendordep.name.toLowerCase()
         for (const dependency of vendordep.cppDependencies) {
-            await queuePromise(
-                getLibrary(
-                    headersRoot,
-                    dependency.artifactId,
-                    formatMavenUrl(
-                        dependency.artifactId,
-                        dependency.version,
-                        vendordep.mavenUrls[0] +
-                        dependency.groupId.replace(/\./g, "/")
-                    )
-                ),
-                promises
+            await installAll(
+                dependency.artifactId,
+                dependency.version,
+                vendordep.mavenUrls[0] + dependency.groupId.replace(/\./g, "/")
             )
-
-            await queuePromise(
-                getLibrary(
-                    localRoot,
-                    dependency.artifactId,
-                    formatMavenUrl(
-                        dependency.artifactId,
-                        dependency.version,
-                        vendordep.mavenUrls[0] +
-                        dependency.groupId.replace(/\./g, "/"),
-                        localLibraryType
-                    )
-                ),
-                promises
-            )
-
-            if (dependency.binaryPlatforms.includes("linuxathena")) {
-                await queuePromise(
-                    getLibrary(
-                        roborioRoot,
-                        dependency.artifactId,
-                        formatMavenUrl(
-                            dependency.artifactId,
-                            dependency.version,
-                            vendordep.mavenUrls[0] +
-                            dependency.groupId.replace(/\./g, "/"),
-                            "linuxathena"
-                        )
-                    ),
-                    promises
-                )
-            }
         }
     }
 
     await Promise.all(promises)
+    status.text = STATUS_READY
 
+    let localDirectories = []
+    let headerDirectories = []
+    const roborioDirectories = []
+    for (const folder of libraries) {
+        if (folder.includes("headers")) {
+            headerDirectories.push(folder)
+        } else if (folder.includes("local")) {
+            localDirectories.push(folder)
+        } else if (folder.includes("/roborio/")) {
+            roborioDirectories.push(folder)
+        }
+    }
     if (vscode.workspace.workspaceFolders) {
         for (const folder of vscode.workspace.workspaceFolders) {
             libraries.push(join(folder.uri.fsPath, "src", "main", "cpp"))
+            headerDirectories.push(
+                join(folder.uri.fsPath, "src", "main", "cpp")
+            )
             libraries.push(
+                join(folder.uri.fsPath, "..", "libmiscar", "src", "main", "cpp")
+            )
+            headerDirectories.push(
                 join(folder.uri.fsPath, "..", "libmiscar", "src", "main", "cpp")
             )
         }
     }
-    const libraryIncludes = libraries
+    const libraryIncludes = headerDirectories
         .map((library) => "-I" + library.replace(/\\/g, "/"))
         .join("\n")
     const compileFlags = libraryIncludes + "\n-std=c++17\n-xc++"
-    let locallibrarys = []
-    let headerslibrarys = []
     for (const folder of libraries) {
-        console.log(locallibrarys.length)
         try {
             writeFileSync(join(folder, "compile_flags.txt"), compileFlags)
-            console.log(folder)
-            if (folder.includes("headers")) {
-                headerslibrarys.push(folder)
-            } else if (folder.includes("local")) {
-                locallibrarys.push(folder)
-            }
-        } catch (_) { }
+        } catch (_) {}
     }
 
     if (vscode.workspace.workspaceFolders) {
         for (const dir of vscode.workspace.workspaceFolders) {
-            const CMAKE_PATH = join(dir.uri.fsPath, "CMakeLists.txt")
             writeFileSync(
-                CMAKE_PATH,
+                join(dir.uri.fsPath, "CMakeLists.txt"),
                 `cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CPP_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+set(CMAKE_CXX_FLAGS "\${CMAKE_CXX_FLAGS} -pthread")
 project(robot)
+
+file(GLOB_RECURSE SOURCES "src/main/cpp/*.cpp")
+add_executable(robot \${SOURCES})
+set_property(TARGET robot PROPERTY CXX_STANDARD 17)
+target_compile_options(robot PUBLIC -Wno-psabi)
 include_directories(src/main/cpp)
 
-${headerslibrarys
-                    .map((f) => `include_directories(${f})`.replace(/\\/g, "/"))
-                    .join("\n")}
+${headerDirectories
+    .map((f) => `include_directories(SYSTEM "${f}")`.replace(/\\/g, "/"))
+    .join("\n")}
 
-                ${fs
-                    .readdirSync(
-                        "C:/Users/progr/AppData/Roaming/Code/User/globalStorage/miscar.vscode-miscar/roborio"
-                    )
-                    .map((dir: string) => {
-                        return fs
-                            .readdirSync(
-                                "C:/Users/progr/AppData/Roaming/Code/User/globalStorage/miscar.vscode-miscar/roborio/" +
-                                dir +
-                                "/linux/athena/shared"
-                            )
-                            .map((file: string) => {
-                                if (file.includes(".so")) {
-                                    console.log("zaks")
-                                    return `add_library(${dir}-${file.replace(".so", "").replace('.debug', "-debug")} STATIC IMPORTED)
-set_property(TARGET ${dir}-${file.replace(".so", "").replace('.debug', "-debug")} PROPERTY IMPORTED_LOCATION C:/Users/progr/AppData/Roaming/Code/User/globalStorage/miscar.vscode-miscar/roborio/${dir}/linux/athena/shared/${file})
- 
-`
-                                }
-                            })
-                            .filter((val: string) => {
-                                console.log(val)
-                                return val != ""
-                            })
-                            .join("")
-                    })
-                    .join("")}
-file(GLOB_RECURSE SOURCES "src/main/cpp/*.cpp")
+${roborioDirectories
+    .map((dir) => {
+        const objectDirectory = join(dir, "linux", "athena", "shared")
+        return readdirSync(objectDirectory)
+            .filter((f) => f.includes(".so") && !f.includes(".debug"))
+            .map((file) => {
+                const libraryName = basename(dir) + "_" + file.split(".")[0]
+                return `add_library(${libraryName} STATIC IMPORTED)
+set_property(TARGET ${libraryName} PROPERTY IMPORTED_LOCATION "${join(
+                    objectDirectory,
+                    file
+                ).replace("\\", "/")}")
+set_target_properties(${libraryName} PROPERTIES LINKER_LANGUAGE CXX)
+target_link_libraries(robot ${libraryName})`
+            })
+            .join("\n")
+    })
+    .join("\n")}`
+            )
 
-add_executable(robot ${SOURCES})
+            const toolchainRoot = join(
+                root.all,
+                "roborio-toolchain",
+                "frc" + TOOLCHAIN_YEAR,
+                "roborio"
+            )
 
-${fs
-                    .readdirSync(
-                        "C:/Users/progr/AppData/Roaming/Code/User/globalStorage/miscar.vscode-miscar/roborio"
-                    )
-                    .map((dir: string) => {
-                        return fs
-                            .readdirSync(
-                                "C:/Users/progr/AppData/Roaming/Code/User/globalStorage/miscar.vscode-miscar/roborio/" +
-                                dir +
-                                "/linux/athena/shared"
-                            )
-                            .map((file: string) => {
-                                return `target_link_libraries(robot ${dir}-${file.replace(".so", "").replace('.debug', "-debug")
-                                    })
-set_target_properties(${dir}-${file.replace(".so", "").replace('.debug', "-debug")
-                                    } PROPERTIES LINKER_LANGUAGE CXX)
-`
-                            })
-                            .filter((val: string) => {
-                                console.log(val)
-                                return val != ""
-                            })
-                            .join("")
-                    })
-                    .join("")}
+            writeFileSync(
+                join(dir.uri.fsPath, "roborio.toolchain.cmake"),
+                `set(CMAKE_SYSTEM_NAME Linux)
+set(CMAKE_SYSTEM_VERSION 1)
+set(CMAKE_SYSTEM_PROCESSOR arm)
+set(CMAKE_SYSROOT "${join(
+                    toolchainRoot,
+                    "arm-frc" + TOOLCHAIN_YEAR + "-linux-gnueabi"
+                )}")
 
-target_compile_features(robot PRIVATE cxx_std_17)`
+set(CMAKE_C_COMPILER "${toolchainRoot}/bin/arm-frc2022-linux-gnueabi-gcc")
+set(CMAKE_CXX_COMPILER "${toolchainRoot}/bin/arm-frc2022-linux-gnueabi-g++")
+set(CMAKE_FORTRAN_COMPILER "${toolchainRoot}/bin/arm-frc2022-linux-gnueabi-gfortran")
+
+set(CMAKE_AR "${toolchainRoot}/bin/arm-frc2022-linux-gnueabi-ar")
+set(CMAKE_AS "${toolchainRoot}/bin/arm-frc2022-linux-gnueabi-as")
+set(CMAKE_NM "${toolchainRoot}/bin/arm-frc2022-linux-gnueabi-nm")
+set(CMAKE_LINKER "${toolchainRoot}/bin/arm-frc2022-linux-gnueabi-ld")
+
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)`
             )
         }
     }

@@ -16,11 +16,11 @@ import fastDeploy from "./tasks/fastDeploy"
 
 export let buildRoboRIOProcess: ChildProcess | undefined
 export let roboRIOKilledProcesses: ChildProcess[] = []
-let status: vscode.StatusBarItem
+export let status: vscode.StatusBarItem
 let log: vscode.OutputChannel
 
 const STATUS_BUILDING = "$(sync~spin) miscar: building"
-const STATUS_READY = "$(pass) miscar: ready"
+export const STATUS_READY = "$(pass) miscar: ready"
 const STATUS_FAILED = "$(close) miscar: failing"
 const STATUS_UNKNOWN = "$(watch) miscar: unknown"
 

@@ -220,11 +220,7 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
 
     stage = "toolchain"
     await queuePromise(
-        getLibrary(
-            context.globalStorageUri.fsPath,
-            "roborio-toolchain",
-            TOOLCHAIN_URL
-        )
+        getLibrary(context.globalStorageUri.fsPath, "toolchain", TOOLCHAIN_URL)
     )
 
     for (const vendordep of vendordeps) {
@@ -245,14 +241,16 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
     let headerDirectories = []
     const roborioDirectories = []
     for (const folder of libraries) {
+        console.log(folder)
         if (folder.includes("headers")) {
             headerDirectories.push(folder)
         } else if (folder.includes("local")) {
             localDirectories.push(folder)
-        } else if (folder.includes("/roborio/")) {
+        } else if (folder.includes("roborio")) {
             roborioDirectories.push(folder)
         }
     }
+
     if (vscode.workspace.workspaceFolders) {
         for (const folder of vscode.workspace.workspaceFolders) {
             libraries.push(join(folder.uri.fsPath, "src", "main", "cpp"))
@@ -276,7 +274,6 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
             writeFileSync(join(folder, "compile_flags.txt"), compileFlags)
         } catch (_) {}
     }
-
     if (vscode.workspace.workspaceFolders) {
         for (const dir of vscode.workspace.workspaceFolders) {
             writeFileSync(
@@ -298,7 +295,9 @@ ${headerDirectories
 
 ${roborioDirectories
     .map((dir) => {
+        console.log("this is roborio dir " + dir)
         const objectDirectory = join(dir, "linux", "athena", "shared")
+        console.log(objectDirectory)
         return readdirSync(objectDirectory)
             .filter((f) => f.includes(".so") && !f.includes(".debug"))
             .map((file) => {
@@ -307,7 +306,7 @@ ${roborioDirectories
 set_property(TARGET ${libraryName} PROPERTY IMPORTED_LOCATION "${join(
                     objectDirectory,
                     file
-                ).replace("\\", "/")}")
+                ).replace(/\\/g, "/")}")
 set_target_properties(${libraryName} PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(robot ${libraryName})`
             })
@@ -321,7 +320,11 @@ target_link_libraries(robot ${libraryName})`
                 "roborio-toolchain",
                 FRC_YEAR,
                 "roborio"
-            )
+            ).replace(/\\/g, "/")
+            let executableExtension = ""
+            if (platform == "windows") {
+                executableExtension = ".exe"
+            }
 
             writeFileSync(
                 join(dir.uri.fsPath, "roborio.toolchain.cmake"),
@@ -331,10 +334,10 @@ set(CMAKE_SYSTEM_PROCESSOR arm)
 set(CMAKE_SYSROOT "${join(
                     toolchainRoot,
                     "arm-" + FRC_YEAR + "-linux-gnueabi"
-                )}")
+                ).replace(/\\/g, "/")}")
 
-set(CMAKE_C_COMPILER "${toolchainRoot}/bin/arm-frc2022-linux-gnueabi-gcc")
-set(CMAKE_CXX_COMPILER "${toolchainRoot}/bin/arm-frc2022-linux-gnueabi-g++")
+set(CMAKE_C_COMPILER "${toolchainRoot}/bin/arm-frc2022-linux-gnueabi-gcc${executableExtension}")
+set(CMAKE_CXX_COMPILER "${toolchainRoot}/bin/arm-frc2022-linux-gnueabi-g++${executableExtension}")
 set(CMAKE_FORTRAN_COMPILER "${toolchainRoot}/bin/arm-frc2022-linux-gnueabi-gfortran")
 
 set(CMAKE_AR "${toolchainRoot}/bin/arm-frc2022-linux-gnueabi-ar")

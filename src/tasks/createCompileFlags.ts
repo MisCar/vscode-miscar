@@ -108,7 +108,6 @@ const getLibrary = (root: string, library: string, url: string) => {
                 console.log(
                     `WARNING: Skipping ${url} because server returned 404.`
                 )
-                console.log(libraries.includes(libraryPath))
                 resolve()
                 return
             }

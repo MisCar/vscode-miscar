@@ -152,5 +152,8 @@
         "tabWidth": 4
     },
     "repository": "https://github.com/miscar/vscode-miscar",
-    "homepage": "https://github.com/miscar/vscode-miscar"
+    "homepage": "https://github.com/miscar/vscode-miscar",
+    "dependencies": {
+        "node-ssh": "^13.0.0"
+    }
 }

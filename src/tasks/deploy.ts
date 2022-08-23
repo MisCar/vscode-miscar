@@ -6,8 +6,9 @@ import { join } from "path"
 import { runInContext } from "vm"
 
 const runCommand = (client: NodeSSH, command: string) => {
-    const [cmd, ...parameters] = command.split(" ")
-    client.exec(cmd, parameters)
+    console.log("i try to run " + command)
+    client.execCommand(command)
+    console.log("i run the command")
 }
 const deploy = async () => {
     const folders = vscode.workspace.workspaceFolders
@@ -36,22 +37,28 @@ const deploy = async () => {
     if (vscode.workspace.workspaceFolders) {
         const ssh = new NodeSSH()
         for (const folder of vscode.workspace.workspaceFolders) {
-            const robotBinaryDestination = join(folder.uri.fsPath, 'cbuild', 'robot')
+            const robotBinaryLocation = join(folder.uri.fsPath, 'cbuild', 'robot')
+            const robotBinaryDestination = "/home/lvuser/robot"
+            console.log("i try to connect")
             await ssh.connect({
                 host: "10.15.74.2",
                 username: "admin",
             })
+            console.log("i connected to the robot")
             await runCommand(ssh, ". /etc/profile.d/natinst-path.sh; /usr/local/frc/bin/frcKillRobot.sh -t")
-            await runCommand(ssh, "rm -f ${robotBinaryDestination}")
+            await runCommand(ssh, `rm -f ${robotBinaryDestination}`)
             await runCommand(ssh, "sed -i -e 's/\\\"exec /\\\"/' /usr/local/frc/bin/frcRunRobot.sh")
             await runCommand(ssh, "sed -i -e 's/^StartupDLLs/;StartupDLLs/' /etc/natinst/share/ni-rt.ini")
 
-            await ssh.putFile(robotBinaryDestination, "/home/lvuser/robot")
+            await ssh.putFile(robotBinaryLocation, robotBinaryDestination)
 
-            await runCommand(ssh, `chmod -x ${robotBinaryDestination}`)
+            await runCommand(ssh, `chmod +x ${robotBinaryDestination}`)
             await runCommand(ssh, `chown lvuser:ni ${robotBinaryDestination}`)
             await runCommand(ssh, `setcap cap_sys_nice+eip ${robotBinaryDestination}`)
 
+            await runCommand(ssh, "sync")
+            await runCommand(ssh, "ldconfig")
+            await runCommand(ssh, ". /etc/profile.d/natinst-path.sh; /usr/local/frc/bin/frcKillRobot.sh -t -r")
 
         }
     }
@@ -60,7 +67,7 @@ const deploy = async () => {
 }
 
 
-}
+
 
 
 

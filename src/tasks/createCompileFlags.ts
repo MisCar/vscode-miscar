@@ -295,14 +295,18 @@ ${headerDirectories
 
 ${roborioDirectories
                     .map((dir) => {
-                        console.log("this is roborio dir " + dir)
                         const objectDirectory = join(dir, "linux", "athena", "shared")
-                        console.log(objectDirectory)
                         return readdirSync(objectDirectory)
-                            .filter((f) => f.includes(".so") && !f.includes(".debug"))
+                            .filter((f) => f.includes(".so") && !f.includes(".debug") && !f.includes("opencv_java"))
                             .map((file) => {
                                 const libraryName = basename(dir) + "_" + file.split(".")[0]
-                                return `find_library(${libraryName} NAMES ${file} PATHS ${objectDirectory.replace(/\\/g, "/")})`
+                                return `add_library(${libraryName} STATIC IMPORTED)
+set_property(TARGET ${libraryName} PROPERTY IMPORTED_LOCATION "${join(
+                                    objectDirectory,
+                                    file
+                                ).replace(/\\/g, "/")}")
+set_target_properties(${libraryName} PROPERTIES LINKER_LANGUAGE CXX)
+target_link_libraries(robot ${libraryName})`
                             })
                             .join("\n")
                     })

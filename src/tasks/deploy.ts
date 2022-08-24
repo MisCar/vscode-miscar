@@ -5,6 +5,7 @@ import { join } from "path"
 
 const runCommand = (client: NodeSSH, command: string) => {
     client.execCommand(command)
+    console.log("i run the command : " + command)
 }
 
 const deploy = async () => {
@@ -26,7 +27,7 @@ const deploy = async () => {
         "vscode-miscar",
         new vscode.ShellExecution(
             bazel +
-                "run robot.deploy --config=for-roborio --ui_event_filters=-info"
+            "run robot.deploy --config=for-roborio --ui_event_filters=-info"
         )
     )
 
@@ -78,6 +79,9 @@ const deploy = async () => {
                 ssh,
                 ". /etc/profile.d/natinst-path.sh; /usr/local/frc/bin/frcKillRobot.sh -t -r"
             )
+            await ssh.putFile('C:\\Users\\progr\\AppData\\Roaming\\Code\\User\\globalStorage\\miscar.vscode-miscar\\roborio\\REVLib-cpp\\linux\\athena\\shared\\libREVlib.so'.replace(/\\/g, "/"), '/usr/local/frc/third-party/lib/libREVLib.so')
+            await ssh.putFile('C:\\Users\\progr\\AppData\\Roaming\\Code\\User\\globalStorage\\miscar.vscode-miscar\\roborio\\REVLib-driver\\linux\\athena\\shared\\libREVLibDriver.so'.replace(/\\/g, "/"), '/usr/local/frc/third-party/lib/libREVLibDriver.so')
+
         }
     }
 }

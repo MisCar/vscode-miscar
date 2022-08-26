@@ -2,13 +2,15 @@ import * as vscode from "vscode"
 import { bazel } from "../utilities"
 import { NodeSSH } from "node-ssh"
 import { join } from "path"
+import { readdir, readdirSync, readFileSync } from "fs"
+import { stringify } from "querystring"
 
 const runCommand = (client: NodeSSH, command: string) => {
     client.execCommand(command)
     console.log("i run the command : " + command)
 }
 
-const deploy = async () => {
+const deploy = async (context: vscode.ExtensionContext) => {
     const folders = vscode.workspace.workspaceFolders
     if (folders === undefined) {
         return
@@ -20,6 +22,7 @@ const deploy = async () => {
         )
         .forEach((execution) => execution.terminate())
 
+    const roborioRoot = join(context.globalStorageUri.fsPath, "roborio")
     const task = new vscode.Task(
         { type: "miscar.deploy" },
         folders[0],
@@ -43,6 +46,26 @@ const deploy = async () => {
                 "cbuild",
                 "robot"
             )
+
+            const libraries = readdirSync(roborioRoot)
+            //ssh.putFiles()
+            let moveFiles: any[] = []
+            libraries.map((lib) => {
+                if (readdirSync(join(roborioRoot, lib)).length != 0) {
+                    console.log(join(roborioRoot, lib, "linux", "athena", "shared"))
+                    let libnames = readdirSync(join(roborioRoot, lib, "linux", "athena", "shared"))
+                    libnames = libnames.filter((lib) => {
+                        return !lib.includes("debug")
+                    })
+                    for (let libName of libnames) {
+                        console.log(libName)
+                        moveFiles.push({ local: join(roborioRoot, lib, "linux", "athena", "shared", libName).replace(/\\/g, "/"), remote: join('/usr/local/frc/third-party/lib', libName).replace(/\\/g, "/") })
+                    }
+                }
+
+            })
+            console.log(moveFiles)
+
             const robotBinaryDestination = "/home/lvuser/robot"
             console.log("i try to connect")
             await ssh.connect({
@@ -81,6 +104,10 @@ const deploy = async () => {
             )
             await ssh.putFile('C:\\Users\\progr\\AppData\\Roaming\\Code\\User\\globalStorage\\miscar.vscode-miscar\\roborio\\REVLib-cpp\\linux\\athena\\shared\\libREVlib.so'.replace(/\\/g, "/"), '/usr/local/frc/third-party/lib/libREVLib.so')
             await ssh.putFile('C:\\Users\\progr\\AppData\\Roaming\\Code\\User\\globalStorage\\miscar.vscode-miscar\\roborio\\REVLib-driver\\linux\\athena\\shared\\libREVLibDriver.so'.replace(/\\/g, "/"), '/usr/local/frc/third-party/lib/libREVLibDriver.so')
+
+            ssh.putFiles(moveFiles
+
+            )
 
         }
     }

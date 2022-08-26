@@ -36,13 +36,17 @@ export const activate = (context: vscode.ExtensionContext) => {
             "miscar.openCommandPalette",
             openCommandPalette
         ),
-        vscode.commands.registerCommand("miscar.buildLocal", buildLocal),
+        vscode.commands.registerCommand("miscar.buildLocal", () =>
+            buildLocal(context)
+        ),
         vscode.commands.registerCommand("miscar.buildRoboRIO", () =>
             buildRoboRIO(status)
         ),
         vscode.commands.registerCommand("miscar.test", test),
         vscode.commands.registerCommand("miscar.deploy", () => deploy(context)),
-        vscode.commands.registerCommand("miscar.fastDeploy", fastDeploy),
+        vscode.commands.registerCommand("miscar.fastDeploy", () =>
+            fastDeploy(context)
+        ),
         vscode.commands.registerCommand("miscar.runSimulation", runSimulation),
         vscode.commands.registerCommand("miscar.startTool", startTool),
         vscode.commands.registerCommand("miscar.newClass", newClass),
@@ -92,4 +96,4 @@ export const activate = (context: vscode.ExtensionContext) => {
     status.show()
 }
 
-export const deactivate = () => { }
+export const deactivate = () => {}

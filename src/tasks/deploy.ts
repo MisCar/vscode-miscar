@@ -1,13 +1,10 @@
 import * as vscode from "vscode"
-import { bazel } from "../utilities"
 import { NodeSSH } from "node-ssh"
 import { join } from "path"
 import { readdir, readdirSync, readFileSync } from "fs"
-import { stringify } from "querystring"
 
 const runCommand = (client: NodeSSH, command: string) => {
     client.execCommand(command)
-    console.log("i run the command : " + command)
 }
 
 const deploy = async (context: vscode.ExtensionContext) => {
@@ -23,93 +20,81 @@ const deploy = async (context: vscode.ExtensionContext) => {
         .forEach((execution) => execution.terminate())
 
     const roborioRoot = join(context.globalStorageUri.fsPath, "roborio")
-    const task = new vscode.Task(
-        { type: "miscar.deploy" },
-        folders[0],
-        "Deploy",
-        "vscode-miscar",
-        new vscode.ShellExecution(
-            bazel +
-            "run robot.deploy --config=for-roborio --ui_event_filters=-info"
-        )
-    )
 
-    task.presentationOptions.clear = true
-    task.presentationOptions.echo = false
+    const ssh = new NodeSSH()
+    for (const folder of folders) {
+        const robotBinaryLocation = join(folder.uri.fsPath, "cbuild", "robot")
 
-    //vscode.tasks.executeTask(task)
-    if (vscode.workspace.workspaceFolders) {
-        const ssh = new NodeSSH()
-        for (const folder of vscode.workspace.workspaceFolders) {
-            const robotBinaryLocation = join(
-                folder.uri.fsPath,
-                "cbuild",
-                "robot"
-            )
-
-            const libraries = readdirSync(roborioRoot)
-            //ssh.putFiles()
-            let moveFiles: any[] = []
-            libraries.map((lib) => {
-                if (readdirSync(join(roborioRoot, lib)).length != 0) {
-                    console.log(join(roborioRoot, lib, "linux", "athena", "shared"))
-                    let libnames = readdirSync(join(roborioRoot, lib, "linux", "athena", "shared"))
-                    libnames = libnames.filter((lib) => {
-                        return !lib.includes("debug")
+        const libraries = readdirSync(roborioRoot)
+        //ssh.putFiles()
+        let moveFiles: any[] = []
+        libraries.map((lib) => {
+            if (readdirSync(join(roborioRoot, lib)).length != 0) {
+                console.log(join(roborioRoot, lib, "linux", "athena", "shared"))
+                let libnames = readdirSync(
+                    join(roborioRoot, lib, "linux", "athena", "shared")
+                )
+                libnames = libnames.filter((lib) => {
+                    return !lib.includes("debug")
+                })
+                for (let libName of libnames) {
+                    console.log(libName)
+                    moveFiles.push({
+                        local: join(
+                            roborioRoot,
+                            lib,
+                            "linux",
+                            "athena",
+                            "shared",
+                            libName
+                        ).replace(/\\/g, "/"),
+                        remote: join(
+                            "/usr/local/frc/third-party/lib",
+                            libName
+                        ).replace(/\\/g, "/"),
                     })
-                    for (let libName of libnames) {
-                        console.log(libName)
-                        moveFiles.push({ local: join(roborioRoot, lib, "linux", "athena", "shared", libName).replace(/\\/g, "/"), remote: join('/usr/local/frc/third-party/lib', libName).replace(/\\/g, "/") })
-                    }
                 }
+            }
+        })
 
-            })
-            console.log(moveFiles)
+        const robotBinaryDestination = "/home/lvuser/robot"
+        await ssh.connect({
+            host: "10.15.74.2",
+            username: "admin",
+        })
+        await runCommand(
+            ssh,
+            ". /etc/profile.d/natinst-path.sh; /usr/local/frc/bin/frcKillRobot.sh -t"
+        )
+        await runCommand(ssh, `rm -f ${robotBinaryDestination}`)
+        await runCommand(
+            ssh,
+            "sed -i -e 's/\\\"exec /\\\"/' /usr/local/frc/bin/frcRunRobot.sh"
+        )
+        await runCommand(
+            ssh,
+            "sed -i -e 's/^StartupDLLs/;StartupDLLs/' /etc/natinst/share/ni-rt.ini"
+        )
 
-            const robotBinaryDestination = "/home/lvuser/robot"
-            console.log("i try to connect")
-            await ssh.connect({
-                host: "10.15.74.2",
-                username: "admin",
-            })
-            console.log("i connected to the robot")
-            await runCommand(
-                ssh,
-                ". /etc/profile.d/natinst-path.sh; /usr/local/frc/bin/frcKillRobot.sh -t"
-            )
-            await runCommand(ssh, `rm -f ${robotBinaryDestination}`)
-            await runCommand(
-                ssh,
-                "sed -i -e 's/\\\"exec /\\\"/' /usr/local/frc/bin/frcRunRobot.sh"
-            )
-            await runCommand(
-                ssh,
-                "sed -i -e 's/^StartupDLLs/;StartupDLLs/' /etc/natinst/share/ni-rt.ini"
-            )
+        await ssh.putFile(robotBinaryLocation, robotBinaryDestination)
 
-            await ssh.putFile(robotBinaryLocation, robotBinaryDestination)
+        await runCommand(ssh, `chmod +x ${robotBinaryDestination}`)
+        await runCommand(ssh, `chown lvuser:ni ${robotBinaryDestination}`)
+        await runCommand(
+            ssh,
+            `setcap cap_sys_nice+eip ${robotBinaryDestination}`
+        )
 
-            await runCommand(ssh, `chmod +x ${robotBinaryDestination}`)
-            await runCommand(ssh, `chown lvuser:ni ${robotBinaryDestination}`)
-            await runCommand(
-                ssh,
-                `setcap cap_sys_nice+eip ${robotBinaryDestination}`
-            )
+        await runCommand(ssh, "sync")
+        await runCommand(ssh, "ldconfig")
+        await runCommand(
+            ssh,
+            ". /etc/profile.d/natinst-path.sh; /usr/local/frc/bin/frcKillRobot.sh -t -r"
+        )
+        // await ssh.putFile('C:\\Users\\progr\\AppData\\Roaming\\Code\\User\\globalStorage\\miscar.vscode-miscar\\roborio\\REVLib-cpp\\linux\\athena\\shared\\libREVlib.so'.replace(/\\/g, "/"), '/usr/local/frc/third-party/lib/libREVLib.so')
+        // await ssh.putFile('C:\\Users\\progr\\AppData\\Roaming\\Code\\User\\globalStorage\\miscar.vscode-miscar\\roborio\\REVLib-driver\\linux\\athena\\shared\\libREVLibDriver.so'.replace(/\\/g, "/"), '/usr/local/frc/third-party/lib/libREVLibDriver.so')
 
-            await runCommand(ssh, "sync")
-            await runCommand(ssh, "ldconfig")
-            await runCommand(
-                ssh,
-                ". /etc/profile.d/natinst-path.sh; /usr/local/frc/bin/frcKillRobot.sh -t -r"
-            )
-            await ssh.putFile('C:\\Users\\progr\\AppData\\Roaming\\Code\\User\\globalStorage\\miscar.vscode-miscar\\roborio\\REVLib-cpp\\linux\\athena\\shared\\libREVlib.so'.replace(/\\/g, "/"), '/usr/local/frc/third-party/lib/libREVLib.so')
-            await ssh.putFile('C:\\Users\\progr\\AppData\\Roaming\\Code\\User\\globalStorage\\miscar.vscode-miscar\\roborio\\REVLib-driver\\linux\\athena\\shared\\libREVLibDriver.so'.replace(/\\/g, "/"), '/usr/local/frc/third-party/lib/libREVLibDriver.so')
-
-            ssh.putFiles(moveFiles
-
-            )
-
-        }
+        ssh.putFiles(moveFiles)
     }
 }
 

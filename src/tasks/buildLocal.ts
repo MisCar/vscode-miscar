@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/semi */
 import * as vscode from "vscode"
-import { bazel, platformArguments } from "../utilities"
-
-const buildLocal = async () => {
+import { readdirSync } from "fs"
+import { join } from "path"
+const buildLocal = async (context: vscode.ExtensionContext) => {
     await vscode.workspace.saveAll()
 
     const folders = vscode.workspace.workspaceFolders
@@ -17,18 +17,12 @@ const buildLocal = async () => {
         )
         .forEach((execution) => execution.terminate())
 
-    const task = new vscode.Task(
-        { type: "bazelrio.buildLocal" },
-        folders[0],
-        "Build Local",
-        "vscode-miscar",
-        new vscode.ShellExecution(bazel + " build //... " + platformArguments)
-    )
+    const headersRoot = join(context.globalStorageUri.fsPath, "headers")
+    const localRoot = join(context.globalStorageUri.fsPath, "local")
 
-    task.presentationOptions.clear = true
-    task.presentationOptions.echo = false
-
-    vscode.tasks.executeTask(task)
+    readdirSync(headersRoot).map((dir) => {
+        console.log(dir)
+    })
 }
 
 export default buildLocal

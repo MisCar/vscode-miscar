@@ -1,3 +1,5 @@
+import { readFileSync, writeFileSync } from "fs"
+import { join } from "path"
 import * as vscode from "vscode"
 import { buildRoboRIOProcess, roboRIOKilledProcesses } from "../extension"
 import { bazel } from "../utilities"
@@ -23,18 +25,46 @@ const buildRoboRIO = async (status: vscode.StatusBarItem) => {
         )
         .forEach((execution) => execution.terminate())
 
-    const task = new vscode.Task(
-        { type: "miscar.buildRoboRIO" },
-        folders[0],
-        "Build RoboRIO",
-        "vscode-miscar",
-        new vscode.ShellExecution(bazel + "build //... --config=for-roborio")
+    const CMakeLists = readFileSync(
+        join(folders[0].uri.fsPath, "./CMakeLists.txt"),
+        "utf-8"
     )
 
-    task.presentationOptions.clear = true
-    task.presentationOptions.echo = false
+    if (!CMakeLists.includes("#roborio")) {
+        writeFileSync(
+            join(folders[0].uri.fsPath, "./CMakeLists.txt"),
+            CMakeLists.replace("#local", "#roborio").replace(
+                "#firsttime",
+                "#roborio"
+            )
+        )
 
-    vscode.tasks.executeTask(task)
+        const setupAndBuild = new vscode.Task(
+            { type: "miscar.runSimulation" },
+            folders[0],
+            "Simulation",
+            "vscode-miscar",
+            new vscode.ShellExecution(
+                "Get-ChildItem -Path './cbuild' | Remove-Item -Recurse -Confirm:$false -Force; cmake -S ./ -B ./cbuild -DIS_ROBORIO=TRUE -GNinja -DCMAKE_TOOLCHAIN_FILE='./roborio.toolchain.cmake'; cd cbuild; ninja"
+            )
+        )
+        setupAndBuild.presentationOptions.clear = true
+        setupAndBuild.presentationOptions.echo = true
+
+        vscode.tasks.executeTask(setupAndBuild)
+    } else {
+        const build = new vscode.Task(
+            { type: "miscar.runSimulation" },
+            folders[0],
+            "Simulation",
+            "vscode-miscar",
+            new vscode.ShellExecution("cd cbuild; ninja")
+        )
+        build.presentationOptions.clear = true
+        build.presentationOptions.echo = true
+
+        vscode.tasks.executeTask(build)
+    }
 }
 
 export default buildRoboRIO

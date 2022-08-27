@@ -361,7 +361,8 @@ endif()`
 
             writeFileSync(
                 join(dir.uri.fsPath, "roborio.toolchain.cmake"),
-                `set(CMAKE_SYSTEM_NAME Linux)
+                `#firsttime
+set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_SYSTEM_VERSION 1)
 set(CMAKE_SYSTEM_PROCESSOR arm)
 set(CMAKE_SYSROOT "${join(

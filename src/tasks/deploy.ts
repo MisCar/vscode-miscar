@@ -20,7 +20,7 @@ const deploy = async (context: vscode.ExtensionContext) => {
         .forEach((execution) => execution.terminate())
 
     const roborioRoot = join(context.globalStorageUri.fsPath, "roborio")
-
+    vscode.commands.executeCommand("miscar.buildRoboRIO")
     const ssh = new NodeSSH()
     for (const folder of folders) {
         const robotBinaryLocation = join(folder.uri.fsPath, "cbuild", "robot")

@@ -39,7 +39,7 @@ const createIndex = () => {
 
     writeFileSync(
         join(folders[0].uri.fsPath, "src", "main", "cpp", "IncludeAll.h"),
-        "#pragma once\n" + includes.filter((file) => file !== "ctre/Phoenix.h" && !file.startsWith("uv") && !file.startsWith("unsupported") && !file.startsWith("cscore") && !file.startsWith("Eigen")).map((file) => `#include <${file}>`).join("\n")
+        "#pragma once\n" + includes.filter((file) => file.startsWith("frc") || file.startsWith("units")).map((file) => `#include <${file}>`).join("\n")
     )
 
     try {

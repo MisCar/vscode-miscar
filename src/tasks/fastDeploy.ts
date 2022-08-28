@@ -20,6 +20,7 @@ const fastDeploy = async (context: vscode.ExtensionContext) => {
                 execution.task.definition.type === "miscar.fastDeploy"
         )
         .forEach((execution) => execution.terminate())
+    vscode.commands.executeCommand("miscar.buildRoboRIO")
 
     const ssh = new NodeSSH()
     for (const folder of folders) {

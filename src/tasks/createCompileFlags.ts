@@ -39,15 +39,15 @@ const TOOLCHAIN_URL =
     platform == "windows"
         ? `https://github.com/wpilibsuite/roborio-toolchain/releases/download/${TOOLCHAIN_VERSION}/FRC-2022-Windows64-Toolchain-${TOOLCHAIN_GCC_VERSION}.zip`
         : platform == "linux"
-        ? `https://github.com/wpilibsuite/roborio-toolchain/releases/download/${TOOLCHAIN_VERSION}/FRC-2022-Linux-Toolchain-${TOOLCHAIN_GCC_VERSION}.tar.gz`
-        : `https://github.com/wpilibsuite/roborio-toolchain/releases/download/${TOOLCHAIN_VERSION}/FRC-2022-Mac-Toolchain-${TOOLCHAIN_GCC_VERSION}.tar.gz`
+            ? `https://github.com/wpilibsuite/roborio-toolchain/releases/download/${TOOLCHAIN_VERSION}/FRC-2022-Linux-Toolchain-${TOOLCHAIN_GCC_VERSION}.tar.gz`
+            : `https://github.com/wpilibsuite/roborio-toolchain/releases/download/${TOOLCHAIN_VERSION}/FRC-2022-Mac-Toolchain-${TOOLCHAIN_GCC_VERSION}.tar.gz`
 
 const localLibraryType =
     platform === "windows"
         ? "windowsx86-64"
         : platform === "mac"
-        ? "osxx86-64"
-        : "linuxx86-64"
+            ? "osxx86-64"
+            : "linuxx86-64"
 
 let libraries: string[] = []
 
@@ -124,7 +124,7 @@ const getLibrary = (root: string, library: string, url: string) => {
                         execSync(`unzip "${zipPath}"`, { cwd: libraryPath })
                     }
                     rmSync(zipPath)
-                } catch (_) {}
+                } catch (_) { }
 
                 libraries.push(libraryPath)
                 resolve()
@@ -209,7 +209,7 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
             library + "-cpp",
             WPILIB_VERSION,
             "https://frcmaven.wpi.edu/ui/api/v1/download?repoKey=release&path=edu/wpi/first/" +
-                library
+            library
         )
     }
     await installAll(
@@ -272,7 +272,7 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
     for (const folder of libraries) {
         try {
             writeFileSync(join(folder, "compile_flags.txt"), compileFlags)
-        } catch (_) {}
+        } catch (_) { }
     }
     if (vscode.workspace.workspaceFolders) {
         for (const dir of vscode.workspace.workspaceFolders) {
@@ -290,58 +290,60 @@ target_compile_options(robot PUBLIC -Wno-psabi)
 include_directories(src/main/cpp)
 
 ${headerDirectories
-    .map((f) => `include_directories(SYSTEM "${f}")`.replace(/\\/g, "/"))
-    .join("\n")}
+                    .map((f) => `include_directories(SYSTEM "${f}")`.replace(/\\/g, "/"))
+                    .join("\n")}
 if(IS_ROBORIO)
 
 ${roborioDirectories
-    .map((dir) => {
-        const objectDirectory = join(dir, "linux", "athena", "shared")
-        return readdirSync(objectDirectory)
-            .filter(
-                (f) =>
-                    f.includes(".so") &&
-                    !f.includes(".debug") &&
-                    !f.includes("opencv_java")
-            )
-            .map((file) => {
-                const libraryName = basename(dir) + "_" + file.split(".")[0]
-                return `add_library(${libraryName} STATIC IMPORTED)
+                    .map((dir) => {
+                        const objectDirectory = join(dir, "linux", "athena", "shared")
+                        return readdirSync(objectDirectory)
+                            .filter(
+                                (f) =>
+                                    f.includes(".so") &&
+                                    !f.includes(".debug") &&
+                                    !f.includes("opencv_java")
+                            )
+                            .map((file) => {
+                                const libraryName = basename(dir) + "_" + file.split(".")[0]
+                                return `#firsttime
+
+add_library(${libraryName} STATIC IMPORTED)
 set_property(TARGET ${libraryName} PROPERTY IMPORTED_LOCATION "${join(
-                    objectDirectory,
-                    file
-                ).replace(/\\/g, "/")}")
+                                    objectDirectory,
+                                    file
+                                ).replace(/\\/g, "/")}")
 set_target_properties(${libraryName} PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(robot ${libraryName})`
-            })
-            .join("\n")
-    })
-    .join("\n")}
+                            })
+                            .join("\n")
+                    })
+                    .join("\n")}
 else()
 ${localDirectories
-    .map((dir) => {
-        const objectDirectory = join(dir, "windows", "x86-64", "shared")
+                    .map((dir) => {
+                        const objectDirectory = join(dir, "windows", "x86-64", "shared")
 
-        return readdirSync(objectDirectory)
-            .filter(
-                (f) =>
-                    !f.includes(".debug") &&
-                    !f.includes("opencv_java") &&
-                    f.includes(".lib")
-            )
-            .map((file) => {
-                const libraryName = basename(dir) + "_" + file.split(".")[0]
-                return `add_library(${libraryName} STATIC IMPORTED)
+                        return readdirSync(objectDirectory)
+                            .filter(
+                                (f) =>
+                                    !f.includes(".debug") &&
+                                    !f.includes("opencv_java") &&
+                                    f.includes(".lib")
+                            )
+                            .map((file) => {
+                                const libraryName = basename(dir) + "_" + file.split(".")[0]
+                                return `add_library(${libraryName} STATIC IMPORTED)
 set_property(TARGET ${libraryName} PROPERTY IMPORTED_LOCATION "${join(
-                    objectDirectory,
-                    file
-                ).replace(/\\/g, "/")}")
+                                    objectDirectory,
+                                    file
+                                ).replace(/\\/g, "/")}")
 set_target_properties(${libraryName} PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(robot ${libraryName})`
-            })
-            .join("\n")
-    })
-    .join("\n")} 
+                            })
+                            .join("\n")
+                    })
+                    .join("\n")} 
 
 
 
@@ -361,8 +363,7 @@ endif()`
 
             writeFileSync(
                 join(dir.uri.fsPath, "roborio.toolchain.cmake"),
-                `#firsttime
-set(CMAKE_SYSTEM_NAME Linux)
+                `set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_SYSTEM_VERSION 1)
 set(CMAKE_SYSTEM_PROCESSOR arm)
 set(CMAKE_SYSROOT "${join(

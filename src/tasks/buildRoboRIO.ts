@@ -1,3 +1,4 @@
+import { execSync } from "child_process"
 import { readFileSync, writeFileSync } from "fs"
 import { join } from "path"
 import * as vscode from "vscode"
@@ -5,6 +6,7 @@ import { buildRoboRIOProcess, roboRIOKilledProcesses } from "../extension"
 import { bazel } from "../utilities"
 
 const buildRoboRIO = async (status: vscode.StatusBarItem) => {
+    let buildFinished = false
     await vscode.workspace.saveAll()
 
     if (buildRoboRIOProcess) {
@@ -50,8 +52,7 @@ const buildRoboRIO = async (status: vscode.StatusBarItem) => {
         )
         setupAndBuild.presentationOptions.clear = true
         setupAndBuild.presentationOptions.echo = true
-
-        vscode.tasks.executeTask(setupAndBuild)
+        await vscode.tasks.executeTask(setupAndBuild)
     } else {
         const build = new vscode.Task(
             { type: "miscar.runSimulation" },
@@ -63,6 +64,10 @@ const buildRoboRIO = async (status: vscode.StatusBarItem) => {
         build.presentationOptions.clear = true
         build.presentationOptions.echo = true
 
+        build.isBackground = false
+        build.presentationOptions.focus = false
+        //execSync(`cd ${join(folders[0].uri.fsPath, "cbuild")}`)
+        //execSync("ninja")
         vscode.tasks.executeTask(build)
     }
 }

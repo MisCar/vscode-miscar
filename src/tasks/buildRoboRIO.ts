@@ -6,7 +6,6 @@ import { buildRoboRIOProcess, roboRIOKilledProcesses } from "../extension"
 import { bazel } from "../utilities"
 
 const buildRoboRIO = async (status: vscode.StatusBarItem) => {
-    let buildFinished = false
     await vscode.workspace.saveAll()
 
     if (buildRoboRIOProcess) {

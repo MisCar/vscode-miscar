@@ -67,7 +67,13 @@ const deploy = async (context: vscode.ExtensionContext) => {
             const robotBinaryDestination = "/home/lvuser/robot"
 
             commands.show(true)
-
+            const connect3 = new Promise((resolve) => {
+                ssh.connect({
+                    host: "172.22.11.2",
+                    username: "admin",
+                })
+                resolve("172.22.11.2")
+            })
             const connect1 = new Promise((resolve) => {
                 ssh.connect({
                     host: "10.15.74.2",
@@ -82,13 +88,7 @@ const deploy = async (context: vscode.ExtensionContext) => {
                 })
                 resolve("roborio-1574-frc.local")
             })
-            const connect3 = new Promise((resolve) => {
-                ssh.connect({
-                    host: "172.22.11.2",
-                    username: "admin",
-                })
-                resolve("172.22.11.2")
-            })
+
             const connect4 = new Promise((resolve) => {
                 ssh.connect({
                     host: "roborio-1574-frc",

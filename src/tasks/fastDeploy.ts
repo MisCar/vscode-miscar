@@ -10,7 +10,8 @@ const runCommand = (client: NodeSSH, command: string) => {
     commands.appendLine(command)
 }
 
-const deploy = async () => {
+const deploy = async (context: vscode.ExtensionContext) => {
+    let isRobotConnected = false
     const folders = vscode.workspace.workspaceFolders
     if (folders === undefined) {
         return
@@ -35,98 +36,156 @@ const deploy = async () => {
             const robotBinaryDestination = "/home/lvuser/robot"
 
             commands.show(true)
+            let adresses: any[] = [
+                "10.15.74.2",
+                "172.22.11.2",
+                "roborio-1574-frc.local",
+                "roborio-1574-frc",
+                "roborio-1574-frc.lan",
+                "roborio-1574-frc.frc-field.local",
+                "roboRIO-1574-FRC.local",
+            ]
+            let connects: any[] = []
+            adresses.map((adress) => {
+                connects.push(
+                    new Promise((resolve) => {
+                        ssh.connect({
+                            host: adress,
+                            username: "admin",
+                        })
+                            .then(() => {
+                                resolve(adress)
+                            })
+                            .catch(() => {
+                                if (!isRobotConnected) {
+                                    commands.appendLine(
+                                        "Cant connect to " + adress
+                                    )
+                                }
+                            })
+                    })
+                )
+            })
+            // const connect1 = new Promise((resolve, reject) => {
+            //     ssh.connect({
+            //         host: "10.15.74.2",
+            //         username: "admin",
+            //     })
+            //         .then(() => {
+            //             resolve("10.15.74.2")
+            //         })
+            //         .catch(() => {
+            //             reject("10.15.74.2")
+            //         })
+            // })
+            // const connect2 = new Promise((resolve, reject) => {
+            //     ssh.connect({
+            //         host: "roborio-1574-frc.local",
+            //         username: "admin",
+            //     })
+            //         .then(() => {
+            //             resolve("roborio-1574-frc.local")
+            //         })
+            //         .catch(() => {
+            //             reject("roborio-1574-frc.local")
+            //         })
+            // })
+            // const connect3 = new Promise((resolve, reject) => {
+            //     ssh.connect({
+            //         host: "172.22.11.2",
+            //         username: "admin",
+            //     })
+            //         .then(() => {
+            //             resolve("172.22.11.2")
+            //         })
+            //         .catch(() => {
+            //             reject("172.22.11.2")
+            //         })
+            // })
+            // const connect4 = new Promise((resolve, reject) => {
+            //     ssh.connect({
+            //         host: "roborio-1574-frc",
+            //         username: "admin",
+            //     })
+            //         .then(() => {
+            //             resolve("roborio-1574-frc")
+            //         })
+            //         .catch(() => {
+            //             reject("roborio-1574-frc")
+            //         })
+            // })
+            // const connect5 = new Promise((resolve, reject) => {
+            //     ssh.connect({
+            //         host: "roborio-1574-frc.lan",
+            //         username: "admin",
+            //     })
+            //         .then(() => {
+            //             resolve("roborio-1574-frc.lan")
+            //         })
+            //         .catch(() => {
+            //             reject("roborio-1574-frc.lan")
+            //         })
+            // })
+            // const connect6 = new Promise((resolve, reject) => {
+            //     ssh.connect({
+            //         host: "roborio-1574-frc.frc-field.local",
+            //         username: "admin",
+            //     })
+            //         .then(() => {
+            //             resolve("roborio-1574-frc.frc-field.local")
+            //         })
+            //         .catch(() => {
+            //             reject("roborio-1574-frc.frc-field.local")
+            //         })
+            // })
+            // const connect7 = new Promise((resolve, reject) => {
+            //     ssh.connect({
+            //         host: "roboRIO-1574-FRC.local",
+            //         username: "admin",
+            //     })
+            //         .then(() => {
+            //             resolve("roboRIO-1574-FRC.local")
+            //         })
+            //         .catch(() => {
+            //             reject("roboRIO-1574-FRC.local")
+            //         })
+            // })
+            Promise.race(connects).then(async (ip) => {
+                isRobotConnected = true
+                commands.appendLine("Conneted to " + ip)
+                await runCommand(
+                    ssh,
+                    ". /etc/profile.d/natinst-path.sh; /usr/local/frc/bin/frcKillRobot.sh -t"
+                )
+                await runCommand(ssh, `rm -f ${robotBinaryDestination}`)
+                await runCommand(
+                    ssh,
+                    "sed -i -e 's/\\\"exec /\\\"/' /usr/local/frc/bin/frcRunRobot.sh"
+                )
+                await runCommand(
+                    ssh,
+                    "sed -i -e 's/^StartupDLLs/;StartupDLLs/' /etc/natinst/share/ni-rt.ini"
+                )
 
-            const connect1 = new Promise((resolve) => {
-                ssh.connect({
-                    host: "10.15.74.2",
-                    username: "admin",
-                })
-                resolve("10.15.74.2")
-            })
-            const connect2 = new Promise((resolve) => {
-                ssh.connect({
-                    host: "roborio-1574-frc.local",
-                    username: "admin",
-                })
-                resolve("roborio-1574-frc.local")
-            })
-            const connect3 = new Promise((resolve) => {
-                ssh.connect({
-                    host: "172.22.11.2",
-                    username: "admin",
-                })
-                resolve("172.22.11.2")
-            })
-            const connect4 = new Promise((resolve) => {
-                ssh.connect({
-                    host: "roborio-1574-frc",
-                    username: "admin",
-                })
-                resolve("roborio-1574-frc")
-            })
-            const connect5 = new Promise((resolve) => {
-                ssh.connect({
-                    host: "roborio-1574-frc.lan",
-                    username: "admin",
-                })
-                resolve("roborio-1574-frc.lan")
-            })
-            const connect6 = new Promise((resolve) => {
-                ssh.connect({
-                    host: "roborio-1574-frc.frc-field.local",
-                    username: "admin",
-                })
-                resolve("roborio-1574-frc.frc-field.local")
-            })
-            Promise.race([
-                connect1,
-                connect2,
-                connect3,
-                connect4,
-                connect5,
-                connect6,
-            ])
-                .then(async (ip) => {
-                    commands.appendLine("Conneted to " + ip)
-                    await runCommand(
-                        ssh,
-                        ". /etc/profile.d/natinst-path.sh; /usr/local/frc/bin/frcKillRobot.sh -t"
-                    )
-                    await runCommand(ssh, `rm -f ${robotBinaryDestination}`)
-                    await runCommand(
-                        ssh,
-                        "sed -i -e 's/\\\"exec /\\\"/' /usr/local/frc/bin/frcRunRobot.sh"
-                    )
-                    await runCommand(
-                        ssh,
-                        "sed -i -e 's/^StartupDLLs/;StartupDLLs/' /etc/natinst/share/ni-rt.ini"
-                    )
+                await ssh.putFile(robotBinaryLocation, robotBinaryDestination)
 
-                    await ssh.putFile(
-                        robotBinaryLocation,
-                        robotBinaryDestination
-                    )
+                await runCommand(ssh, `chmod +x ${robotBinaryDestination}`)
+                await runCommand(
+                    ssh,
+                    `chown lvuser:ni ${robotBinaryDestination}`
+                )
+                await runCommand(
+                    ssh,
+                    `setcap cap_sys_nice+eip ${robotBinaryDestination}`
+                )
 
-                    await runCommand(ssh, `chmod +x ${robotBinaryDestination}`)
-                    await runCommand(
-                        ssh,
-                        `chown lvuser:ni ${robotBinaryDestination}`
-                    )
-                    await runCommand(
-                        ssh,
-                        `setcap cap_sys_nice+eip ${robotBinaryDestination}`
-                    )
-
-                    await runCommand(ssh, "sync")
-                    await runCommand(ssh, "ldconfig")
-                    await runCommand(
-                        ssh,
-                        ". /etc/profile.d/natinst-path.sh; /usr/local/frc/bin/frcKillRobot.sh -t -r"
-                    )
-                })
-                .catch((error) => {
-                    commands.appendLine(error)
-                })
+                await runCommand(ssh, "sync")
+                await runCommand(ssh, "ldconfig")
+                await runCommand(
+                    ssh,
+                    ". /etc/profile.d/natinst-path.sh; /usr/local/frc/bin/frcKillRobot.sh -t -r"
+                )
+            })
         }
     })
 }

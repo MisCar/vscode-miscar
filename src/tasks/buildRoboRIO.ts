@@ -3,10 +3,8 @@ import { readFileSync, writeFileSync } from "fs"
 import { join } from "path"
 import * as vscode from "vscode"
 import { buildRoboRIOProcess, roboRIOKilledProcesses } from "../extension"
-import { bazel } from "../utilities"
 
 const buildRoboRIO = async (status: vscode.StatusBarItem) => {
-    let buildFinished = false
     await vscode.workspace.saveAll()
 
     if (buildRoboRIOProcess) {
@@ -42,9 +40,9 @@ const buildRoboRIO = async (status: vscode.StatusBarItem) => {
         )
 
         const setupAndBuild = new vscode.Task(
-            { type: "miscar.runSimulation" },
+            { type: "miscar.buildRoboRIO" },
             folders[0],
-            "Simulation",
+            "Build Roborio",
             "vscode-miscar",
             new vscode.ShellExecution(
                 "Get-ChildItem -Path './cbuild' | Remove-Item -Recurse -Confirm:$false -Force; cmake -S ./ -B ./cbuild -DIS_ROBORIO=TRUE -GNinja -DCMAKE_TOOLCHAIN_FILE='./roborio.toolchain.cmake'; cd cbuild; ninja"
@@ -55,9 +53,9 @@ const buildRoboRIO = async (status: vscode.StatusBarItem) => {
         await vscode.tasks.executeTask(setupAndBuild)
     } else {
         const build = new vscode.Task(
-            { type: "miscar.runSimulation" },
+            { type: "miscar.buildRoboRIO" },
             folders[0],
-            "Simulation",
+            "Build Roborio",
             "vscode-miscar",
             new vscode.ShellExecution("cd cbuild; ninja")
         )

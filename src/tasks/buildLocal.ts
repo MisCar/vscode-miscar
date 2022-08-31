@@ -32,9 +32,9 @@ const buildLocal = async (context: vscode.ExtensionContext) => {
         )
 
         const setupAndBuild = new vscode.Task(
-            { type: "miscar.runSimulation" },
+            { type: "miscar.buildLocal" },
             folders[0],
-            "Simulation",
+            "Build Local",
             "vscode-miscar",
             new vscode.ShellExecution(
                 "Get-ChildItem -Path './cbuild' | Remove-Item -Recurse -Confirm:$false -Force; cmake -S ./ -B ./cbuild -DIS_ROBORIO=FALSE -GNinja; cd cbuild; ninja"
@@ -46,9 +46,9 @@ const buildLocal = async (context: vscode.ExtensionContext) => {
         vscode.tasks.executeTask(setupAndBuild)
     } else {
         const build = new vscode.Task(
-            { type: "miscar.runSimulation" },
+            { type: "miscar.buildLocal" },
             folders[0],
-            "Simulation",
+            "Build Local",
             "vscode-miscar",
             new vscode.ShellExecution("cd cbuild; ninja")
         )

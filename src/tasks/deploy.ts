@@ -12,6 +12,11 @@ const runCommand = (client: NodeSSH, command: string) => {
 }
 
 const deploy = async (context: vscode.ExtensionContext) => {
+    // I'm not checking this.
+    // It's way to similar to the fast deploy.
+    // You gotta extract the shared code into a function
+    // That's what programmers do
+    // You don't copy-paste unless nobody sees your code ever
     let isRobotConnected = false
     const folders = vscode.workspace.workspaceFolders
     if (folders === undefined) {

@@ -30,7 +30,7 @@ const buildRoboRIO = async (status: vscode.StatusBarItem) => {
         "utf-8"
     )
 
-    if (!CMakeLists.includes("#roborio")) {
+    if (!CMakeLists.includes("#roborio")) { // Same notes as buildLocal.
         writeFileSync(
             join(folders[0].uri.fsPath, "./CMakeLists.txt"),
             CMakeLists.replace("#local", "#roborio").replace(

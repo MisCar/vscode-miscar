@@ -39,14 +39,18 @@ const deploy = async (context: vscode.ExtensionContext) => {
             let adresses: any[] = [
                 "10.15.74.2",
                 "172.22.11.2",
-                "roborio-1574-frc.local",
+                "roborio-1574-frc.local", // Try to generalize the team number.
+                // Learn about VSCode extension preferences,
+                // so it is defined there.
+                // It's simple so don't be lazy
+                // You've been warned
                 "roborio-1574-frc",
                 "roborio-1574-frc.lan",
                 "roborio-1574-frc.frc-field.local",
                 "roboRIO-1574-FRC.local",
             ]
             let connects: any[] = []
-            adresses.map((adress) => {
+            adresses.map((adress) => { // Address is pronounced with a double d
                 connects.push(
                     new Promise((resolve) => {
                         ssh.connect({

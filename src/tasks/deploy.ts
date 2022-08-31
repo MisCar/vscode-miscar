@@ -1,6 +1,6 @@
 import * as vscode from "vscode"
 import { NodeSSH } from "node-ssh"
-import { join } from "path"
+import { join, resolve } from "path"
 import { readdirSync } from "fs"
 
 let commands = vscode.window.createOutputChannel("Commands")
@@ -26,7 +26,7 @@ const deploy = async (context: vscode.ExtensionContext) => {
 
     const roborioRoot = join(context.globalStorageUri.fsPath, "roborio")
     await vscode.commands.executeCommand("miscar.buildRoboRIO")
-    vscode.tasks.onDidEndTask(() => {
+    vscode.tasks.onDidEndTask(async () => {
         const ssh = new NodeSSH()
         for (const folder of folders) {
             const robotBinaryLocation = join(
@@ -65,8 +65,9 @@ const deploy = async (context: vscode.ExtensionContext) => {
             })
 
             const robotBinaryDestination = "/home/lvuser/robot"
-
+            commands.clear()
             commands.show(true)
+
             let adresses: any[] = [
                 "10.15.74.2",
                 "172.22.11.2",
@@ -222,5 +223,4 @@ const deploy = async (context: vscode.ExtensionContext) => {
         }
     })
 }
-
 export default deploy

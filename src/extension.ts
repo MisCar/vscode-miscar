@@ -94,4 +94,4 @@ export const activate = (context: vscode.ExtensionContext) => {
     status.show()
 }
 
-export const deactivate = () => {}
+export const deactivate = () => { }

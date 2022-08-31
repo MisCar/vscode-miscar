@@ -45,7 +45,7 @@ const buildRoboRIO = async (status: vscode.StatusBarItem) => {
             "Build Roborio",
             "vscode-miscar",
             new vscode.ShellExecution(
-                "Get-ChildItem -Path './cbuild' | Remove-Item -Recurse -Confirm:$false -Force; cmake -S ./ -B ./cbuild -DIS_ROBORIO=TRUE -GNinja -DCMAKE_TOOLCHAIN_FILE='./roborio.toolchain.cmake'; cd cbuild; ninja"
+                `cd ${join(folders[0].uri.fsPath, "cbuild")} && del /F /Q * && cmake .. -GNinja -DCMAKE_TOOLCHAIN_FILE=../roborio.toolchain.cmake -DIS_ROBORIO=TRUE && ninja`
             )
         )
         setupAndBuild.presentationOptions.clear = true
@@ -57,7 +57,7 @@ const buildRoboRIO = async (status: vscode.StatusBarItem) => {
             folders[0],
             "Build Roborio",
             "vscode-miscar",
-            new vscode.ShellExecution("cd cbuild; ninja")
+            new vscode.ShellExecution(`cd ${join(folders[0].uri.fsPath, "cbuild")} && ninja`)
         )
         build.presentationOptions.clear = true
         build.presentationOptions.echo = true

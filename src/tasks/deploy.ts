@@ -4,9 +4,11 @@ import { join, resolve } from "path"
 import { readdirSync } from "fs"
 
 let commands = vscode.window.createOutputChannel("Commands")
-const runCommand = (client: NodeSSH, command: string) => {
-    client.execCommand(command).catch((error: string) => {
+const runCommand = async (client: NodeSSH, command: string) => {
+    while (!client.isConnected());
+    await client.execCommand(command).catch((error: string) => {
         commands.appendLine(error)
+        commands.appendLine("connection status " + client.isConnected())
     })
     commands.appendLine(command)
 }
@@ -27,7 +29,6 @@ const deploy = async (context: vscode.ExtensionContext) => {
     const roborioRoot = join(context.globalStorageUri.fsPath, "roborio")
     await vscode.commands.executeCommand("miscar.buildRoboRIO")
     vscode.tasks.onDidEndTask(async () => {
-        const ssh = new NodeSSH()
         for (const folder of folders) {
             const robotBinaryLocation = join(
                 folder.uri.fsPath,
@@ -79,6 +80,8 @@ const deploy = async (context: vscode.ExtensionContext) => {
             ]
             let connects: any[] = []
             adresses.map((adress) => {
+                const ssh = new NodeSSH()
+
                 connects.push(
                     new Promise((resolve) => {
                         ssh.connect({
@@ -86,7 +89,7 @@ const deploy = async (context: vscode.ExtensionContext) => {
                             username: "admin",
                         })
                             .then(() => {
-                                resolve(adress)
+                                resolve({ "adress": adress, "ssh": ssh })
                             })
                             .catch(() => {
                                 if (!isRobotConnected) {
@@ -182,7 +185,9 @@ const deploy = async (context: vscode.ExtensionContext) => {
             //             reject("roboRIO-1574-FRC.local")
             //         })
             // })
-            Promise.race(connects).then(async (ip) => {
+            Promise.race(connects).then(async (connectionData) => {
+                const ip = connectionData['adress']
+                const ssh = connectionData['ssh']
                 isRobotConnected = true
                 commands.appendLine("Conneted to " + ip)
                 await runCommand(
@@ -218,7 +223,8 @@ const deploy = async (context: vscode.ExtensionContext) => {
                     ". /etc/profile.d/natinst-path.sh; /usr/local/frc/bin/frcKillRobot.sh -t -r"
                 )
 
-                ssh.putFiles(moveFiles)
+                await ssh.putFiles(moveFiles)
+                commands.appendLine("Deploy Complete")
             })
         }
     })

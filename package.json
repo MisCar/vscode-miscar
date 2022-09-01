@@ -134,6 +134,8 @@
         "@types/glob": "^7.1.4",
         "@types/mocha": "^9.0.0",
         "@types/node": "^14.18.24",
+        "@types/ssh2": "^1.11.5",
+        "@types/ssh2-streams": "^0.1.9",
         "@types/vscode": "^1.62.0",
         "@typescript-eslint/eslint-plugin": "^5.1.0",
         "@typescript-eslint/parser": "^5.1.0",
@@ -154,6 +156,7 @@
     "repository": "https://github.com/miscar/vscode-miscar",
     "homepage": "https://github.com/miscar/vscode-miscar",
     "dependencies": {
-        "node-ssh": "^13.0.0"
+        "node-ssh": "^13.0.0",
+        "ssh2-streams": "^0.4.10"
     }
 }

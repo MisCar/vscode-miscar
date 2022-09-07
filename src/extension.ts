@@ -43,8 +43,8 @@ export const activate = (context: vscode.ExtensionContext) => {
             buildRoboRIO(status)
         ),
         vscode.commands.registerCommand("miscar.test", test),
-        vscode.commands.registerCommand("miscar.deploy", () => deploy(context)),
-        vscode.commands.registerCommand("miscar.fastDeploy", fastDeploy),
+        vscode.commands.registerCommand("miscar.deploy", () => deploy(context, false)),
+        vscode.commands.registerCommand("miscar.fastDeploy", () => deploy(context, true)),
         vscode.commands.registerCommand("miscar.runSimulation", runSimulation),
         vscode.commands.registerCommand("miscar.startTool", startTool),
         vscode.commands.registerCommand("miscar.newClass", newClass),

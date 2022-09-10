@@ -3,6 +3,16 @@ import { NodeSSH } from "node-ssh"
 import { join, resolve } from "path"
 import { readdirSync } from "fs"
 
+const ADDRESSES = [
+    "10.15.74.2",
+    "172.22.11.2",
+    "roborio-1574-frc.local",
+    "roborio-1574-frc",
+    "roborio-1574-frc.lan",
+    "roborio-1574-frc.frc-field.local",
+    "roboRIO-1574-FRC.local",
+]
+
 let commands = vscode.window.createOutputChannel("Commands")
 const runCommand = async (client: NodeSSH, command: string) => {
     while (!client.isConnected());
@@ -12,6 +22,20 @@ const runCommand = async (client: NodeSSH, command: string) => {
     })
     commands.appendLine(command)
 }
+
+const raceFirstSuccess = (promises: Promise<any>[]) => {
+    return Promise.all(promises.map(p =>
+        p.then(
+            value => Promise.reject(value),
+            error => Promise.resolve(error)
+        )
+    )).then(
+        errors => Promise.reject(errors),
+        value => Promise.resolve(value)
+    );
+}
+
+let stillTrying = [...ADDRESSES]
 
 const deploy = async (context: vscode.ExtensionContext, isFast: boolean) => {
     let isRobotConnected = false
@@ -34,6 +58,7 @@ const deploy = async (context: vscode.ExtensionContext, isFast: boolean) => {
             event.execution.task.definition.type === "miscar.buildRoboRIO" && event.exitCode === 0) {
 
             for (const folder of folders) {
+                stillTrying = [...ADDRESSES]
                 const robotBinaryLocation = join(
                     folder.uri.fsPath,
                     "cbuild",
@@ -75,21 +100,14 @@ const deploy = async (context: vscode.ExtensionContext, isFast: boolean) => {
                 commands.clear()
                 commands.show(true)
 
-                let adresses: any[] = [
-                    "10.15.74.2",
-                    "172.22.11.2",
-                    "roborio-1574-frc.local",
-                    "roborio-1574-frc",
-                    "roborio-1574-frc.lan",
-                    "roborio-1574-frc.frc-field.local",
-                    "roboRIO-1574-FRC.local",
-                ]
-                let connects: any[] = []
-                adresses.map((adress) => {
+                let connects: Promise<{
+                    "adress": string,
+                    "ssh": NodeSSH
+                }>[] = ADDRESSES.map((adress) => {
                     const ssh = new NodeSSH()
 
-                    connects.push(
-                        new Promise((resolve) => {
+                    return (
+                        new Promise((resolve, reject) => {
                             ssh.connect({
                                 host: adress,
                                 username: "admin",
@@ -97,17 +115,21 @@ const deploy = async (context: vscode.ExtensionContext, isFast: boolean) => {
                                 .then(() => {
                                     resolve({ "adress": adress, "ssh": ssh })
                                 })
-                                .catch(() => {
-                                    if (!isRobotConnected) {
+                                .catch((e) => {
+                                    if (!isRobotConnected && stillTrying.includes(adress)) {
+                                        stillTrying.splice(stillTrying.indexOf(adress), 1)
                                         commands.appendLine(
                                             "Cant connect to " + adress
                                         )
                                     }
+                                    ssh.dispose()
+                                    reject(e)
                                 })
                         })
                     )
                 })
-                Promise.race(connects).then(async (connectionData) => {
+
+                raceFirstSuccess(connects).then(async (connectionData) => {
                     if (!startedDeploy) {
                         startedDeploy = true
                         const ip = connectionData['adress']
@@ -150,9 +172,13 @@ const deploy = async (context: vscode.ExtensionContext, isFast: boolean) => {
                             await ssh.putFiles(moveFiles)
                         }
                         ssh.dispose()
-                        ssh.Connection.close()
+                        for (const p of connects) {
+                            p.then(({ ssh }) => ssh.dispose())
+                        }
                         commands.appendLine("Deploy Complete")
                     }
+                }).catch(() => {
+                    console.log("Failed to deploy")
                 })
             }
         }

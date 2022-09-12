@@ -30,8 +30,12 @@ const raceFirstSuccess = (promises: Promise<any>[]) => {
             error => Promise.resolve(error)
         )
     )).then(
-        errors => Promise.reject(errors),
-        value => Promise.resolve(value)
+        errors => {
+            Promise.reject(errors)
+        },
+        value => {
+            Promise.resolve(value)
+        }
     );
 }
 
@@ -40,6 +44,8 @@ let stillTrying = [...ADDRESSES]
 const deploy = async (context: vscode.ExtensionContext, isFast: boolean) => {
     let isRobotConnected = false
     let startedDeploy = false
+    let finishedFirstBuild = false
+    let failedConnects = 0
     const folders = vscode.workspace.workspaceFolders
     if (folders === undefined) {
         return
@@ -55,8 +61,8 @@ const deploy = async (context: vscode.ExtensionContext, isFast: boolean) => {
     await vscode.commands.executeCommand("miscar.buildRoboRIO")
     vscode.tasks.onDidEndTaskProcess((event) => {
         if (
-            event.execution.task.definition.type === "miscar.buildRoboRIO" && event.exitCode === 0) {
-
+            event.execution.task.definition.type === "miscar.buildRoboRIO" && event.exitCode === 0 && !finishedFirstBuild) {
+            finishedFirstBuild = true
             for (const folder of folders) {
                 stillTrying = [...ADDRESSES]
                 const robotBinaryLocation = join(
@@ -116,6 +122,7 @@ const deploy = async (context: vscode.ExtensionContext, isFast: boolean) => {
                                     resolve({ "adress": adress, "ssh": ssh })
                                 })
                                 .catch((e) => {
+                                    failedConnects++
                                     if (!isRobotConnected && stillTrying.includes(adress)) {
                                         stillTrying.splice(stillTrying.indexOf(adress), 1)
                                         commands.appendLine(
@@ -123,13 +130,16 @@ const deploy = async (context: vscode.ExtensionContext, isFast: boolean) => {
                                         )
                                     }
                                     ssh.dispose()
-                                    reject(e)
+                                    if (failedConnects == ADDRESSES.length) {
+                                        reject(e)
+                                    }
                                 })
                         })
                     )
                 })
 
-                raceFirstSuccess(connects).then(async (connectionData) => {
+                Promise.race(connects).then(async (connectionData: any) => {
+
                     if (!startedDeploy) {
                         startedDeploy = true
                         const ip = connectionData['adress']
@@ -178,8 +188,10 @@ const deploy = async (context: vscode.ExtensionContext, isFast: boolean) => {
                         commands.appendLine("Deploy Complete")
                     }
                 }).catch(() => {
+                    commands.appendLine("Deploy Failed")
                     console.log("Failed to deploy")
                 })
+
             }
         }
     })

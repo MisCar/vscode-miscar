@@ -172,15 +172,22 @@ const deploy = async (context: vscode.ExtensionContext, isFast: boolean) => {
                             `setcap cap_sys_nice+eip ${robotBinaryDestination}`
                         )
 
+                        await runCommand(ssh, `echo ${robotBinaryDestination}s > /home/lvuser/robotCommand`)
+                        await runCommand(ssh, "chmod +x /home/lvuser/robotCommand")
+                        await runCommand(ssh, "chown lvuser:ni /home/lvuser/robotCommand")
+
+                        if (!isFast) {
+                            await ssh.putFiles(moveFiles)
+                        }
+
+                        commands.appendLine("Restarting Robot Code...")
                         await runCommand(ssh, "sync")
                         await runCommand(ssh, "ldconfig")
                         await runCommand(
                             ssh,
                             ". /etc/profile.d/natinst-path.sh; /usr/local/frc/bin/frcKillRobot.sh -t -r"
                         )
-                        if (!isFast) {
-                            await ssh.putFiles(moveFiles)
-                        }
+
                         ssh.dispose()
                         for (const p of connects) {
                             p.then(({ ssh }) => ssh.dispose())

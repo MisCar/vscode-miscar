@@ -17,46 +17,22 @@ const buildLocal = async (context: vscode.ExtensionContext) => {
         )
         .forEach((execution) => execution.terminate())
 
-    const CMakeLists = readFileSync(
-        join(folders[0].uri.fsPath, "./CMakeLists.txt"),
-        "utf-8"
+
+
+    const setupAndBuild = new vscode.Task(
+        { type: "miscar.buildLocal" },
+        folders[0],
+        "Build Local",
+        "vscode-miscar",
+        new vscode.ShellExecution(
+            `cmake ../.. -GNinja  -DIS_ROBORIO=FALSE && ninja`, { cwd: join(folders[0].uri.fsPath, "build/local") })
+
     )
+    setupAndBuild.presentationOptions.clear = true
+    setupAndBuild.presentationOptions.echo = true
 
-    if (!CMakeLists.includes("#local")) {
-        writeFileSync(
-            join(folders[0].uri.fsPath, "./CMakeLists.txt"),
-            CMakeLists.replace("#roborio", "#local").replace(
-                "#firsttime",
-                "#local"
-            )
-        )
+    vscode.tasks.executeTask(setupAndBuild)
 
-        const setupAndBuild = new vscode.Task(
-            { type: "miscar.buildLocal" },
-            folders[0],
-            "Build Local",
-            "vscode-miscar",
-            new vscode.ShellExecution(
-                "Get-ChildItem -Path './cbuild' | Remove-Item -Recurse -Confirm:$false -Force; cmake -S ./ -B ./cbuild -DIS_ROBORIO=FALSE -GNinja; cd cbuild; ninja"
-            )
-        )
-        setupAndBuild.presentationOptions.clear = true
-        setupAndBuild.presentationOptions.echo = true
-
-        vscode.tasks.executeTask(setupAndBuild)
-    } else {
-        const build = new vscode.Task(
-            { type: "miscar.buildLocal" },
-            folders[0],
-            "Build Local",
-            "vscode-miscar",
-            new vscode.ShellExecution("cd cbuild; ninja")
-        )
-        build.presentationOptions.clear = true
-        build.presentationOptions.echo = true
-
-        vscode.tasks.executeTask(build)
-    }
 }
 
 export default buildLocal

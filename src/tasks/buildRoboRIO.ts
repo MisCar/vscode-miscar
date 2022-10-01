@@ -25,49 +25,23 @@ const buildRoboRIO = async (status: vscode.StatusBarItem) => {
         )
         .forEach((execution) => execution.terminate())
 
-    const CMakeLists = readFileSync(
-        join(folders[0].uri.fsPath, "./CMakeLists.txt"),
-        "utf-8"
+
+    const build = new vscode.Task(
+        { type: "miscar.buildRoboRIO" },
+        folders[0],
+        "Build Roborio",
+        "vscode-miscar",
+        new vscode.ShellExecution(`cmake ../.. -GNinja -DCMAKE_TOOLCHAIN_FILE=../../roborio.toolchain.cmake -DIS_ROBORIO=TRUE && ninja && echo %date:~-4%/%date:~3,2%/%date:~0,2% %time:~0,2%:%time:~3,2%:%time:~6,2%`, { cwd: join(folders[0].uri.fsPath, "build/roborio") })
     )
+    build.presentationOptions.clear = true
+    build.presentationOptions.echo = true
 
-    if (!CMakeLists.includes("#roborio")) {
-        writeFileSync(
-            join(folders[0].uri.fsPath, "./CMakeLists.txt"),
-            CMakeLists.replace("#local", "#roborio").replace(
-                "#firsttime",
-                "#roborio"
-            )
-        )
+    build.isBackground = false
+    build.presentationOptions.focus = false
+    //execSync(`cd ${join(folders[0].uri.fsPath, "build/roborio")}`)
+    //execSync("ninja")
+    vscode.tasks.executeTask(build)
 
-        const setupAndBuild = new vscode.Task(
-            { type: "miscar.buildRoboRIO" },
-            folders[0],
-            "Build Roborio",
-            "vscode-miscar",
-            new vscode.ShellExecution(
-                `cd ${join(folders[0].uri.fsPath, "cbuild")} && del /F /Q * && cmake .. -GNinja -DCMAKE_TOOLCHAIN_FILE=../roborio.toolchain.cmake -DIS_ROBORIO=TRUE && ninja`
-            )
-        )
-        setupAndBuild.presentationOptions.clear = true
-        setupAndBuild.presentationOptions.echo = true
-        await vscode.tasks.executeTask(setupAndBuild)
-    } else {
-        const build = new vscode.Task(
-            { type: "miscar.buildRoboRIO" },
-            folders[0],
-            "Build Roborio",
-            "vscode-miscar",
-            new vscode.ShellExecution(`cd ${join(folders[0].uri.fsPath, "cbuild")} && ninja`)
-        )
-        build.presentationOptions.clear = true
-        build.presentationOptions.echo = true
-
-        build.isBackground = false
-        build.presentationOptions.focus = false
-        //execSync(`cd ${join(folders[0].uri.fsPath, "cbuild")}`)
-        //execSync("ninja")
-        vscode.tasks.executeTask(build)
-    }
 }
 
 export default buildRoboRIO

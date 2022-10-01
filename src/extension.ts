@@ -13,6 +13,7 @@ import wpiformat from "./tasks/wpiformat"
 import createIndex from "./tasks/createIndex"
 import clearCompileFlags from "./tasks/clearCompileFlags"
 import fastDeploy from "./tasks/fastDeploy"
+import openInstallDirectory from "./tasks/openInstallDirectory"
 
 export let buildRoboRIOProcess: ChildProcess | undefined
 export let roboRIOKilledProcesses: ChildProcess[] = []
@@ -56,6 +57,7 @@ export const activate = (context: vscode.ExtensionContext) => {
         vscode.commands.registerCommand("miscar.clearCompileFlags", () =>
             clearCompileFlags(context)
         ),
+        vscode.commands.registerCommand("miscar.openInstallDirectory", () => openInstallDirectory(context)),
         vscode.commands.registerCommand("miscar.showOutput", () => {
             if (
                 vscode.window.activeTextEditor?.document.fileName.startsWith(

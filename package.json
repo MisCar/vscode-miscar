@@ -3,7 +3,7 @@
     "displayName": "MisCar",
     "description": "Faster FRC development",
     "publisher": "miscar",
-    "version": "2023.0.2",
+    "version": "2023.0.5",
     "license": "MIT",
     "icon": "icon.png",
     "engines": {
@@ -30,7 +30,8 @@
         "onCommand:miscar.newClass",
         "onCommand:miscar.wpiformat",
         "onCommand:miscar.createIndex",
-        "onCommand:miscar.clearCompileFlags"
+        "onCommand:miscar.clearCompileFlags",
+        "onCommand:miscar.openInstallDirectory"
     ],
     "main": "./dist/extension.js",
     "contributes": {
@@ -94,6 +95,10 @@
             {
                 "command": "miscar.clearCompileFlags",
                 "title": "MisCar: Clear Compile Flags"
+            },
+            {
+                "command": "miscar.openInstallDirectory",
+                "title": "MisCar: Open Install Directory"
             }
         ],
         "menus": {

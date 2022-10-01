@@ -67,7 +67,7 @@ const deploy = async (context: vscode.ExtensionContext, isFast: boolean) => {
                 stillTrying = [...ADDRESSES]
                 const robotBinaryLocation = join(
                     folder.uri.fsPath,
-                    "cbuild",
+                    "build/roborio",
                     "robot"
                 )
 
@@ -109,24 +109,24 @@ const deploy = async (context: vscode.ExtensionContext, isFast: boolean) => {
                 let connects: Promise<{
                     "adress": string,
                     "ssh": NodeSSH
-                }>[] = ADDRESSES.map((adress) => {
+                }>[] = ADDRESSES.map((address) => {
                     const ssh = new NodeSSH()
 
                     return (
                         new Promise((resolve, reject) => {
                             ssh.connect({
-                                host: adress,
+                                host: address,
                                 username: "admin",
                             })
                                 .then(() => {
-                                    resolve({ "adress": adress, "ssh": ssh })
+                                    resolve({ "adress": address, "ssh": ssh })
                                 })
                                 .catch((e) => {
                                     failedConnects++
-                                    if (!isRobotConnected && stillTrying.includes(adress)) {
-                                        stillTrying.splice(stillTrying.indexOf(adress), 1)
+                                    if (!isRobotConnected && stillTrying.includes(address)) {
+                                        stillTrying.splice(stillTrying.indexOf(address), 1)
                                         commands.appendLine(
-                                            "Cant connect to " + adress
+                                            "Cant connect to " + address
                                         )
                                     }
                                     ssh.dispose()
@@ -172,7 +172,7 @@ const deploy = async (context: vscode.ExtensionContext, isFast: boolean) => {
                             `setcap cap_sys_nice+eip ${robotBinaryDestination}`
                         )
 
-                        await runCommand(ssh, `echo ${robotBinaryDestination}s > /home/lvuser/robotCommand`)
+                        await runCommand(ssh, `echo ${robotBinaryDestination} > /home/lvuser/robotCommand`)
                         await runCommand(ssh, "chmod +x /home/lvuser/robotCommand")
                         await runCommand(ssh, "chown lvuser:ni /home/lvuser/robotCommand")
 

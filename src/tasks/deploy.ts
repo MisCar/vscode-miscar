@@ -2,7 +2,6 @@ import * as vscode from "vscode"
 import { NodeSSH } from "node-ssh"
 import { join, resolve } from "path"
 import { readdirSync } from "fs"
-import { time } from "console"
 
 const ADDRESSES = [
     "10.15.74.2",

@@ -1,7 +1,6 @@
 import * as vscode from "vscode"
 import { NodeSSH } from "node-ssh"
-import { join, resolve } from "path"
-import { readdirSync } from "fs"
+import { join } from "path"
 
 let commands = vscode.window.createOutputChannel("Commands")
 const runCommand = async (client: NodeSSH, command: string) => {
@@ -39,7 +38,7 @@ const fastDeploy = async () => {
                 commands.clear()
                 commands.show(true)
 
-                let adresses: any[] = [
+                let addresses: any[] = [
                     "10.15.74.2",
                     "172.22.11.2",
                     "roborio-1574-frc.local",
@@ -49,22 +48,22 @@ const fastDeploy = async () => {
                     "roboRIO-1574-FRC.local",
                 ]
                 let connects: any[] = []
-                adresses.map((adress) => {
+                addresses.map((address) => {
                     const ssh = new NodeSSH()
 
                     connects.push(
                         new Promise((resolve) => {
                             ssh.connect({
-                                host: adress,
+                                host: address,
                                 username: "admin",
                             })
                                 .then(() => {
-                                    resolve({ "adress": adress, "ssh": ssh })
+                                    resolve({ "address": address, "ssh": ssh })
                                 })
                                 .catch(() => {
                                     if (!isRobotConnected) {
                                         commands.appendLine(
-                                            "Cant connect to " + adress
+                                            "Cant connect to " + address
                                         )
                                     }
                                 })
@@ -72,7 +71,7 @@ const fastDeploy = async () => {
                     )
                 })
                 Promise.race(connects).then(async (connectionData) => {
-                    const ip = connectionData['adress']
+                    const ip = connectionData['address']
                     const ssh = connectionData['ssh']
                     isRobotConnected = true
                     commands.appendLine("Conneted to " + ip)

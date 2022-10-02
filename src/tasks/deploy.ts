@@ -2,6 +2,7 @@ import * as vscode from "vscode"
 import { NodeSSH } from "node-ssh"
 import { join, resolve } from "path"
 import { readdirSync } from "fs"
+import { time } from "console"
 
 const ADDRESSES = [
     "10.15.74.2",
@@ -107,7 +108,7 @@ const deploy = async (context: vscode.ExtensionContext, isFast: boolean) => {
                 commands.show(true)
 
                 let connects: Promise<{
-                    "adress": string,
+                    "address": string,
                     "ssh": NodeSSH
                 }>[] = ADDRESSES.map((address) => {
                     const ssh = new NodeSSH()
@@ -119,7 +120,7 @@ const deploy = async (context: vscode.ExtensionContext, isFast: boolean) => {
                                 username: "admin",
                             })
                                 .then(() => {
-                                    resolve({ "adress": address, "ssh": ssh })
+                                    resolve({ "address": address, "ssh": ssh })
                                 })
                                 .catch((e) => {
                                     failedConnects++
@@ -142,7 +143,7 @@ const deploy = async (context: vscode.ExtensionContext, isFast: boolean) => {
 
                     if (!startedDeploy) {
                         startedDeploy = true
-                        const ip = connectionData['adress']
+                        const ip = connectionData['address']
                         const ssh = connectionData['ssh']
                         isRobotConnected = true
                         commands.appendLine("Conneted to " + ip)
@@ -197,6 +198,10 @@ const deploy = async (context: vscode.ExtensionContext, isFast: boolean) => {
                 }).catch(() => {
                     commands.appendLine("Deploy Failed")
                     console.log("Failed to deploy")
+                }).finally(() => {
+                    let date: Date = new Date()
+                    commands.appendLine(
+                        date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds())
                 })
 
             }

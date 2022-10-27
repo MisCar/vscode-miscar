@@ -287,6 +287,8 @@ project(robot)
 
 file(GLOB_RECURSE SOURCES "src/main/cpp/*.cpp")
 add_executable(robot \${SOURCES})
+file(GLOB_RECURSE LIBMISCAR "c:/Users/progr/Developer/libmiscar/src/main/cpp/miscar/*.cpp" )
+target_sources(robot PRIVATE  \${LIBMISCAR})
 set_property(TARGET robot PROPERTY CXX_STANDARD 17)
 target_compile_options(robot PUBLIC -Wno-psabi)
 include_directories(src/main/cpp)

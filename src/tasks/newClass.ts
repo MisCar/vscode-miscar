@@ -115,10 +115,10 @@ void ${className}::Periodic() {}
             .map((subsystem) => `#include "subsystems/${subsystem}.h"`)
             .join("\n")
         const subsystemMembers = usesSubsystems
-            .map((subsystem) => `${subsystem}& m_${subsystem.toLowerCase()};`)
+            .map((subsystem) => `${subsystem} *m_${subsystem.toLowerCase()};`)
             .join("\n    ")
         const subsystemReferences = usesSubsystems
-            .map((subsystem) => `${subsystem}& ${subsystem.toLowerCase()}`)
+            .map((subsystem) => `${subsystem} *${subsystem.toLowerCase()}`)
             .join(", ")
         const subsystemInitializers = usesSubsystems
             .map(
@@ -132,7 +132,7 @@ void ${className}::Periodic() {}
                 ? ""
                 : "\n    AddRequirements({ " +
                   requiresSubsystems
-                      .map((subsystem) => "&" + subsystem.toLowerCase())
+                      .map((subsystem) => subsystem.toLowerCase())
                       .join(", ") +
                   " });\n"
         switch (

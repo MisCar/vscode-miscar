@@ -18,6 +18,7 @@ import { status, STATUS_READY } from "../extension"
 
 const NI_VERSION = "2022.4.0"
 const WPILIB_VERSION = "2022.4.1"
+
 const OPENCV_VERSION = "4.5.2-1"
 const FRC_YEAR = "frc2022"
 
@@ -226,10 +227,15 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
     for (const vendordep of vendordeps) {
         stage = vendordep.name.toLowerCase()
         for (const dependency of vendordep.cppDependencies) {
+            let mavenUrl = vendordep.mavenUrls[0]
+            if (!mavenUrl.endsWith("/")) {
+                mavenUrl += "/"
+            }
+
             await installAll(
                 dependency.artifactId,
                 dependency.version,
-                vendordep.mavenUrls[0] + dependency.groupId.replace(/\./g, "/")
+                mavenUrl + dependency.groupId.replace(/\./g, "/")
             )
         }
     }

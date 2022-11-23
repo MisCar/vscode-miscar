@@ -332,7 +332,14 @@ target_link_libraries(robot ${libraryName})`
 else()
 ${localDirectories
                     .map((dir) => {
-                        const objectDirectory = join(dir, "windows", "x86-64", "shared")
+                        let objectDirectory = "";
+                        if (platform == "windows") {
+                            objectDirectory = join(dir, "windows", "x86-64", "shared")
+                        } else if (platform == "mac") {
+                            objectDirectory = join(dir, "osx", "x86-64", "shared")
+                        } else if (platform == "linux") {
+                            objectDirectory = join(dir, "linux", "x86-64", "shared")
+                        }
 
                         return readdirSync(objectDirectory)
                             .filter(

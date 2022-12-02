@@ -63,7 +63,7 @@ const getWithRedirects = (
     //     url = url.replace("https", "http")
     //     get = httpGet
     // }
-
+    console.log(url)
     get(url, (response) => {
         if (
             response.statusCode &&
@@ -404,6 +404,92 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)`
             )
         }
     }
+
+    if (vscode.workspace.workspaceFolders != undefined) {
+        if (!existsSync(join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build"))) {
+            mkdirSync(join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build"))
+        }
+
+        if (!existsSync(join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build", "roborio"))) {
+            mkdirSync(join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build", "roborio"))
+        }
+
+        if (!existsSync(join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build", "local"))) {
+            mkdirSync(join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build", "local"))
+        }
+
+        if (!existsSync(join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build", "roborio", "build.py"))) {
+            writeFileSync(join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build", "roborio", "build.py"), `import subprocess
+from colorama import Fore
+from colorama import Sty
+process = subprocess.Popen("ninja -k 1", stdout=subprocess.PIPE,cwd='./build/roborio
+need_space = False
+last_line = ""
+while True:
+    line = process.stdout.readline()
+    if not line:
+        break           
+    if line == b"": 
+        contin
+    if("In file included from" in line.decode() or "arm-frc2022-linux-gnueabi-g++.exe" in line.decode()):
+        continue
+    if(need_space and "FAILED" in line.decode()):
+        print("\n\n")
+        print(line.decode().replace("FAILED:",'\033[1m' +  f"{Fore.RED}FAILED:{Style.RESET_ALL}" + '\033[0m'))
+        need_space = False
+        last_line = ""
+        continue
+    elif(need_space):
+        print(last_line)
+    elif(not "Building CXX object" in line.decode()):
+        print(line.decode().replace("error:",'\033[1m' +  f"{Fore.RED}error:{Style.RESET_ALL}" + '\033[0m').replace("~",f"{Fore.GREEN}~{Style.RESET_ALL}").replace("^",f"{Fore.GREEN}^{Style.RESET_ALL}").replace("warning:", f"{Fore.YELLOW}warning:{Style.RESET_ALL}"), end="")
+    else:
+        last_line = line.decode()
+        need_space = True
+        continue
+`)
+        }
+
+        //         if (!existsSync(join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build", "local", "build.py"))) {
+        //             writeFileSync(join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build", "local", "build.py"),
+        //                 `
+        // import subprocess
+        // from colorama import Fore
+        // from colorama import Style
+
+        // process = subprocess.Popen("cmake ../.. -GNinja -DIS_ROBORIO=FALSE && ninja -k 1", stdout=subprocess.PIPE,cwd='./build/local')
+
+        // need_space = False
+        // last_line = ""
+        // while True:
+        //     line = process.stdout.readline()
+        //     if not line:
+        //         break       
+        //     if line == b"": 
+        //         continue
+
+        //     if("In file included from" in line.decode() or "arm-frc2022-linux-gnueabi-g++.exe" in line.decode()):
+        //         continue
+        //     if(need_space and "FAILED" in line.decode()):
+        //         print("\n\n")
+        //         print(line.decode().replace("FAILED:",'\033[1m' +  f"{Fore.RED}FAILED:{Style.RESET_ALL}" + '\033[0m'))
+        //         need_space = False
+        //         last_line = ""
+        //         continue
+        //     elif(need_space):
+        //         print(last_line)
+        //     elif(not "Building CXX object" in line.decode()):
+        //         print(line.decode().replace("error:",'\033[1m' +  f"{Fore.RED}error:{Style.RESET_ALL}" + '\033[0m').replace("~",f"{Fore.GREEN}~{Style.RESET_ALL}").replace("^",f"{Fore.GREEN}^{Style.RESET_ALL}").replace("warning:", f"{Fore.YELLOW}warning:{Style.RESET_ALL}"), end="")
+        //     else:
+        //         last_line = line.decode()
+        //         need_space = True
+        //         continue
+        // `)
+        //         }
+
+    }
+
+
 
     vscode.window.showInformationMessage("Succesfully created compile flags")
 }

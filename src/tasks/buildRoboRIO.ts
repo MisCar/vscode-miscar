@@ -31,7 +31,7 @@ const buildRoboRIO = async (status: vscode.StatusBarItem) => {
         folders[0],
         "Build Roborio",
         "vscode-miscar",
-        new vscode.ShellExecution(`cmake ../.. -GNinja -DCMAKE_TOOLCHAIN_FILE=../../roborio.toolchain.cmake -DIS_ROBORIO=TRUE && ninja && echo %date:~-4%/%date:~3,2%/%date:~0,2% %time:~0,2%:%time:~3,2%:%time:~6,2%`, { cwd: join(folders[0].uri.fsPath, "build/roborio") })
+        new vscode.ShellExecution(`py build.py`, { cwd: join(folders[0].uri.fsPath, "build/roborio") })
     )
     build.presentationOptions.clear = true
     build.presentationOptions.echo = true

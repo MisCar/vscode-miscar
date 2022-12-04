@@ -419,10 +419,23 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)`
         }
 
         if (!existsSync(join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build", "roborio", "build.py"))) {
-            writeFileSync(join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build", "roborio", "build.py"), `import subprocess
+
+            const pyfile: string = `import subprocess
 from colorama import Fore
-from colorama import Sty
-process = subprocess.Popen("ninja -k 1", stdout=subprocess.PIPE,cwd='./build/roborio
+from colorama import Style
+import sys
+import datetime
+
+pre_process = subprocess.Popen("cmake ../.. -GNinja -DCMAKE_TOOLCHAIN_FILE=../../roborio.toolchain.cmake -DIS_ROBORIO=TRUE", stdout=subprocess.PIPE)
+while True:
+    line = pre_process.stdout.readline()
+    if not line:
+        break           
+    if line == b"": 
+        continue
+    print(line.decode())
+process = subprocess.Popen("ninja -k 1", stdout=subprocess.PIPE)
+
 need_space = False
 last_line = ""
 while True:
@@ -430,62 +443,83 @@ while True:
     if not line:
         break           
     if line == b"": 
-        contin
+        continue
     if("In file included from" in line.decode() or "arm-frc2022-linux-gnueabi-g++.exe" in line.decode()):
         continue
     if(need_space and "FAILED" in line.decode()):
-        print("\n\n")
-        print(line.decode().replace("FAILED:",'\033[1m' +  f"{Fore.RED}FAILED:{Style.RESET_ALL}" + '\033[0m'))
+        print("\\n\\n")
+        print(line.decode().replace("FAILED:","\\033[1m" +  f"{Fore.RED}FAILED:{Style.RESET_ALL}" + "\\033[0m"))
         need_space = False
         last_line = ""
         continue
     elif(need_space):
         print(last_line)
+        last_line = line.decode()
     elif(not "Building CXX object" in line.decode()):
-        print(line.decode().replace("error:",'\033[1m' +  f"{Fore.RED}error:{Style.RESET_ALL}" + '\033[0m').replace("~",f"{Fore.GREEN}~{Style.RESET_ALL}").replace("^",f"{Fore.GREEN}^{Style.RESET_ALL}").replace("warning:", f"{Fore.YELLOW}warning:{Style.RESET_ALL}"), end="")
+        print(line.decode().replace("error:","\\033[1m" +  f"{Fore.RED}error:{Style.RESET_ALL}" + "\\033[0m").replace("~",f"{Fore.GREEN}~{Style.RESET_ALL}").replace("^",f"{Fore.GREEN}^{Style.RESET_ALL}").replace("warning:", f"{Fore.YELLOW}warning:{Style.RESET_ALL}"), end="")
     else:
         last_line = line.decode()
         need_space = True
-        continue
-`)
+process.wait()
+print(datetime)
+sys.exit(process.poll())`
+            writeFileSync(
+                join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build", "roborio", "build.py"),
+                pyfile
+            )
         }
 
-        //         if (!existsSync(join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build", "local", "build.py"))) {
-        //             writeFileSync(join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build", "local", "build.py"),
-        //                 `
-        // import subprocess
-        // from colorama import Fore
-        // from colorama import Style
+        if (!existsSync(join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build", "local", "build.py"))) {
 
-        // process = subprocess.Popen("cmake ../.. -GNinja -DIS_ROBORIO=FALSE && ninja -k 1", stdout=subprocess.PIPE,cwd='./build/local')
+            const pyfile: string = `import subprocess
+from colorama import Fore
+from colorama import Style
+import sys
 
-        // need_space = False
-        // last_line = ""
-        // while True:
-        //     line = process.stdout.readline()
-        //     if not line:
-        //         break       
-        //     if line == b"": 
-        //         continue
+pre_process = subprocess.Popen("cmake ../.. -GNinja -DIS_ROBORIO=FALSE", stdout=subprocess.PIPE)
+while True:
+    line = pre_process.stdout.readline()
+    if not line:
+        break           
+    if line == b"": 
+        continue
+    print(line.decode())
+process = subprocess.Popen("ninja -k 1", stdout=subprocess.PIPE)
 
-        //     if("In file included from" in line.decode() or "arm-frc2022-linux-gnueabi-g++.exe" in line.decode()):
-        //         continue
-        //     if(need_space and "FAILED" in line.decode()):
-        //         print("\n\n")
-        //         print(line.decode().replace("FAILED:",'\033[1m' +  f"{Fore.RED}FAILED:{Style.RESET_ALL}" + '\033[0m'))
-        //         need_space = False
-        //         last_line = ""
-        //         continue
-        //     elif(need_space):
-        //         print(last_line)
-        //     elif(not "Building CXX object" in line.decode()):
-        //         print(line.decode().replace("error:",'\033[1m' +  f"{Fore.RED}error:{Style.RESET_ALL}" + '\033[0m').replace("~",f"{Fore.GREEN}~{Style.RESET_ALL}").replace("^",f"{Fore.GREEN}^{Style.RESET_ALL}").replace("warning:", f"{Fore.YELLOW}warning:{Style.RESET_ALL}"), end="")
-        //     else:
-        //         last_line = line.decode()
-        //         need_space = True
-        //         continue
-        // `)
-        //         }
+need_space = False
+last_line = ""
+while True:
+    line = process.stdout.readline()
+    if not line:
+        break           
+    if line == b"": 
+        continue
+    if("In file included from" in line.decode() or "arm-frc2022-linux-gnueabi-g++.exe" in line.decode()):
+        continue
+    if(need_space and "FAILED" in line.decode()):
+        print("\\n\\n")
+        print(line.decode().replace("FAILED:","\\033[1m" +  f"{Fore.RED}FAILED:{Style.RESET_ALL}" + "\\033[0m"))
+        need_space = False
+        last_line = ""
+        continue
+    elif(need_space):
+        print(last_line)
+        last_line = line.decode()
+    elif(not "Building CXX object" in line.decode()):
+        print(line.decode().replace("error:","\\033[1m" +  f"{Fore.RED}error:{Style.RESET_ALL}" + "\\033[0m").replace("~",f"{Fore.GREEN}~{Style.RESET_ALL}").replace("^",f"{Fore.GREEN}^{Style.RESET_ALL}").replace("warning:", f"{Fore.YELLOW}warning:{Style.RESET_ALL}"), end="")
+    else:
+        last_line = line.decode()
+        need_space = True
+process.wait()
+sys.exit(process.poll())`
+            writeFileSync(
+                join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build", "local", "build.py"),
+                pyfile
+            )
+        }
+
+
+
 
     }
 

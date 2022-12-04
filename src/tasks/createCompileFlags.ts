@@ -17,13 +17,13 @@ import { platform } from "../utilities"
 import { status, STATUS_READY } from "../extension"
 
 const NI_VERSION = "2022.4.0"
-const WPILIB_VERSION = "2022.4.1"
+const WPILIB_VERSION = "2023.1.1-beta-4"
 
 const OPENCV_VERSION = "4.5.2-1"
-const FRC_YEAR = "frc2022"
+const FRC_YEAR = "frc2023"
 
-const TOOLCHAIN_VERSION = "v2022-1"
-const TOOLCHAIN_GCC_VERSION = "7.3.0"
+const TOOLCHAIN_VERSION = "v2023-7"
+const TOOLCHAIN_GCC_VERSION = "12.1.0"
 const NI_LIBRARIES = ["visa", "netcomm", "chipobject", "runtime"]
 const WPILIB_LIBRARIES = [
     "wpilibc",
@@ -38,10 +38,10 @@ const WPILIB_LIBRARIES = [
 
 const TOOLCHAIN_URL =
     platform == "windows"
-        ? `https://github.com/wpilibsuite/roborio-toolchain/releases/download/${TOOLCHAIN_VERSION}/FRC-2022-Windows64-Toolchain-${TOOLCHAIN_GCC_VERSION}.zip`
+        ? `https://github.com/wpilibsuite/opensdk/releases/download/${TOOLCHAIN_VERSION}/cortexa9_vfpv3-roborio-academic-2023-x86_64-w64-mingw32-Toolchain-${TOOLCHAIN_GCC_VERSION}.zip`
         : platform == "linux"
-            ? `https://github.com/wpilibsuite/roborio-toolchain/releases/download/${TOOLCHAIN_VERSION}/FRC-2022-Linux-Toolchain-${TOOLCHAIN_GCC_VERSION}.tar.gz`
-            : `https://github.com/wpilibsuite/roborio-toolchain/releases/download/${TOOLCHAIN_VERSION}/FRC-2022-Mac-Toolchain-${TOOLCHAIN_GCC_VERSION}.tar.gz`
+            ? `https://github.com/wpilibsuite/opensdk/releases/download/${TOOLCHAIN_VERSION}/arm64-bullseye-2023-x86_64-linux-gnu-Toolchain-${TOOLCHAIN_GCC_VERSION}.tgz`
+            : `https://github.com/wpilibsuite/opensdk/releases/download/${TOOLCHAIN_VERSION}/arm64-bullseye-2023-x86_64-apple-darwin-Toolchain-${TOOLCHAIN_GCC_VERSION}.tgz`
 
 const localLibraryType =
     platform === "windows"
@@ -63,7 +63,7 @@ const getWithRedirects = (
     //     url = url.replace("https", "http")
     //     get = httpGet
     // }
-    console.log(url)
+    // console.log(url)
     get(url, (response) => {
         if (
             response.statusCode &&
@@ -104,6 +104,7 @@ const getLibrary = (root: string, library: string, url: string) => {
         }
 
         mkdirSync(libraryPath)
+        console.log(url)
         getWithRedirects(url, (response) => {
             if (response.statusCode === 404) {
                 console.log(
@@ -247,7 +248,6 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
     let headerDirectories = []
     const roborioDirectories = []
     for (const folder of libraries) {
-        console.log(folder)
         if (folder.includes("headers")) {
             headerDirectories.push(folder)
         } else if (folder.includes("local")) {
@@ -274,7 +274,7 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
     const libraryIncludes = headerDirectories
         .map((library) => "-I" + library.replace(/\\/g, "/"))
         .join("\n")
-    const compileFlags = libraryIncludes + "\n-std=c++17\n-xc++"
+    const compileFlags = libraryIncludes + "\n-std=c++20\n-xc++"
     for (const folder of libraries) {
         try {
             writeFileSync(join(folder, "compile_flags.txt"), compileFlags)
@@ -287,7 +287,7 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
                 `
 #firsttime
 cmake_minimum_required(VERSION 3.10)
-set(CMAKE_CPP_STANDARD 17)
+set(CMAKE_CPP_STANDARD 20)
 set(CMAKE_CXX_FLAGS "\${CMAKE_CXX_FLAGS} -pthread")
 project(robot)
 
@@ -295,7 +295,7 @@ file(GLOB_RECURSE SOURCES "src/main/cpp/*.cpp")
 add_executable(robot \${SOURCES})
 file(GLOB_RECURSE LIBMISCAR "c:/Users/progr/Developer/libmiscar/src/main/cpp/miscar/*.cpp" )
 target_sources(robot PRIVATE  \${LIBMISCAR})
-set_property(TARGET robot PROPERTY CXX_STANDARD 17)
+set_property(TARGET robot PROPERTY CXX_STANDARD 20)
 target_compile_options(robot PUBLIC -Wno-psabi)
 include_directories(src/main/cpp)
 
@@ -370,13 +370,14 @@ endif()`
             const toolchainRoot = join(
                 root.all,
                 "toolchain",
-                FRC_YEAR,
-                "roborio"
+                "roborio-academic"
             ).replace(/\\/g, "/")
             let executableExtension = ""
             if (platform == "windows") {
                 executableExtension = ".exe"
             }
+
+            console.log(toolchainRoot)
 
             writeFileSync(
                 join(dir.uri.fsPath, "roborio.toolchain.cmake"),
@@ -385,17 +386,18 @@ set(CMAKE_SYSTEM_VERSION 1)
 set(CMAKE_SYSTEM_PROCESSOR arm)
 set(CMAKE_SYSROOT "${join(
                     toolchainRoot,
-                    "arm-" + FRC_YEAR + "-linux-gnueabi"
+                    "arm-nilrt-linux-gnueabi",
+                    "sysroot"
                 ).replace(/\\/g, "/")}")
 
-set(CMAKE_C_COMPILER "${toolchainRoot}/bin/arm-frc2022-linux-gnueabi-gcc${executableExtension}")
-set(CMAKE_CXX_COMPILER "${toolchainRoot}/bin/arm-frc2022-linux-gnueabi-g++${executableExtension}")
-set(CMAKE_FORTRAN_COMPILER "${toolchainRoot}/bin/arm-frc2022-linux-gnueabi-gfortran")
+set(CMAKE_C_COMPILER "${toolchainRoot}/bin/arm-frc2023-linux-gnueabi-gcc${executableExtension}")
+set(CMAKE_CXX_COMPILER "${toolchainRoot}/bin/arm-frc2023-linux-gnueabi-g++${executableExtension}")
+set(CMAKE_FORTRAN_COMPILER "${toolchainRoot}/bin/arm-frc2023-linux-gnueabi-gfortran")
 
-set(CMAKE_AR "${toolchainRoot}/bin/arm-frc2022-linux-gnueabi-ar")
-set(CMAKE_AS "${toolchainRoot}/bin/arm-frc2022-linux-gnueabi-as")
-set(CMAKE_NM "${toolchainRoot}/bin/arm-frc2022-linux-gnueabi-nm")
-set(CMAKE_LINKER "${toolchainRoot}/bin/arm-frc2022-linux-gnueabi-ld")
+set(CMAKE_AR "${toolchainRoot}/bin/arm-frc2023-linux-gnueabi-ar")
+set(CMAKE_AS "${toolchainRoot}/bin/arm-frc2023-linux-gnueabi-as")
+set(CMAKE_NM "${toolchainRoot}/bin/arm-frc2023-linux-gnueabi-nm")
+set(CMAKE_LINKER "${toolchainRoot}/bin/arm-frc2023-linux-gnueabi-ld")
 
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)

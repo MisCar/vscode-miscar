@@ -16,10 +16,10 @@ import vendordeps from "../vendordeps"
 import { platform } from "../utilities"
 import { status, STATUS_READY } from "../extension"
 
-const NI_VERSION = "2022.4.0"
+const NI_VERSION = "2023.1.0"
 const WPILIB_VERSION = "2023.1.1-beta-4"
 
-const OPENCV_VERSION = "4.5.2-1"
+const OPENCV_VERSION = "4.6.0-3"
 const FRC_YEAR = "frc2023"
 
 const TOOLCHAIN_VERSION = "v2023-7"
@@ -34,6 +34,7 @@ const WPILIB_LIBRARIES = [
     "hal",
     "cameraserver",
     "wpilibNewCommands",
+    'wpinet'
 ]
 
 const TOOLCHAIN_URL =
@@ -63,7 +64,6 @@ const getWithRedirects = (
     //     url = url.replace("https", "http")
     //     get = httpGet
     // }
-    // console.log(url)
     get(url, (response) => {
         if (
             response.statusCode &&
@@ -214,6 +214,7 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
             library
         )
     }
+
     await installAll(
         "opencv-cpp",
         OPENCV_VERSION,
@@ -459,11 +460,13 @@ while True:
         last_line = line.decode()
     elif(not "Building CXX object" in line.decode()):
         print(line.decode().replace("error:","\\033[1m" +  f"{Fore.RED}error:{Style.RESET_ALL}" + "\\033[0m").replace("~",f"{Fore.GREEN}~{Style.RESET_ALL}").replace("^",f"{Fore.GREEN}^{Style.RESET_ALL}").replace("warning:", f"{Fore.YELLOW}warning:{Style.RESET_ALL}"), end="")
+    elif("Linking" in line.decode()):
+        print(line.decode())
     else:
         last_line = line.decode()
         need_space = True
 process.wait()
-print(datetime)
+print(datetime.datetime.now())
 sys.exit(process.poll())`
             writeFileSync(
                 join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build", "roborio", "build.py"),
@@ -477,6 +480,7 @@ sys.exit(process.poll())`
 from colorama import Fore
 from colorama import Style
 import sys
+import datetime
 
 pre_process = subprocess.Popen("cmake ../.. -GNinja -DIS_ROBORIO=FALSE", stdout=subprocess.PIPE)
 while True:
@@ -509,10 +513,13 @@ while True:
         last_line = line.decode()
     elif(not "Building CXX object" in line.decode()):
         print(line.decode().replace("error:","\\033[1m" +  f"{Fore.RED}error:{Style.RESET_ALL}" + "\\033[0m").replace("~",f"{Fore.GREEN}~{Style.RESET_ALL}").replace("^",f"{Fore.GREEN}^{Style.RESET_ALL}").replace("warning:", f"{Fore.YELLOW}warning:{Style.RESET_ALL}"), end="")
+    elif("Linking" in line.decode()):
+        print(line.decode())
     else:
         last_line = line.decode()
         need_space = True
 process.wait()
+print(datetime.datetime.now())
 sys.exit(process.poll())`
             writeFileSync(
                 join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build", "local", "build.py"),

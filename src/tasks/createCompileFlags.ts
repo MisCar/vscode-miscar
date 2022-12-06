@@ -12,7 +12,6 @@ import * as vscode from "vscode"
 import { execSync } from "child_process"
 import { IncomingMessage } from "http"
 import { get } from "https"
-import { arch } from "process"
 import { status, STATUS_READY } from "../extension"
 import { platform } from "../utilities"
 import vendordeps from "../vendordeps"
@@ -120,7 +119,7 @@ const getLibrary = (root: string, library: string, url: string) => {
             response.pipe(stream)
             stream.on("finish", () => {
                 try {
-                    if (platform === "windows" || url.endsWith(".tar.gz")) {
+                    if (platform === "windows" || url.endsWith(".tar.gz") || url.endsWith(".tgz")) {
                         execSync(`tar -xf "${zipPath}"`, {
                             cwd: libraryPath,
                         })
@@ -184,7 +183,6 @@ let root: { [key: string]: string } = {
 let promises: Promise<void>[] = []
 
 const createCompileFlags = async (context: vscode.ExtensionContext) => {
-    console.log(arch)
     libraries = []
 
     root.all = context.globalStorageUri.fsPath

@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync } from "fs"
 import { join } from "path"
 import * as vscode from "vscode"
 import { buildRoboRIOProcess, roboRIOKilledProcesses } from "../extension"
+import { python } from "../utilities"
 
 const buildRoboRIO = async (status: vscode.StatusBarItem) => {
     await vscode.workspace.saveAll()
@@ -31,7 +32,7 @@ const buildRoboRIO = async (status: vscode.StatusBarItem) => {
         folders[0],
         "Build Roborio",
         "vscode-miscar",
-        new vscode.ShellExecution(`py build.py`, { cwd: join(folders[0].uri.fsPath, "build/roborio") })
+        new vscode.ShellExecution(`${python} build.py`, { cwd: join(folders[0].uri.fsPath, "build/roborio") })
     )
     build.presentationOptions.clear = true
     build.presentationOptions.echo = true

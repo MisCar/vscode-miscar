@@ -1,11 +1,12 @@
-import { platform as processPlatform } from "process"
+import { arch, platform as processPlatform } from "process"
+
 
 export const platform =
     processPlatform === "win32"
         ? "windows"
-        : processPlatform === "darwin"
-        ? "mac"
-        : "linux"
+        : processPlatform === "darwin" && arch == "x64"
+            ? "mac-x64"
+            : processPlatform === "darwin" && arch == "ARM" ? "mac-arm" : "linux"
 
 export const platformArguments =
     platform == "windows" ? "--config=for-windows" : ""

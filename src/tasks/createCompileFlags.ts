@@ -1,20 +1,21 @@
-import * as vscode from "vscode"
 import {
     createWriteStream,
     existsSync,
     mkdirSync,
     readdirSync,
     rmSync,
-    writeFileSync,
+    writeFileSync
 } from "fs"
 import { basename, join } from "path"
+import * as vscode from "vscode"
 // import { get as httpGet } from "http"
-import { get } from "https"
 import { execSync } from "child_process"
 import { IncomingMessage } from "http"
-import vendordeps from "../vendordeps"
-import { platform } from "../utilities"
+import { get } from "https"
+import { arch } from "process"
 import { status, STATUS_READY } from "../extension"
+import { platform } from "../utilities"
+import vendordeps from "../vendordeps"
 
 const NI_VERSION = "2023.1.0"
 const WPILIB_VERSION = "2023.1.1-beta-4"
@@ -41,13 +42,14 @@ const TOOLCHAIN_URL =
     platform == "windows"
         ? `https://github.com/wpilibsuite/opensdk/releases/download/${TOOLCHAIN_VERSION}/cortexa9_vfpv3-roborio-academic-2023-x86_64-w64-mingw32-Toolchain-${TOOLCHAIN_GCC_VERSION}.zip`
         : platform == "linux"
-            ? `https://github.com/wpilibsuite/opensdk/releases/download/${TOOLCHAIN_VERSION}/arm64-bullseye-2023-x86_64-linux-gnu-Toolchain-${TOOLCHAIN_GCC_VERSION}.tgz`
-            : `https://github.com/wpilibsuite/opensdk/releases/download/${TOOLCHAIN_VERSION}/arm64-bullseye-2023-x86_64-apple-darwin-Toolchain-${TOOLCHAIN_GCC_VERSION}.tgz`
+            ? `https://github.com/wpilibsuite/opensdk/releases/download/${TOOLCHAIN_VERSION}/cortexa9_vfpv3-roborio-academic-2023-armv6-bullseye-linux-gnueabihf-Toolchain-${TOOLCHAIN_GCC_VERSION}.tgz`
+            : platform == "mac-arm" ? `https://github.com/wpilibsuite/opensdk/releases/download/${TOOLCHAIN_VERSION}/cortexa9_vfpv3-roborio-academic-2023-arm64-apple-darwin-Toolchain-${TOOLCHAIN_GCC_VERSION}.tgz` :
+                `https://github.com/wpilibsuite/opensdk/releases/download/${TOOLCHAIN_VERSION}/cortexa9_vfpv3-roborio-academic-2023-x86_64-apple-darwin-Toolchain-${TOOLCHAIN_GCC_VERSION}.tgz`
 
 const localLibraryType =
     platform === "windows"
         ? "windowsx86-64"
-        : platform === "mac"
+        : platform.includes("mac")
             ? "osxx86-64"
             : "linuxx86-64"
 
@@ -182,6 +184,7 @@ let root: { [key: string]: string } = {
 let promises: Promise<void>[] = []
 
 const createCompileFlags = async (context: vscode.ExtensionContext) => {
+    console.log(arch)
     libraries = []
 
     root.all = context.globalStorageUri.fsPath
@@ -336,7 +339,7 @@ ${localDirectories
                         let objectDirectory = "";
                         if (platform == "windows") {
                             objectDirectory = join(dir, "windows", "x86-64", "shared")
-                        } else if (platform == "mac") {
+                        } else if (platform.includes("mac")) {
                             objectDirectory = join(dir, "osx", "x86-64", "shared")
                         } else if (platform == "linux") {
                             objectDirectory = join(dir, "linux", "x86-64", "shared")

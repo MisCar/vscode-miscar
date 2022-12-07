@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/semi */
 import * as vscode from "vscode"
-import { readdirSync, readFileSync, writeFileSync } from "fs"
-import { join } from "path"
+import { python } from "../utilities"
 const buildLocal = async (context: vscode.ExtensionContext) => {
     await vscode.workspace.saveAll()
 
@@ -25,7 +24,7 @@ const buildLocal = async (context: vscode.ExtensionContext) => {
         "Build Local",
         "vscode-miscar",
         new vscode.ShellExecution(
-            `cmake ../.. -GNinja  -DIS_ROBORIO=FALSE && ninja`, { cwd: join(folders[0].uri.fsPath, "build/local") })
+            `${python} build.py local`)
 
     )
     setupAndBuild.presentationOptions.clear = true

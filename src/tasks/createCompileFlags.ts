@@ -421,116 +421,69 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)`
         if (!existsSync(join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build", "local"))) {
             mkdirSync(join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build", "local"))
         }
-
-        if (!existsSync(join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build", "roborio", "build.py"))) {
-
-            const pyfile: string = `import subprocess
-from colorama import Fore
-from colorama import Style
+        if (!existsSync(join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build.py"))) {
+            const pyfile: string = `import datetime
+import os
+import subprocess
 import sys
-import datetime
 
-pre_process = subprocess.Popen("cmake ../.. -GNinja -DCMAKE_TOOLCHAIN_FILE=../../roborio.toolchain.cmake -DIS_ROBORIO=TRUE", stdout=subprocess.PIPE)
-while True:
-    line = pre_process.stdout.readline()
-    if not line:
-        break           
-    if line == b"": 
-        continue
-    print(line.decode())
-process = subprocess.Popen("ninja -k 1", stdout=subprocess.PIPE)
+from colorama import Fore, Style
 
-need_space = False
-last_line = ""
-while True:
-    line = process.stdout.readline()
-    if not line:
-        break           
-    if line == b"": 
-        continue
-    if("In file included from" in line.decode() or "arm-frc2022-linux-gnueabi-g++.exe" in line.decode()):
-        continue
-    if(need_space and "FAILED" in line.decode()):
-        print("\\n\\n")
-        print(line.decode().replace("FAILED:","\\033[1m" +  f"{Fore.RED}FAILED:{Style.RESET_ALL}" + "\\033[0m"))
-        need_space = False
-        last_line = ""
-        continue
-    elif(need_space):
-        print(last_line)
-        last_line = line.decode()
-    elif(not "Building CXX object" in line.decode()):
-        print(line.decode().replace("error:","\\033[1m" +  f"{Fore.RED}error:{Style.RESET_ALL}" + "\\033[0m").replace("~",f"{Fore.GREEN}~{Style.RESET_ALL}").replace("^",f"{Fore.GREEN}^{Style.RESET_ALL}").replace("warning:", f"{Fore.YELLOW}warning:{Style.RESET_ALL}"), end="")
-    elif("Linking" in line.decode()):
-        print(line.decode())
+
+def main(build_type):
+    project_path = os.getcwd()
+    # pre_process = subprocess
+    if(build_type == "local"):
+        cwd = './build/local'
     else:
-        last_line = line.decode()
-        need_space = True
-process.wait()
-print(datetime.datetime.now())
-sys.exit(process.poll())`
-            writeFileSync(
-                join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build", "roborio", "build.py"),
-                pyfile
-            )
-        }
-
-        if (!existsSync(join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build", "local", "build.py"))) {
-
-            const pyfile: string = `import subprocess
-from colorama import Fore
-from colorama import Style
-import sys
-import datetime
-
-pre_process = subprocess.Popen("cmake ../.. -GNinja -DIS_ROBORIO=FALSE", stdout=subprocess.PIPE)
-while True:
-    line = pre_process.stdout.readline()
-    if not line:
-        break           
-    if line == b"": 
-        continue
-    print(line.decode())
-process = subprocess.Popen("ninja -k 1", stdout=subprocess.PIPE)
-
-need_space = False
-last_line = ""
-while True:
-    line = process.stdout.readline()
-    if not line:
-        break           
-    if line == b"": 
-        continue
-    if("In file included from" in line.decode() or "arm-frc2022-linux-gnueabi-g++.exe" in line.decode()):
-        continue
-    if(need_space and "FAILED" in line.decode()):
-        print("\\n\\n")
-        print(line.decode().replace("FAILED:","\\033[1m" +  f"{Fore.RED}FAILED:{Style.RESET_ALL}" + "\\033[0m"))
-        need_space = False
-        last_line = ""
-        continue
-    elif(need_space):
-        print(last_line)
-        last_line = line.decode()
-    elif(not "Building CXX object" in line.decode()):
-        print(line.decode().replace("error:","\\033[1m" +  f"{Fore.RED}error:{Style.RESET_ALL}" + "\\033[0m").replace("~",f"{Fore.GREEN}~{Style.RESET_ALL}").replace("^",f"{Fore.GREEN}^{Style.RESET_ALL}").replace("warning:", f"{Fore.YELLOW}warning:{Style.RESET_ALL}"), end="")
-    elif("Linking" in line.decode()):
-        print(line.decode())
+        cwd = './build/roborio'
+    if(build_type == 'local'):
+        pre_process = subprocess.Popen("cmake ../.. -GNinja -DIS_ROBORIO=FALSE", stdout=subprocess.PIPE,cwd=cwd)
     else:
-        last_line = line.decode()
-        need_space = True
-process.wait()
-print(datetime.datetime.now())
-sys.exit(process.poll())`
-            writeFileSync(
-                join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build", "local", "build.py"),
-                pyfile
-            )
+        pre_process = subprocess.Popen("cmake ../../ -GNinja -DCMAKE_TOOLCHAIN_FILE=../../roborio.toolchain.cmake -DIS_ROBORIO=TRUE", stdout=subprocess.PIPE,cwd=cwd)
+    while True:
+        line = pre_process.stdout.readline()
+        if not line:
+            break           
+        if line == b"": 
+            continue
+        print(line.decode())
+    
+    process = subprocess.Popen("ninja -k 1", stdout=subprocess.PIPE,cwd=cwd)
+
+    while True:
+        line = process.stdout.readline()
+        if not line:
+            break           
+        if line == b"": 
+            continue
+        
+        text_line = line.decode()
+        if("Building CXX object" in text_line):
+            print(line.decode().replace('\\n','').replace('\\r',''))
+        elif('\\\\miscar.vscode-miscar\\\\toolchain\\\\' in text_line):
+            continue
+        else:
+            path_to_file = "-157415741574"
+            if((project_path.replace('\\\\','/') + '/src') in text_line):
+                path_to_file = text_line[0:text_line.find('.cpp') + 4]
+         
+            print(text_line.replace("FAILED:","\\033[1m" +  f"{Fore.RED}FAILED:{Style.RESET_ALL}" + "\\033[0m")
+                  .replace("warning:", f"{Fore.YELLOW}warning:{Style.RESET_ALL}")
+                  .replace("error:","\\033[1m" +  f"{Fore.RED}error:{Style.RESET_ALL}" + "\\033[0m")
+                  .replace("^",f"{Fore.GREEN}^{Style.RESET_ALL}")
+                  .replace("~",f"{Fore.GREEN}~{Style.RESET_ALL}")
+                  .replace(path_to_file ,f"{Fore.CYAN}" + path_to_file + f"{Style.RESET_ALL}"))
+    process.wait()
+    print(datetime.datetime.now())
+
+    sys.exit(process.poll())
+
+if __name__ == "__main__":
+    main(sys.argv[1])`
+
+            writeFileSync(join(vscode.workspace.workspaceFolders[0].uri.fsPath, "build.py"), pyfile)
         }
-
-
-
-
     }
 
 

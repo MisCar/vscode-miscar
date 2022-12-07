@@ -1,6 +1,3 @@
-import { execSync } from "child_process"
-import { readFileSync, writeFileSync } from "fs"
-import { join } from "path"
 import * as vscode from "vscode"
 import { buildRoboRIOProcess, roboRIOKilledProcesses } from "../extension"
 import { python } from "../utilities"
@@ -32,7 +29,7 @@ const buildRoboRIO = async (status: vscode.StatusBarItem) => {
         folders[0],
         "Build Roborio",
         "vscode-miscar",
-        new vscode.ShellExecution(`${python} build.py`, { cwd: join(folders[0].uri.fsPath, "build/roborio") })
+        new vscode.ShellExecution(`${python} build.py roborio`)
     )
     build.presentationOptions.clear = true
     build.presentationOptions.echo = true

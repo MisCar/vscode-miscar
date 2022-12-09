@@ -1,22 +1,24 @@
+import { ChildProcess } from "child_process"
 import * as vscode from "vscode"
 import buildLocal from "./tasks/buildLocal"
 import buildRoboRIO from "./tasks/buildRoboRIO"
-import test from "./tasks/test"
+import clearCompileFlags from "./tasks/clearCompileFlags"
+import createCompileFlags from "./tasks/createCompileFlags"
+import createIndex from "./tasks/createIndex"
 import deploy from "./tasks/deploy"
+import newClass from "./tasks/newClass"
 import openCommandPalette from "./tasks/openCommandPalette"
+import openInstallDirectory from "./tasks/openInstallDirectory"
 import runSimulation from "./tasks/runSimulation"
 import startTool from "./tasks/startTool"
-import createCompileFlags from "./tasks/createCompileFlags"
-import { ChildProcess } from "child_process"
-import newClass from "./tasks/newClass"
+import test from "./tasks/test"
 import wpiformat from "./tasks/wpiformat"
-import createIndex from "./tasks/createIndex"
-import clearCompileFlags from "./tasks/clearCompileFlags"
-import fastDeploy from "./tasks/fastDeploy"
-import openInstallDirectory from "./tasks/openInstallDirectory"
 
 export let buildRoboRIOProcess: ChildProcess | undefined
 export let roboRIOKilledProcesses: ChildProcess[] = []
+
+export let buildLocalProcess: ChildProcess | undefined
+export let localKilledProcesses: ChildProcess[] = []
 export let status: vscode.StatusBarItem
 export let log: vscode.OutputChannel
 
@@ -38,7 +40,7 @@ export const activate = (context: vscode.ExtensionContext) => {
             openCommandPalette
         ),
         vscode.commands.registerCommand("miscar.buildLocal", () =>
-            buildLocal(context)
+            buildLocal(status)
         ),
         vscode.commands.registerCommand("miscar.buildRoboRIO", () =>
             buildRoboRIO(status)

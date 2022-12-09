@@ -438,9 +438,9 @@ def main(build_type):
     else:
         cwd = './build/roborio'
     if(build_type == 'local'):
-        pre_process = subprocess.Popen("cmake ../.. -GNinja -DIS_ROBORIO=FALSE", stdout=subprocess.PIPE,cwd=cwd)
+        pre_process = subprocess.Popen(["cmake","../..","-GNinja","-DIS_ROBORIO=FALSE"], stdout=subprocess.PIPE,cwd=cwd)
     else:
-        pre_process = subprocess.Popen("cmake ../../ -GNinja -DCMAKE_TOOLCHAIN_FILE=../../roborio.toolchain.cmake -DIS_ROBORIO=TRUE", stdout=subprocess.PIPE,cwd=cwd)
+        pre_process = subprocess.Popen(["cmake", "../../","-GNinja", "-DCMAKE_TOOLCHAIN_FILE=../../roborio.toolchain.cmake","-DIS_ROBORIO=TRUE"], stdout=subprocess.PIPE,cwd=cwd)
     while True:
         line = pre_process.stdout.readline()
         if not line:
@@ -461,7 +461,7 @@ def main(build_type):
         text_line = line.decode()
         if("Building CXX object" in text_line):
             print(line.decode().replace('\\n','').replace('\\r',''))
-        elif('\\\\miscar.vscode-miscar\\\\toolchain\\\\' in text_line):
+        elif('\\\\miscar.vscode-miscar\\\\toolchain\\\\' in text_line  or "C:\\\\PROGRA~1\\\\LLVM\\\\bin\\\\CLANG_~1.EXE" in text_line):
             continue
         else:
             path_to_file = "-157415741574"

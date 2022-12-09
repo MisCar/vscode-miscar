@@ -36,8 +36,7 @@ const buildRoboRIO = async (status: vscode.StatusBarItem) => {
 
     build.isBackground = false
     build.presentationOptions.focus = false
-    //execSync(`cd ${join(folders[0].uri.fsPath, "build/roborio")}`)
-    //execSync("ninja")
+
     vscode.tasks.executeTask(build)
 
 }

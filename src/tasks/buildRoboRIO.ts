@@ -1,9 +1,25 @@
+import { readFileSync } from "fs"
+import { join } from "path"
 import * as vscode from "vscode"
 import { buildRoboRIOProcess, roboRIOKilledProcesses } from "../extension"
-import { python } from "../utilities"
+import { getVersions, python } from "../utilities"
 
 const buildRoboRIO = async (status: vscode.StatusBarItem) => {
     await vscode.workspace.saveAll()
+
+    const versions = readFileSync(
+        join(vscode.workspace.workspaceFolders![0].uri.fsPath, "versions.json")
+    ).toString()
+
+    if (
+        JSON.stringify(JSON.parse(versions)) !== JSON.stringify(getVersions())
+    ) {
+        console.log(JSON.parse(versions))
+        console.log(getVersions())
+        vscode.window.showWarningMessage(
+            "Version mismatch between this project and the computer"
+        )
+    }
 
     if (buildRoboRIOProcess) {
         buildRoboRIOProcess.kill()
@@ -23,7 +39,6 @@ const buildRoboRIO = async (status: vscode.StatusBarItem) => {
         )
         .forEach((execution) => execution.terminate())
 
-
     const build = new vscode.Task(
         { type: "miscar.buildRoboRIO" },
         folders[0],
@@ -38,7 +53,6 @@ const buildRoboRIO = async (status: vscode.StatusBarItem) => {
     build.presentationOptions.focus = false
 
     vscode.tasks.executeTask(build)
-
 }
 
 export default buildRoboRIO

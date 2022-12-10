@@ -46,8 +46,12 @@ export const activate = (context: vscode.ExtensionContext) => {
             buildRoboRIO(status)
         ),
         vscode.commands.registerCommand("miscar.test", test),
-        vscode.commands.registerCommand("miscar.deploy", () => deploy(context, false)),
-        vscode.commands.registerCommand("miscar.fastDeploy", () => deploy(context, true)),
+        vscode.commands.registerCommand("miscar.deploy", () =>
+            deploy(context, false)
+        ),
+        vscode.commands.registerCommand("miscar.fastDeploy", () =>
+            deploy(context, true)
+        ),
         vscode.commands.registerCommand("miscar.runSimulation", runSimulation),
         vscode.commands.registerCommand("miscar.startTool", startTool),
         vscode.commands.registerCommand("miscar.newClass", newClass),
@@ -59,7 +63,9 @@ export const activate = (context: vscode.ExtensionContext) => {
         vscode.commands.registerCommand("miscar.clearCompileFlags", () =>
             clearCompileFlags(context)
         ),
-        vscode.commands.registerCommand("miscar.openInstallDirectory", () => openInstallDirectory(context)),
+        vscode.commands.registerCommand("miscar.openInstallDirectory", () =>
+            openInstallDirectory(context)
+        ),
         vscode.commands.registerCommand("miscar.showOutput", () => {
             if (
                 vscode.window.activeTextEditor?.document.fileName.startsWith(
@@ -98,4 +104,4 @@ export const activate = (context: vscode.ExtensionContext) => {
     status.show()
 }
 
-export const deactivate = () => { }
+export const deactivate = () => {}

@@ -103,7 +103,7 @@ const getLibrary = (
 ) => {
     return new Promise<void>((resolve, reject) => {
         const libraryPath = join(root, library)
-        if (needUpdate) {
+        if (needUpdate && existsSync(libraryPath)) {
             rmdirSync(libraryPath, { recursive: true })
         }
         if (existsSync(libraryPath)) {

@@ -1,4 +1,4 @@
-export const NI_VERSION = "2023.1.0"
+export const NI_VERSION = "2023.3.0"
 export const WPILIB_VERSION = "2023.1.1-beta-7"
 
 export const OPENCV_VERSION = "4.6.0-3"

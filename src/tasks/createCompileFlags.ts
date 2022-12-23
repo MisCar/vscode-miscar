@@ -103,9 +103,12 @@ const getLibrary = (
 ) => {
     return new Promise<void>((resolve, reject) => {
         const libraryPath = join(root, library)
-        if (needUpdate && existsSync(libraryPath)) {
-            rmdirSync(libraryPath, { recursive: true })
+        if (existsSync(libraryPath)) {
+            if (needUpdate) {
+                rmdirSync(libraryPath, { recursive: true })
+            }
         }
+
         if (existsSync(libraryPath)) {
             if (
                 readdirSync(libraryPath).filter((f) => f != "compile_flags.txt")

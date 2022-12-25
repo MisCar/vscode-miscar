@@ -328,7 +328,7 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
                         join(context.globalStorageUri.fsPath, "versions.json")
                     ).toString()
                 ).PHOENIX
-        } else {
+        } else if (vendordep.fileName == "REVLib.json") {
             needUpdate =
                 getVersions().REVLIB !=
                 JSON.parse(
@@ -336,6 +336,14 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
                         join(context.globalStorageUri.fsPath, "versions.json")
                     ).toString()
                 ).REVLIB
+        } else if (vendordep.fileName == "photonlib.json") {
+            needUpdate =
+                getVersions().PHOTONLIB !=
+                JSON.parse(
+                    readFileSync(
+                        join(context.globalStorageUri.fsPath, "versions.json")
+                    ).toString()
+                ).PHOTONLIB
         }
         stage = vendordep.name.toLowerCase()
 

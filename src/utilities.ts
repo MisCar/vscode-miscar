@@ -3,7 +3,6 @@ import { join } from "path"
 import { arch, platform as processPlatform } from "process"
 import * as vscode from "vscode"
 import PHOENIX_VENDORDEP from "./vendordeps/phoenix"
-import PHOTONLIB_VENDORDEP from "./vendordeps/photonlib"
 import REVLIB_VENDORDEP from "./vendordeps/revlib"
 import {
     FRC_YEAR,
@@ -58,7 +57,6 @@ export const getVersions = () => {
         TOOLCHAIN_GCC_VERSION,
         PHOENIX: PHOENIX_VENDORDEP.version,
         REVLIB: REVLIB_VENDORDEP.version,
-        PHOTONLIB: PHOTONLIB_VENDORDEP.version,
         LIBMISCAR,
     }
 }

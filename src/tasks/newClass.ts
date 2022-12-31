@@ -1,6 +1,6 @@
-import * as vscode from "vscode"
 import { readdirSync, writeFile } from "fs"
 import { join } from "path"
+import * as vscode from "vscode"
 
 const newClass = async (path: vscode.Uri | undefined) => {
     if (vscode.workspace.workspaceFolders === undefined) {
@@ -156,7 +156,7 @@ ${subsystemIncludes}
 class ${className}
     : public frc2::CommandHelper<frc2::CommandBase, ${className}> {
   public:
-    ${className}(${subsystemReferences});
+    explicit ${className}(${subsystemReferences});
 
     void Initialize() override;
 

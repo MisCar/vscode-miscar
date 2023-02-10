@@ -1,5 +1,5 @@
 export const NI_VERSION = "2023.3.0"
-export const WPILIB_VERSION = "2023.2.1"
+export const WPILIB_VERSION = "2023.3.2"
 
 export const OPENCV_VERSION = "4.6.0-3"
 export const FRC_YEAR = "frc2023"

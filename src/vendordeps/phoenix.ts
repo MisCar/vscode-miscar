@@ -1,7 +1,7 @@
 const PHOENIX_VENDORDEP = {
     fileName: "Phoenix.json",
     name: "CTRE-Phoenix (v5)",
-    version: "5.30.4",
+    version: "5.30.4+23.0.10",
     frcYear: 2023,
     uuid: "ab676553-b602-441f-a38d-f1296eff6537",
     mavenUrls: ["https://maven.ctr-electronics.com/release/"],
@@ -41,7 +41,7 @@ const PHOENIX_VENDORDEP = {
         {
             groupId: "com.ctre.phoenixpro",
             artifactId: "tools",
-            version: "23.0.5",
+            version: "23.0.10",
             isJar: false,
             skipInvalidPlatforms: true,
             validPlatforms: ["windowsx86-64", "linuxx86-64", "linuxathena"],
@@ -50,7 +50,7 @@ const PHOENIX_VENDORDEP = {
         {
             groupId: "com.ctre.phoenixpro.sim",
             artifactId: "tools-sim",
-            version: "23.0.5",
+            version: "23.0.10",
             isJar: false,
             skipInvalidPlatforms: true,
             validPlatforms: ["windowsx86-64", "linuxx86-64", "osxuniversal"],
@@ -59,7 +59,7 @@ const PHOENIX_VENDORDEP = {
         {
             groupId: "com.ctre.phoenixpro.sim",
             artifactId: "simTalonSRX",
-            version: "23.0.5",
+            version: "23.0.10",
             isJar: false,
             skipInvalidPlatforms: true,
             validPlatforms: ["windowsx86-64", "linuxx86-64", "osxuniversal"],
@@ -68,7 +68,7 @@ const PHOENIX_VENDORDEP = {
         {
             groupId: "com.ctre.phoenixpro.sim",
             artifactId: "simTalonFX",
-            version: "23.0.5",
+            version: "23.0.10",
             isJar: false,
             skipInvalidPlatforms: true,
             validPlatforms: ["windowsx86-64", "linuxx86-64", "osxuniversal"],
@@ -77,7 +77,7 @@ const PHOENIX_VENDORDEP = {
         {
             groupId: "com.ctre.phoenixpro.sim",
             artifactId: "simVictorSPX",
-            version: "23.0.5",
+            version: "23.0.10",
             isJar: false,
             skipInvalidPlatforms: true,
             validPlatforms: ["windowsx86-64", "linuxx86-64", "osxuniversal"],
@@ -86,7 +86,7 @@ const PHOENIX_VENDORDEP = {
         {
             groupId: "com.ctre.phoenixpro.sim",
             artifactId: "simPigeonIMU",
-            version: "23.0.5",
+            version: "23.0.10",
             isJar: false,
             skipInvalidPlatforms: true,
             validPlatforms: ["windowsx86-64", "linuxx86-64", "osxuniversal"],
@@ -95,7 +95,7 @@ const PHOENIX_VENDORDEP = {
         {
             groupId: "com.ctre.phoenixpro.sim",
             artifactId: "simCANCoder",
-            version: "23.0.5",
+            version: "23.0.10",
             isJar: false,
             skipInvalidPlatforms: true,
             validPlatforms: ["windowsx86-64", "linuxx86-64", "osxuniversal"],
@@ -104,7 +104,7 @@ const PHOENIX_VENDORDEP = {
         {
             groupId: "com.ctre.phoenixpro.sim",
             artifactId: "simProTalonFX",
-            version: "23.0.5",
+            version: "23.0.10",
             isJar: false,
             skipInvalidPlatforms: true,
             validPlatforms: ["windowsx86-64", "linuxx86-64", "osxuniversal"],
@@ -113,7 +113,7 @@ const PHOENIX_VENDORDEP = {
         {
             groupId: "com.ctre.phoenixpro.sim",
             artifactId: "simProCANcoder",
-            version: "23.0.5",
+            version: "23.0.10",
             isJar: false,
             skipInvalidPlatforms: true,
             validPlatforms: ["windowsx86-64", "linuxx86-64", "osxuniversal"],
@@ -122,7 +122,7 @@ const PHOENIX_VENDORDEP = {
         {
             groupId: "com.ctre.phoenixpro.sim",
             artifactId: "simProPigeon2",
-            version: "23.0.5",
+            version: "23.0.10",
             isJar: false,
             skipInvalidPlatforms: true,
             validPlatforms: ["windowsx86-64", "linuxx86-64", "osxuniversal"],
@@ -166,7 +166,7 @@ const PHOENIX_VENDORDEP = {
         {
             groupId: "com.ctre.phoenixpro",
             artifactId: "tools",
-            version: "23.0.5",
+            version: "23.0.10",
             libName: "CTRE_PhoenixTools",
             headerClassifier: "headers",
             sharedLibrary: true,
@@ -210,7 +210,7 @@ const PHOENIX_VENDORDEP = {
         {
             groupId: "com.ctre.phoenixpro.sim",
             artifactId: "tools-sim",
-            version: "23.0.5",
+            version: "23.0.10",
             libName: "CTRE_PhoenixTools_Sim",
             headerClassifier: "headers",
             sharedLibrary: true,
@@ -221,7 +221,7 @@ const PHOENIX_VENDORDEP = {
         {
             groupId: "com.ctre.phoenixpro.sim",
             artifactId: "simTalonSRX",
-            version: "23.0.5",
+            version: "23.0.10",
             libName: "CTRE_SimTalonSRX",
             headerClassifier: "headers",
             sharedLibrary: true,
@@ -232,7 +232,7 @@ const PHOENIX_VENDORDEP = {
         {
             groupId: "com.ctre.phoenixpro.sim",
             artifactId: "simTalonFX",
-            version: "23.0.5",
+            version: "23.0.10",
             libName: "CTRE_SimTalonFX",
             headerClassifier: "headers",
             sharedLibrary: true,
@@ -243,7 +243,7 @@ const PHOENIX_VENDORDEP = {
         {
             groupId: "com.ctre.phoenixpro.sim",
             artifactId: "simVictorSPX",
-            version: "23.0.5",
+            version: "23.0.10",
             libName: "CTRE_SimVictorSPX",
             headerClassifier: "headers",
             sharedLibrary: true,
@@ -254,7 +254,7 @@ const PHOENIX_VENDORDEP = {
         {
             groupId: "com.ctre.phoenixpro.sim",
             artifactId: "simPigeonIMU",
-            version: "23.0.5",
+            version: "23.0.10",
             libName: "CTRE_SimPigeonIMU",
             headerClassifier: "headers",
             sharedLibrary: true,
@@ -265,7 +265,7 @@ const PHOENIX_VENDORDEP = {
         {
             groupId: "com.ctre.phoenixpro.sim",
             artifactId: "simCANCoder",
-            version: "23.0.5",
+            version: "23.0.10",
             libName: "CTRE_SimCANCoder",
             headerClassifier: "headers",
             sharedLibrary: true,
@@ -276,7 +276,7 @@ const PHOENIX_VENDORDEP = {
         {
             groupId: "com.ctre.phoenixpro.sim",
             artifactId: "simProTalonFX",
-            version: "23.0.5",
+            version: "23.0.10",
             libName: "CTRE_SimProTalonFX",
             headerClassifier: "headers",
             sharedLibrary: true,
@@ -287,7 +287,7 @@ const PHOENIX_VENDORDEP = {
         {
             groupId: "com.ctre.phoenixpro.sim",
             artifactId: "simProCANcoder",
-            version: "23.0.5",
+            version: "23.0.10",
             libName: "CTRE_SimProCANcoder",
             headerClassifier: "headers",
             sharedLibrary: true,
@@ -298,7 +298,7 @@ const PHOENIX_VENDORDEP = {
         {
             groupId: "com.ctre.phoenixpro.sim",
             artifactId: "simProPigeon2",
-            version: "23.0.5",
+            version: "23.0.10",
             libName: "CTRE_SimProPigeon2",
             headerClassifier: "headers",
             sharedLibrary: true,

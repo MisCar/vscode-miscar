@@ -3,7 +3,7 @@
     "displayName": "MisCar",
     "description": "Faster FRC development",
     "publisher": "miscar",
-    "version": "2023.0.31",
+    "version": "2024.0.0",
     "license": "MIT",
     "icon": "icon.png",
     "engines": {

@@ -3,7 +3,7 @@
     "displayName": "MisCar",
     "description": "Faster FRC development",
     "publisher": "miscar",
-    "version": "2024.0.0",
+    "version": "2024.0.2",
     "license": "MIT",
     "icon": "icon.png",
     "engines": {
@@ -151,7 +151,7 @@
         "node-loader": "^2.0.0",
         "ts-loader": "^9.2.5",
         "typescript": "^4.4.4",
-        "webpack": "^5.52.1",
+        "webpack": "^5.89.0",
         "webpack-cli": "^4.8.0"
     },
     "prettier": {

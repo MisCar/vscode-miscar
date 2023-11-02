@@ -1,22 +1,23 @@
 const REVLIB_VENDORDEP = {
     fileName: "REVLib.json",
     name: "REVLib",
-    version: "2023.1.3",
+    version: "2024.0.0",
+    frcYear: "2024",
     uuid: "3f48eb8c-50fe-43a6-9cb7-44c86353c4cb",
     mavenUrls: ["https://maven.revrobotics.com/"],
-    jsonUrl: "https://software-metadata.revrobotics.com/REVLib-2023.json",
+    jsonUrl: "https://software-metadata.revrobotics.com/REVLib-2024.json",
     javaDependencies: [
         {
             groupId: "com.revrobotics.frc",
             artifactId: "REVLib-java",
-            version: "2023.1.3",
+            version: "2024.0.0",
         },
     ],
     jniDependencies: [
         {
             groupId: "com.revrobotics.frc",
             artifactId: "REVLib-driver",
-            version: "2023.1.3",
+            version: "2024.0.0",
             skipInvalidPlatforms: true,
             isJar: false,
             validPlatforms: [
@@ -34,7 +35,7 @@ const REVLIB_VENDORDEP = {
         {
             groupId: "com.revrobotics.frc",
             artifactId: "REVLib-cpp",
-            version: "2023.1.3",
+            version: "2024.0.0",
             libName: "REVLib",
             headerClassifier: "headers",
             sharedLibrary: false,
@@ -52,7 +53,7 @@ const REVLIB_VENDORDEP = {
         {
             groupId: "com.revrobotics.frc",
             artifactId: "REVLib-driver",
-            version: "2023.1.3",
+            version: "2024.0.0",
             libName: "REVLibDriver",
             headerClassifier: "headers",
             sharedLibrary: false,

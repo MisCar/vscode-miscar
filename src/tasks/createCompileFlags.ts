@@ -320,14 +320,22 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
     )
 
     for (const vendordep of vendordeps) {
-        if (vendordep.fileName === "Phoenix.json") {
+        if (vendordep.fileName === "Phoenix5.json") {
             needUpdate =
-                getVersions().PHOENIX !=
+                getVersions().PHOENIX_5 !=
                 JSON.parse(
                     readFileSync(
                         join(context.globalStorageUri.fsPath, "versions.json")
                     ).toString()
-                ).PHOENIX
+                ).PHOENIX_5
+        } else if (vendordep.fileName === "Phoenix6.json") {
+            needUpdate =
+                getVersions().PHOENIX_6 !=
+                JSON.parse(
+                    readFileSync(
+                        join(context.globalStorageUri.fsPath, "versions.json")
+                    ).toString()
+                ).PHOENIX_6
         } else if (vendordep.fileName == "REVLib.json") {
             needUpdate =
                 getVersions().REVLIB !=

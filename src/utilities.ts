@@ -2,7 +2,8 @@ import { execSync } from "child_process"
 import { join } from "path"
 import { arch, platform as processPlatform } from "process"
 import * as vscode from "vscode"
-import PHOENIX_VENDORDEP from "./vendordeps/phoenix"
+import PHOENIX_5_VENDORDEP from "./vendordeps/phoenix5"
+import PHOENIX_6_VENDORDEP from "./vendordeps/phoenix6"
 import REVLIB_VENDORDEP from "./vendordeps/revlib"
 import {
     FRC_YEAR,
@@ -55,7 +56,8 @@ export const getVersions = () => {
         FRC_YEAR,
         TOOLCHAIN_VERSION,
         TOOLCHAIN_GCC_VERSION,
-        PHOENIX: PHOENIX_VENDORDEP.version,
+        PHOENIX_6: PHOENIX_6_VENDORDEP.version,
+        PHOENIX_5: PHOENIX_5_VENDORDEP.version,
         REVLIB: REVLIB_VENDORDEP.version,
         LIBMISCAR,
     }

@@ -195,13 +195,14 @@ const installAll = async (
     version: string,
     base: string,
     needUpdate: boolean,
-    platforms = ALL_PLATFORMS
+    platforms = ALL_PLATFORMS,
+    pathSuffix: string = ""
 ) => {
     for (const platform of platforms) {
         await queuePromise(
             getLibrary(
                 root[platform],
-                library,
+                library + pathSuffix,
                 formatMavenUrl(library, version, base, MAVEN_NAMES[platform]),
                 needUpdate
             )
@@ -348,16 +349,26 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
         stage = vendordep.name.toLowerCase()
 
         for (const dependency of vendordep.cppDependencies) {
+            let pathSuffix = ""
             let mavenUrl = vendordep.mavenUrls[0]
+
             if (!mavenUrl.endsWith("/")) {
                 mavenUrl += "/"
+            }
+
+            if (vendordep.fileName === "Phoenix5.json") {
+                pathSuffix = "-v5"
+            } else if (vendordep.fileName === "Phoenix6.json") {
+                pathSuffix = "-v6"
             }
 
             await installAll(
                 dependency.artifactId,
                 dependency.version,
                 mavenUrl + dependency.groupId.replace(/\./g, "/"),
-                needUpdate
+                needUpdate,
+                ALL_PLATFORMS,
+                pathSuffix
             )
         }
     }

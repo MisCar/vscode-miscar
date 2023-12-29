@@ -1,0 +1,12 @@
+{
+    "NI_VERSION": "2024.1.1",
+    "WPILIB_VERSION": "2024.1.1-beta-4",
+    "OPENCV_VERSION": "4.8.0-1",
+    "FRC_YEAR": "frc2024",
+    "TOOLCHAIN_VERSION": "v2023-8",
+    "TOOLCHAIN_GCC_VERSION": "12.1.0",
+    "PHOENIX_5": "5.32.0-beta-4",
+    "PHOENIX_6": "24.0.0-beta-5",
+    "REVLIB": "2024.0.0",
+    "LIBMISCAR": "9795272daed6d5638ce909bc95cd35e39b7de3e2"
+}

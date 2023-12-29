@@ -1,7 +1,7 @@
 const PHOENIX_5_VENDORDEP = {
     fileName: "Phoenix5.json",
     name: "CTRE-Phoenix (v5)",
-    version: "5.32.0-beta-1",
+    version: "5.32.0-beta-4",
     frcYear: 2024,
     uuid: "ab676553-b602-441f-a38d-f1296eff6537",
     mavenUrls: ["https://maven.ctr-electronics.com/release/"],
@@ -21,19 +21,19 @@ const PHOENIX_5_VENDORDEP = {
         {
             groupId: "com.ctre.phoenix",
             artifactId: "api-java",
-            version: "5.32.0-beta-1",
+            version: "5.32.0-beta-4",
         },
         {
             groupId: "com.ctre.phoenix",
             artifactId: "wpiapi-java",
-            version: "5.32.0-beta-1",
+            version: "5.32.0-beta-4",
         },
     ],
     jniDependencies: [
         {
             groupId: "com.ctre.phoenix",
             artifactId: "cci",
-            version: "5.32.0-beta-1",
+            version: "5.32.0-beta-4",
             isJar: false,
             skipInvalidPlatforms: true,
             validPlatforms: ["windowsx86-64", "linuxx86-64", "linuxathena"],
@@ -42,7 +42,7 @@ const PHOENIX_5_VENDORDEP = {
         {
             groupId: "com.ctre.phoenix.sim",
             artifactId: "cci-sim",
-            version: "5.32.0-beta-1",
+            version: "5.32.0-beta-4",
             isJar: false,
             skipInvalidPlatforms: true,
             validPlatforms: ["windowsx86-64", "linuxx86-64", "osxuniversal"],
@@ -53,7 +53,7 @@ const PHOENIX_5_VENDORDEP = {
         {
             groupId: "com.ctre.phoenix",
             artifactId: "wpiapi-cpp",
-            version: "5.32.0-beta-1",
+            version: "5.32.0-beta-4",
             libName: "CTRE_Phoenix_WPI",
             headerClassifier: "headers",
             sharedLibrary: true,
@@ -64,7 +64,7 @@ const PHOENIX_5_VENDORDEP = {
         {
             groupId: "com.ctre.phoenix",
             artifactId: "api-cpp",
-            version: "5.32.0-beta-1",
+            version: "5.32.0-beta-4",
             libName: "CTRE_Phoenix",
             headerClassifier: "headers",
             sharedLibrary: true,
@@ -75,7 +75,7 @@ const PHOENIX_5_VENDORDEP = {
         {
             groupId: "com.ctre.phoenix",
             artifactId: "cci",
-            version: "5.32.0-beta-1",
+            version: "5.32.0-beta-4",
             libName: "CTRE_PhoenixCCI",
             headerClassifier: "headers",
             sharedLibrary: true,
@@ -86,7 +86,7 @@ const PHOENIX_5_VENDORDEP = {
         {
             groupId: "com.ctre.phoenix.sim",
             artifactId: "wpiapi-cpp-sim",
-            version: "5.32.0-beta-1",
+            version: "5.32.0-beta-4",
             libName: "CTRE_Phoenix_WPISim",
             headerClassifier: "headers",
             sharedLibrary: true,
@@ -97,7 +97,7 @@ const PHOENIX_5_VENDORDEP = {
         {
             groupId: "com.ctre.phoenix.sim",
             artifactId: "api-cpp-sim",
-            version: "5.32.0-beta-1",
+            version: "5.32.0-beta-4",
             libName: "CTRE_PhoenixSim",
             headerClassifier: "headers",
             sharedLibrary: true,
@@ -108,7 +108,7 @@ const PHOENIX_5_VENDORDEP = {
         {
             groupId: "com.ctre.phoenix.sim",
             artifactId: "cci-sim",
-            version: "5.32.0-beta-1",
+            version: "5.32.0-beta-4",
             libName: "CTRE_PhoenixCCISim",
             headerClassifier: "headers",
             sharedLibrary: true,

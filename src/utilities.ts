@@ -56,8 +56,8 @@ export const getVersions = () => {
         FRC_YEAR,
         TOOLCHAIN_VERSION,
         TOOLCHAIN_GCC_VERSION,
-        PHOENIX_6: PHOENIX_6_VENDORDEP.version,
         PHOENIX_5: PHOENIX_5_VENDORDEP.version,
+        PHOENIX_6: PHOENIX_6_VENDORDEP.version,
         REVLIB: REVLIB_VENDORDEP.version,
         LIBMISCAR,
     }

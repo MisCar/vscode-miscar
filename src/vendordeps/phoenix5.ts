@@ -1,12 +1,12 @@
 const PHOENIX_5_VENDORDEP = {
     fileName: "Phoenix5.json",
     name: "CTRE-Phoenix (v5)",
-    version: "5.32.0-beta-4",
+    version: "5.33.0",
     frcYear: 2024,
     uuid: "ab676553-b602-441f-a38d-f1296eff6537",
     mavenUrls: ["https://maven.ctr-electronics.com/release/"],
     jsonUrl:
-        "https://maven.ctr-electronics.com/release/com/ctre/phoenix/Phoenix5-frc2024-beta-latest.json",
+        "https://maven.ctr-electronics.com/release/com/ctre/phoenix/Phoenix5-frc2024-latest.json",
     requires: [
         {
             uuid: "e995de00-2c64-4df5-8831-c1441420ff19",
@@ -14,26 +14,26 @@ const PHOENIX_5_VENDORDEP = {
                 "Phoenix 5 requires low-level libraries from Phoenix 6.  Please add the Phoenix 6 vendordep before adding Phoenix 5.",
             offlineFileName: "Phoenix6.json",
             onlineUrl:
-                "https://maven.ctr-electronics.com/release/com/ctre/phoenix6/latest/Phoenix6-frc2024-beta-latest.json",
+                "https://maven.ctr-electronics.com/release/com/ctre/phoenix6/latest/Phoenix6-frc2024-latest.json",
         },
     ],
     javaDependencies: [
         {
             groupId: "com.ctre.phoenix",
             artifactId: "api-java",
-            version: "5.32.0-beta-4",
+            version: "5.33.0",
         },
         {
             groupId: "com.ctre.phoenix",
             artifactId: "wpiapi-java",
-            version: "5.32.0-beta-4",
+            version: "5.33.0",
         },
     ],
     jniDependencies: [
         {
             groupId: "com.ctre.phoenix",
             artifactId: "cci",
-            version: "5.32.0-beta-4",
+            version: "5.33.0",
             isJar: false,
             skipInvalidPlatforms: true,
             validPlatforms: ["windowsx86-64", "linuxx86-64", "linuxathena"],
@@ -42,7 +42,7 @@ const PHOENIX_5_VENDORDEP = {
         {
             groupId: "com.ctre.phoenix.sim",
             artifactId: "cci-sim",
-            version: "5.32.0-beta-4",
+            version: "5.33.0",
             isJar: false,
             skipInvalidPlatforms: true,
             validPlatforms: ["windowsx86-64", "linuxx86-64", "osxuniversal"],
@@ -53,7 +53,7 @@ const PHOENIX_5_VENDORDEP = {
         {
             groupId: "com.ctre.phoenix",
             artifactId: "wpiapi-cpp",
-            version: "5.32.0-beta-4",
+            version: "5.33.0",
             libName: "CTRE_Phoenix_WPI",
             headerClassifier: "headers",
             sharedLibrary: true,
@@ -64,7 +64,7 @@ const PHOENIX_5_VENDORDEP = {
         {
             groupId: "com.ctre.phoenix",
             artifactId: "api-cpp",
-            version: "5.32.0-beta-4",
+            version: "5.33.0",
             libName: "CTRE_Phoenix",
             headerClassifier: "headers",
             sharedLibrary: true,
@@ -75,7 +75,7 @@ const PHOENIX_5_VENDORDEP = {
         {
             groupId: "com.ctre.phoenix",
             artifactId: "cci",
-            version: "5.32.0-beta-4",
+            version: "5.33.0",
             libName: "CTRE_PhoenixCCI",
             headerClassifier: "headers",
             sharedLibrary: true,
@@ -86,7 +86,7 @@ const PHOENIX_5_VENDORDEP = {
         {
             groupId: "com.ctre.phoenix.sim",
             artifactId: "wpiapi-cpp-sim",
-            version: "5.32.0-beta-4",
+            version: "5.33.0",
             libName: "CTRE_Phoenix_WPISim",
             headerClassifier: "headers",
             sharedLibrary: true,
@@ -97,7 +97,7 @@ const PHOENIX_5_VENDORDEP = {
         {
             groupId: "com.ctre.phoenix.sim",
             artifactId: "api-cpp-sim",
-            version: "5.32.0-beta-4",
+            version: "5.33.0",
             libName: "CTRE_PhoenixSim",
             headerClassifier: "headers",
             sharedLibrary: true,
@@ -108,7 +108,7 @@ const PHOENIX_5_VENDORDEP = {
         {
             groupId: "com.ctre.phoenix.sim",
             artifactId: "cci-sim",
-            version: "5.32.0-beta-4",
+            version: "5.33.0",
             libName: "CTRE_PhoenixCCISim",
             headerClassifier: "headers",
             sharedLibrary: true,

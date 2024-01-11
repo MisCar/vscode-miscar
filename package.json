@@ -3,7 +3,7 @@
     "displayName": "MisCar",
     "description": "Faster FRC development",
     "publisher": "miscar",
-    "version": "2023.0.31",
+    "version": "2026.0.31",
     "license": "MIT",
     "icon": "icon.png",
     "engines": {
@@ -162,6 +162,7 @@
     "repository": "https://github.com/miscar/vscode-miscar",
     "homepage": "https://github.com/miscar/vscode-miscar",
     "dependencies": {
+        "cpu-features": "^0.0.9",
         "gyp": "^0.3.0",
         "node-gyp": "^9.1.0",
         "node-ssh": "^13.0.0",

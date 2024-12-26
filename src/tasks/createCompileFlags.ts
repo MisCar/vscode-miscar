@@ -41,12 +41,12 @@ const WPILIB_LIBRARIES = [
 
 const TOOLCHAIN_URL =
     platform == "windows"
-        ? `https://github.com/wpilibsuite/opensdk/releases/download/${TOOLCHAIN_VERSION}/cortexa9_vfpv3-roborio-academic-2023-x86_64-w64-mingw32-Toolchain-${TOOLCHAIN_GCC_VERSION}.zip`
+        ? `https://github.com/wpilibsuite/opensdk/releases/download/${TOOLCHAIN_VERSION}/cortexa9_vfpv3-roborio-academic-2025-x86_64-w64-mingw32-Toolchain-${TOOLCHAIN_GCC_VERSION}.zip`
         : platform == "linux"
-        ? `https://github.com/wpilibsuite/opensdk/releases/download/${TOOLCHAIN_VERSION}/cortexa9_vfpv3-roborio-academic-2023-armv6-bullseye-linux-gnueabihf-Toolchain-${TOOLCHAIN_GCC_VERSION}.tgz`
+        ? `https://github.com/wpilibsuite/opensdk/releases/download/${TOOLCHAIN_VERSION}/cortexa9_vfpv3-roborio-academic-2025-armv6-bullseye-linux-gnueabihf-Toolchain-${TOOLCHAIN_GCC_VERSION}.tgz`
         : platform == "mac-arm"
-        ? `https://github.com/wpilibsuite/opensdk/releases/download/${TOOLCHAIN_VERSION}/cortexa9_vfpv3-roborio-academic-2023-arm64-apple-darwin-Toolchain-${TOOLCHAIN_GCC_VERSION}.tgz`
-        : `https://github.com/wpilibsuite/opensdk/releases/download/${TOOLCHAIN_VERSION}/cortexa9_vfpv3-roborio-academic-2023-x86_64-apple-darwin-Toolchain-${TOOLCHAIN_GCC_VERSION}.tgz`
+        ? `https://github.com/wpilibsuite/opensdk/releases/download/${TOOLCHAIN_VERSION}/cortexa9_vfpv3-roborio-academic-2025-arm64-apple-darwin-Toolchain-${TOOLCHAIN_GCC_VERSION}.tgz`
+        : `https://github.com/wpilibsuite/opensdk/releases/download/${TOOLCHAIN_VERSION}/cortexa9_vfpv3-roborio-academic-2025-x86_64-apple-darwin-Toolchain-${TOOLCHAIN_GCC_VERSION}.tgz`
 
 const localLibraryType =
     platform === "windows"
@@ -321,8 +321,6 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
     )
 
     for (const vendordep of vendordeps) {
-
-    
         if (vendordep.fileName === "Phoenix5-frc2025-beta-latest.json") {
             needUpdate =
                 getVersions().PHOENIX_5 !=
@@ -360,7 +358,9 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
 
             if (vendordep.fileName === "Phoenix5-frc2025-beta-latest.json") {
                 pathSuffix = "-v5"
-            } else if (vendordep.fileName === "Phoenix6-frc2025-beta-latest.json") {
+            } else if (
+                vendordep.fileName === "Phoenix6-frc2025-beta-latest.json"
+            ) {
                 pathSuffix = "-v6"
             }
 
@@ -524,14 +524,14 @@ set(CMAKE_SYSROOT "${join(
                     "sysroot"
                 ).replace(/\\/g, "/")}")
 
-set(CMAKE_C_COMPILER "${toolchainRoot}/bin/arm-frc2023-linux-gnueabi-gcc${executableExtension}")
-set(CMAKE_CXX_COMPILER "${toolchainRoot}/bin/arm-frc2023-linux-gnueabi-g++${executableExtension}")
-set(CMAKE_FORTRAN_COMPILER "${toolchainRoot}/bin/arm-frc2023-linux-gnueabi-gfortran")
+set(CMAKE_C_COMPILER "${toolchainRoot}/bin/arm-frc2025-linux-gnueabi-gcc${executableExtension}")
+set(CMAKE_CXX_COMPILER "${toolchainRoot}/bin/arm-frc2025-linux-gnueabi-g++${executableExtension}")
+set(CMAKE_FORTRAN_COMPILER "${toolchainRoot}/bin/arm-2025-linux-gnueabi-gfortran")
 
-set(CMAKE_AR "${toolchainRoot}/bin/arm-frc2023-linux-gnueabi-ar")
-set(CMAKE_AS "${toolchainRoot}/bin/arm-frc2023-linux-gnueabi-as")
-set(CMAKE_NM "${toolchainRoot}/bin/arm-frc2023-linux-gnueabi-nm")
-set(CMAKE_LINKER "${toolchainRoot}/bin/arm-frc2023-linux-gnueabi-ld")
+set(CMAKE_AR "${toolchainRoot}/bin/arm-frc2025-linux-gnueabi-ar")
+set(CMAKE_AS "${toolchainRoot}/bin/arm-frc2025-linux-gnueabi-as")
+set(CMAKE_NM "${toolchainRoot}/bin/arm-frc2025-linux-gnueabi-nm")
+set(CMAKE_LINKER "${toolchainRoot}/bin/arm-frc2025-linux-gnueabi-ld")
 
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)

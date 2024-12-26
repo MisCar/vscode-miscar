@@ -1,0 +1,566 @@
+{
+    "version": "1.0.1",
+    "name": "thirdparty",
+    "number": "1698818893655",
+    "buildAgent": {
+        "name": "Gradle",
+        "version": "8.4"
+    },
+    "agent": {
+        "name": "Gradle",
+        "version": "8.4"
+    },
+    "started": "2023-11-01T06:08:12.976+0000",
+    "durationMillis": 146712,
+    "principal": "runner",
+    "artifactoryPrincipal": "github_actions",
+    "artifactoryPluginVersion": "Unknown",
+    "vcs": [],
+    "modules": [
+        {
+            "type": "gradle",
+            "id": ":combiner:unspecified",
+            "repository": "thirdparty-mvn-release",
+            "artifacts": [
+                {
+                    "type": "zip",
+                    "sha1": "8d8ad57b6a762f648ee2e34e89700370de698b94",
+                    "sha256": "55c78d5cd6253656936310f417e12fb5f540f2864692cef9501bee73a9bf2e8e",
+                    "md5": "e38bb9a25351fdc8aac1c5025406f601",
+                    "name": "opencv-cpp-4.8.0-2-headers.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-headers.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "f80e3f5b1c45de35ac54ea3dde4ea1c3a26e3747",
+                    "sha256": "d1f5289db0791a91d8eab7d073387775c99b886f6aa6139924059879c6bd7e32",
+                    "md5": "c94361a51d38d7da0daecfa3c13d549f",
+                    "name": "opencv-cpp-4.8.0-2-linuxarm32.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-linuxarm32.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "c9fb0918dcda50432ee016c19a87fadf1c556815",
+                    "sha256": "efe862204bee3afe5b2e00cb8018b3df7549b3693d4cc93137e1000cc1465210",
+                    "md5": "bfc8e31faa6c81193ed1e8bfe22a4865",
+                    "name": "opencv-cpp-4.8.0-2-linuxarm32debug.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-linuxarm32debug.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "9ff96ef7f045554a2cd18d5058d814dba8cd820f",
+                    "sha256": "4157692e6c812f50f266c524b1aa07fd318464f7e82756a5ebbcf6dcacc34ad3",
+                    "md5": "8f6714135422c255a5d443d487f415ba",
+                    "name": "opencv-cpp-4.8.0-2-linuxarm32static.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-linuxarm32static.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "04752f9feb4f99897e080793b1a8e46895708edc",
+                    "sha256": "f7b6d779e86f6457482467ef87313ade4582665f15cfa44d5294c4b29a12d6a8",
+                    "md5": "8103a5e1b569c6b1c9c324dc3518b786",
+                    "name": "opencv-cpp-4.8.0-2-linuxarm32staticdebug.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-linuxarm32staticdebug.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "f4cf94f6b0bfe780356f546c56e525aad6194e71",
+                    "sha256": "560e890ef4d9b8bf43549263548cb3ed20d1f438e64bed20527cd0f5e9ecddb4",
+                    "md5": "e6909261627cfa593de4ee6f0770b521",
+                    "name": "opencv-cpp-4.8.0-2-linuxarm64.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-linuxarm64.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "c6b94dbfe5c2899dab3da7cdb919c4c3fbe4d6e0",
+                    "sha256": "3535fccb1c2371c0b5f3ffb174bd642314335b1a9689fcb4ee00e08c92a8cee2",
+                    "md5": "426379bfbe2a6a8ac1d5c44840c980c6",
+                    "name": "opencv-cpp-4.8.0-2-linuxarm64debug.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-linuxarm64debug.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "208bf980e3f69dbda31825ea4736c077f129be99",
+                    "sha256": "77a75d1dfbbe6d543e031519b90fac6e61858129d6dd1f498b08b4723166a87d",
+                    "md5": "a8cc53da0971182e579727e343feaddd",
+                    "name": "opencv-cpp-4.8.0-2-linuxarm64static.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-linuxarm64static.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "d451c42bebe59ba358614b276d98af324415aa55",
+                    "sha256": "5b161a35a92647f3bb598c190058f46f4f3e2ac5055d37260387ac501245f9c4",
+                    "md5": "b0846a896413af757dfc519fae426b9d",
+                    "name": "opencv-cpp-4.8.0-2-linuxarm64staticdebug.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-linuxarm64staticdebug.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "b84ca722b4b3b35c99c7798c3b4de262f2c26934",
+                    "sha256": "abe69f6cac06637e1b4fcd46ea9f08f09e43cdf36b37e531440677c69dfa7973",
+                    "md5": "f99d7bcbd56cfeddda2ecd2bd112e912",
+                    "name": "opencv-cpp-4.8.0-2-linuxathena.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-linuxathena.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "4c954ff58950950cf88815506b44801c98d2117a",
+                    "sha256": "598b2e5057833250a0b90f8153156d6f319833fd01669bd5014ef34f454548af",
+                    "md5": "9d8a92cbabc3f8669d94e9cf977b7a24",
+                    "name": "opencv-cpp-4.8.0-2-linuxathenadebug.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-linuxathenadebug.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "988a6412257ff6feaf0bfb0772d8dce3632a8f14",
+                    "sha256": "e79f2f54a8aec9d33f350d85f1af6fe47e54291d1a2682a31e183f3797858d3c",
+                    "md5": "14e4ec214eafd0545bdbc7d3a9327bf8",
+                    "name": "opencv-cpp-4.8.0-2-linuxathenastatic.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-linuxathenastatic.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "dd5264d0c1846fdd3c0e95dea6e4433dc6c955c1",
+                    "sha256": "3d2e75dcaf5497ffd17f57b2a37b63b0e43f10cc5001a96b87cccd97b5667882",
+                    "md5": "13d5d41da08c3bdd283aaf71ea591de9",
+                    "name": "opencv-cpp-4.8.0-2-linuxathenastaticdebug.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-linuxathenastaticdebug.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "47b68ff977171f30d230d98e9598ac7c1668702a",
+                    "sha256": "1a0a046ec0f022334562d5cd0c4fbfd1613a1d2e430fa2a58cda7347bb1491cf",
+                    "md5": "f0054bcee9a25f72c0183a94055eeafd",
+                    "name": "opencv-cpp-4.8.0-2-linuxx86-64.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-linuxx86-64.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "d8788f3fcacabc4ac681c9a2e59b5257679d6a9d",
+                    "sha256": "964e492419ef40516625a35ffa4bade77861a16018bff4f511641e17c44823fa",
+                    "md5": "22b357ada36b48cc2af206d8505a79a2",
+                    "name": "opencv-cpp-4.8.0-2-linuxx86-64debug.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-linuxx86-64debug.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "0836e63f62a1f7ecc2fb3958aa585642cc28bd46",
+                    "sha256": "e1e9b2173e423a9e651d4740c29d8b9a2a2ab4d68526bbaccaad5949fa664a0d",
+                    "md5": "d65f44d02dcf75dc30d92a864efebbe2",
+                    "name": "opencv-cpp-4.8.0-2-linuxx86-64static.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-linuxx86-64static.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "fb0aa5c5cfae8b9b50528c2ad0b309887df35fd4",
+                    "sha256": "1b8e25a36fb3e0ef0eaae0dc12a6d5169f024f02e76f104c70f620a12ac62f1e",
+                    "md5": "ef30b34c4ff471a3e59633f2e290581a",
+                    "name": "opencv-cpp-4.8.0-2-linuxx86-64staticdebug.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-linuxx86-64staticdebug.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "1f2eb4cc59d0e2002f655f664e9a7d2be073ce38",
+                    "sha256": "414c82269d608ab46e0c72aefd6bed5216596e75d16cd0dc2cfc508a15527c13",
+                    "md5": "9eed1f73a0b3dcda1095827b2405fb1b",
+                    "name": "opencv-cpp-4.8.0-2-osxarm64.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-osxarm64.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "9c09ecf5cb86ffd4cc134eba9116d0d324862e2f",
+                    "sha256": "fa55dbe2cfb832752ed87ce31d351c4266b2d8d942c85c5019e0f5d79bfea468",
+                    "md5": "6cb3f173b76b573ad461d889bdbc3b80",
+                    "name": "opencv-cpp-4.8.0-2-osxarm64debug.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-osxarm64debug.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "af980f92e830524d3a155ae32a15d449906723a3",
+                    "sha256": "80d9a71b7cbcfa2edb0a21a7a7004d108bb66b2b57d9d4161650ced3460af657",
+                    "md5": "c4494225085fd6da966e8ba6f527400b",
+                    "name": "opencv-cpp-4.8.0-2-osxarm64static.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-osxarm64static.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "4d6520a8453c300a76d39e32b6e93d11afb0fd18",
+                    "sha256": "fd34cddb9413d8e47c0c0293e285bbba53ad142d8357822827a8dc730c9f2f5e",
+                    "md5": "dba9260ccfc4f2e66e94ec33b1015cd4",
+                    "name": "opencv-cpp-4.8.0-2-osxarm64staticdebug.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-osxarm64staticdebug.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "2727c7c480164eb16daaf6fdedca7e62f3e9a6c3",
+                    "sha256": "2a600d9b96ef31c605f929bab15643861e443a034ffdd869f5de9f8206a93f02",
+                    "md5": "d8a15a0fe882e7e67c5f797e285a24bc",
+                    "name": "opencv-cpp-4.8.0-2-osxuniversal.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-osxuniversal.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "5ce60bfbb64d4d481e4352a5986c2ce590fe3968",
+                    "sha256": "2b32c016424481cdcca43d230457361638ea947e44050f38458a4a2b798409db",
+                    "md5": "dff3099e03f77a501e4152917a1c29d6",
+                    "name": "opencv-cpp-4.8.0-2-osxuniversaldebug.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-osxuniversaldebug.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "f1f2fc23fc1f8bc11ff7f4d0583878f435db3695",
+                    "sha256": "88815a7d3e852dcd5124c0c7905c2c01fdb86cef89e1d741b09361ef6f6974ff",
+                    "md5": "0eb5b37f60df1b9d4b9532f33cb1369c",
+                    "name": "opencv-cpp-4.8.0-2-osxuniversalstatic.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-osxuniversalstatic.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "417deb1474ce32fb998ebe513e2a5489e62fa73b",
+                    "sha256": "469e04a496c047935a33af827da25248d039d8c35e8acfb00484f6fb22392203",
+                    "md5": "8edf5d3383624518df2f5fd6ac857b0d",
+                    "name": "opencv-cpp-4.8.0-2-osxuniversalstaticdebug.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-osxuniversalstaticdebug.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "c2d4f82aea7dd3efd351395c2208838525501aea",
+                    "sha256": "4f018f97d94da75d8eb2f58c968d7f92ecd4d0be1796402790bebc91bc10ba4f",
+                    "md5": "ef0b000b2945d7ea218cda34ab8c4a5c",
+                    "name": "opencv-cpp-4.8.0-2-osxx86-64.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-osxx86-64.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "9f47a74244bfe47e91be544e504e913838f8d240",
+                    "sha256": "4356490be24da5e42bc53cb49d8c31dd8df46598a435ca7bb70823d65994049c",
+                    "md5": "632ef07ca90eabff77c547f148aab69a",
+                    "name": "opencv-cpp-4.8.0-2-osxx86-64debug.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-osxx86-64debug.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "cdcda77ddd79fe258eac869c51a314ee5fd61f67",
+                    "sha256": "eae534374655afe0984ba2fc63a54f0c1fc2d917301ef152392b845d7df313ef",
+                    "md5": "8aafa418867289b3cecb306664b04acb",
+                    "name": "opencv-cpp-4.8.0-2-osxx86-64static.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-osxx86-64static.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "25daf283a83ed18ed6efbea92b763320f776892a",
+                    "sha256": "b40363c41cd96fa9e64b741de5f29ddd7bef0678df52ab942cf7f3dae7beca03",
+                    "md5": "65de0e82ffca1d3f0c1ac1a7e05c90d1",
+                    "name": "opencv-cpp-4.8.0-2-osxx86-64staticdebug.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-osxx86-64staticdebug.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "7ac4f8e06980540560b8d7b5bdbd2d278508949d",
+                    "sha256": "e8203be9fe553ce2cb80d286423e43fbb84891ac36de38a3dc71f0d302cca968",
+                    "md5": "25d4d058e0a1c1de4ac9147698d5a21b",
+                    "name": "opencv-cpp-4.8.0-2-sources.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-sources.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "57a924a5c14914cb136fa1ed24adac84ced5f09d",
+                    "sha256": "ee612ae00850c0a5f0a2dce65978a496c27af6d6802bc4607b8089974ca2a9b6",
+                    "md5": "1ba869e5f56ca6eaee86498d3abb83e7",
+                    "name": "opencv-cpp-4.8.0-2-windowsarm64.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-windowsarm64.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "d203e922c48be2775cc58a4582b9eca32dbc9aa0",
+                    "sha256": "9fd1b7d4164dc7e33f1d8e5582b802330f84bf656a387286ac12e09777c1994a",
+                    "md5": "5c2fdf37227cbff35f6edd364cd4e408",
+                    "name": "opencv-cpp-4.8.0-2-windowsarm64debug.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-windowsarm64debug.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "c7d04190a15da7b7e4dd19cb0bf7a9ff49ce9b1a",
+                    "sha256": "9a248b758ec5532fb6860c1ba8e968b92a9c7e8de10aaecaad4dfd9bb51567df",
+                    "md5": "862ac632c073eba1a0c6cf03eafea662",
+                    "name": "opencv-cpp-4.8.0-2-windowsarm64static.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-windowsarm64static.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "0884413717b2ded381e35630df7e60ac87246be4",
+                    "sha256": "4cccf7d59b74742b3fb186d98932029137a42c5ad12c8113837b4c7e7d19f0a6",
+                    "md5": "3cc98512543cfbf64d6ce375a204fa41",
+                    "name": "opencv-cpp-4.8.0-2-windowsarm64staticdebug.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-windowsarm64staticdebug.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "1e3c0431682b7ad230b7e80a045042258fb0eb02",
+                    "sha256": "f62223e5490b60d0d2d181dcb7bc32cbf060082afbf548ee65a2ea9779dcce9d",
+                    "md5": "e256341b4e7878d3b620459e81965221",
+                    "name": "opencv-cpp-4.8.0-2-windowsx86-64.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-windowsx86-64.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "804887af9856185357320409c2ec5454e47423ea",
+                    "sha256": "8ba494f824a0c9bf5609679333e524c9dddd5e40ba1f5be91029782a7abd0a79",
+                    "md5": "2335710c7b2b6ada7fdecac1c7567a63",
+                    "name": "opencv-cpp-4.8.0-2-windowsx86-64debug.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-windowsx86-64debug.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "dc3f5fd163c976370b08f92680050b2497fbfeb4",
+                    "sha256": "0592f3d25b8273bcd72110d32bdadacbcd227e0f494eff6814ddff6d5a0a6638",
+                    "md5": "2c434b9b41038758403078216602982e",
+                    "name": "opencv-cpp-4.8.0-2-windowsx86-64static.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-windowsx86-64static.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "0e394f6d03e30486db527c8be591fbeac35530c7",
+                    "sha256": "7276013b1eddbd3b1e32f2329a6aa582543cd6bbb353dad98abf0416ee4fbc61",
+                    "md5": "c34afa8783554f066b6f860cfef45f72",
+                    "name": "opencv-cpp-4.8.0-2-windowsx86-64staticdebug.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-windowsx86-64staticdebug.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "38f90cd0f26189f09fac982c5188c7e68c757d81",
+                    "sha256": "ced00457d857648d949b4906af203af3199ba85725b32bbbdf357a0e8a3200a2",
+                    "md5": "aa7e15d19f4503ab35f217e0cd43fb92",
+                    "name": "opencv-cpp-4.8.0-2-windowsx86.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-windowsx86.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "c576c4749882365f5c0d7fc9ffb9f0de3747e92b",
+                    "sha256": "2fcc58c9a82da9c5c69e16e0dd05767c4d5c6f0f5d05f24e7375c68234d9e663",
+                    "md5": "5f8acf109cd48da75cbf3347a00d1e9a",
+                    "name": "opencv-cpp-4.8.0-2-windowsx86debug.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-windowsx86debug.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "360ca528e1335d55c258f74eea3f2cde6112dbd9",
+                    "sha256": "86c78121562cc1ad0c090ff94f7621863857992a5589ef5d6aba852a6463014b",
+                    "md5": "b181fd99c6a30b064904e7f286e26fc5",
+                    "name": "opencv-cpp-4.8.0-2-windowsx86static.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-windowsx86static.zip"
+                },
+                {
+                    "type": "zip",
+                    "sha1": "c2bba5825518e4be0eae6e8d31ba0255078681a7",
+                    "sha256": "4e3a22465b547f59feca9cb9cbe823885454f67e769213542841f53b90d7bbc9",
+                    "md5": "60fa2a2f3116863d7fcf773940e945fc",
+                    "name": "opencv-cpp-4.8.0-2-windowsx86staticdebug.zip",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2-windowsx86staticdebug.zip"
+                },
+                {
+                    "type": "sources-jar",
+                    "sha1": "49bac1dcb75e1e74e9edb93274b08ecf0deb519f",
+                    "sha256": "6b8f0ebb889946fcb97c601997badf0774721c28db3275aa35a79ad8d9c69e94",
+                    "md5": "bf543cd4d9b8cb14f82f9bbfa6f9f578",
+                    "name": "opencv-java-4.8.0-2-sources.jar",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-java/4.8.0-2/opencv-java-4.8.0-2-sources.jar"
+                },
+                {
+                    "type": "jar",
+                    "sha1": "9170177fca4fc6aa3766ae427fa92fe18e8be235",
+                    "sha256": "5410a9ecc510d7b88acf52e5998136a7b0c6318b4bcdcbf80102d9446a43763a",
+                    "md5": "45c455627345c3c7f742dd1fb4d39a1d",
+                    "name": "opencv-java-4.8.0-2.jar",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-java/4.8.0-2/opencv-java-4.8.0-2.jar"
+                },
+                {
+                    "type": "linuxarm32-jar",
+                    "sha1": "efdd50a3b879052a27f845b28d2dd56405276439",
+                    "sha256": "f4dadbd0b6403eeb02b6bf98145472460ee08f7c2c5adf0e951011f27b0a180a",
+                    "md5": "68ed42edc9d56c40a65723dad4344660",
+                    "name": "opencv-jni-4.8.0-2-linuxarm32.jar",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-jni/4.8.0-2/opencv-jni-4.8.0-2-linuxarm32.jar"
+                },
+                {
+                    "type": "linuxarm32debug-jar",
+                    "sha1": "4dd21f71f81073a0571a61a11ff53beef4c4b847",
+                    "sha256": "91ce39f4360e1faf5609377dba7ff94d5d55f08cd09d6feb2b65223d50415194",
+                    "md5": "8668f522058927844de955687dcf89d3",
+                    "name": "opencv-jni-4.8.0-2-linuxarm32debug.jar",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-jni/4.8.0-2/opencv-jni-4.8.0-2-linuxarm32debug.jar"
+                },
+                {
+                    "type": "linuxarm64-jar",
+                    "sha1": "596e3dbbe43724aa919262122a999c20cf6a2674",
+                    "sha256": "ab31f6bc618aff63f8d2c7b4439174a2bcb740371af97e01aed15b425a547b17",
+                    "md5": "964da7599332dded63b4984550f588c9",
+                    "name": "opencv-jni-4.8.0-2-linuxarm64.jar",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-jni/4.8.0-2/opencv-jni-4.8.0-2-linuxarm64.jar"
+                },
+                {
+                    "type": "linuxarm64debug-jar",
+                    "sha1": "126ee97bf09f943207b7176a8c6c988793878f0a",
+                    "sha256": "1e1fdd04589dc4efe1e7d7c13ba0ad6085dce5a577c1730fd1d19e19a4006fd7",
+                    "md5": "bcf492e183d21389bfee1e1c970077d0",
+                    "name": "opencv-jni-4.8.0-2-linuxarm64debug.jar",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-jni/4.8.0-2/opencv-jni-4.8.0-2-linuxarm64debug.jar"
+                },
+                {
+                    "type": "linuxathena-jar",
+                    "sha1": "62d1e861ec77eca9be482e9ed367239add868ee0",
+                    "sha256": "191d26002a03a8b17a39470a642eb561cc52fb0344004d5cc44fc251dd7251e3",
+                    "md5": "2a7e9e83a02b5f6f59e0a82730984853",
+                    "name": "opencv-jni-4.8.0-2-linuxathena.jar",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-jni/4.8.0-2/opencv-jni-4.8.0-2-linuxathena.jar"
+                },
+                {
+                    "type": "linuxathenadebug-jar",
+                    "sha1": "532aab26e268d1366bae409b9b757866539edac3",
+                    "sha256": "bbb09955cf6ba63d1dc67e5f0a22e112834a773c969975cd2f54e8853346495f",
+                    "md5": "75ff934524dd17b034cb6cf490df2476",
+                    "name": "opencv-jni-4.8.0-2-linuxathenadebug.jar",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-jni/4.8.0-2/opencv-jni-4.8.0-2-linuxathenadebug.jar"
+                },
+                {
+                    "type": "linuxx86-64-jar",
+                    "sha1": "f65a7eb9b615dda7d66d7630a30448bd06f56638",
+                    "sha256": "f7eec19467334f86905b4b723ad13f3f3417af1ae562aa3da37fc766b2043657",
+                    "md5": "0e3f986885fe03e5fa45371b8ad60948",
+                    "name": "opencv-jni-4.8.0-2-linuxx86-64.jar",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-jni/4.8.0-2/opencv-jni-4.8.0-2-linuxx86-64.jar"
+                },
+                {
+                    "type": "linuxx86-64debug-jar",
+                    "sha1": "6c8ba6535594a7caa555c37244b0664656b076ac",
+                    "sha256": "f46a73165c3527e8094c2b1d77a6aabde5cd653a4315b024884753ae09ab1a5a",
+                    "md5": "d72f4e4fa86a2e3a43b1982942f8598c",
+                    "name": "opencv-jni-4.8.0-2-linuxx86-64debug.jar",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-jni/4.8.0-2/opencv-jni-4.8.0-2-linuxx86-64debug.jar"
+                },
+                {
+                    "type": "osxarm64-jar",
+                    "sha1": "da68f9a756245535439eeff3a2b4ec832963ea22",
+                    "sha256": "0ba2dab0602b425f16b3be311ab689b81433e10ea09a76db0f21ce1360adc0f1",
+                    "md5": "9f4b6a47e9409420a0019be5b425bc20",
+                    "name": "opencv-jni-4.8.0-2-osxarm64.jar",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-jni/4.8.0-2/opencv-jni-4.8.0-2-osxarm64.jar"
+                },
+                {
+                    "type": "osxarm64debug-jar",
+                    "sha1": "4ce3e77583b4932dea47f2d89fba9eae835eac55",
+                    "sha256": "9b7915f7c41bca21387ea4419223649ea00a8e1c92adeec778375ebf5b0f93c5",
+                    "md5": "291f55af0e94f7bc64804f7daf52239b",
+                    "name": "opencv-jni-4.8.0-2-osxarm64debug.jar",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-jni/4.8.0-2/opencv-jni-4.8.0-2-osxarm64debug.jar"
+                },
+                {
+                    "type": "osxuniversal-jar",
+                    "sha1": "114154b13db5c24c4fae522fdad2db0315b048e7",
+                    "sha256": "8f9e006d732d2e0dca12e2f93b9c2f72e449c71aad421af55ac455cbd26cd174",
+                    "md5": "33b61b0ad4a388db140f14c6c104bfa4",
+                    "name": "opencv-jni-4.8.0-2-osxuniversal.jar",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-jni/4.8.0-2/opencv-jni-4.8.0-2-osxuniversal.jar"
+                },
+                {
+                    "type": "osxuniversaldebug-jar",
+                    "sha1": "6d8e269dfc557630e63862ce53b291cb43060085",
+                    "sha256": "3e49a686facf66928ae6a142c9dff5be60598a6b08fa4640a71bdb21d8e95f40",
+                    "md5": "8cf2fbc22a032250ed814b0b302f4bb6",
+                    "name": "opencv-jni-4.8.0-2-osxuniversaldebug.jar",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-jni/4.8.0-2/opencv-jni-4.8.0-2-osxuniversaldebug.jar"
+                },
+                {
+                    "type": "osxx86-64-jar",
+                    "sha1": "45fdeede37a5063fbf76af7411396cb6aedd0dc3",
+                    "sha256": "ff5ebacb7b5d74eb2a30762e16136c9b4fcd6fd6a324ff713a9e06a4a009d105",
+                    "md5": "3128da61ef08be4f44b688cc391aa9e3",
+                    "name": "opencv-jni-4.8.0-2-osxx86-64.jar",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-jni/4.8.0-2/opencv-jni-4.8.0-2-osxx86-64.jar"
+                },
+                {
+                    "type": "osxx86-64debug-jar",
+                    "sha1": "4cf6738f9f8443febb221861ec582768b617f36d",
+                    "sha256": "e46a3722e37c7b0b3a090272507ca7d8613192a502cf5cafebbdba5b2b865691",
+                    "md5": "3b3c6dbccd4e28fd37ac7aa955794783",
+                    "name": "opencv-jni-4.8.0-2-osxx86-64debug.jar",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-jni/4.8.0-2/opencv-jni-4.8.0-2-osxx86-64debug.jar"
+                },
+                {
+                    "type": "windowsarm64-jar",
+                    "sha1": "f07fc7cf1d0721506a2b8925f18541ddec64d6ee",
+                    "sha256": "da11d1ab1efb098b2712fca7c08be1018c0ce855f94d24e8ea9bd8c19f8e2458",
+                    "md5": "4ebe8cc236dd402a6180d7c3304b18b9",
+                    "name": "opencv-jni-4.8.0-2-windowsarm64.jar",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-jni/4.8.0-2/opencv-jni-4.8.0-2-windowsarm64.jar"
+                },
+                {
+                    "type": "windowsarm64debug-jar",
+                    "sha1": "258a609660a03075e1886f30f2d94110987efd59",
+                    "sha256": "ce08a01c0c0704e1e9f65269714c8d717ad9c339beb70d5b48a10bea13ed9f6a",
+                    "md5": "42c9ca78dc0d80d3aa90fdb6a743004d",
+                    "name": "opencv-jni-4.8.0-2-windowsarm64debug.jar",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-jni/4.8.0-2/opencv-jni-4.8.0-2-windowsarm64debug.jar"
+                },
+                {
+                    "type": "windowsx86-64-jar",
+                    "sha1": "38f539225b65878b31638dd2270e341a6111a8ef",
+                    "sha256": "bc1e54ba4b1caf8f80f6cea9bd34a9078096e96abaa573012a357a4c720083c0",
+                    "md5": "d607e7758f5ad88095532c71b45849ba",
+                    "name": "opencv-jni-4.8.0-2-windowsx86-64.jar",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-jni/4.8.0-2/opencv-jni-4.8.0-2-windowsx86-64.jar"
+                },
+                {
+                    "type": "windowsx86-64debug-jar",
+                    "sha1": "7ea4c3c80e4801089675e28f34ca0da6f55f775f",
+                    "sha256": "e9aaef1cac5bc2ee30b83c60bb79800bc9d853217e27df991e2684b0fec638ef",
+                    "md5": "8a4984a8b337d85bf0d8144b8edba2e5",
+                    "name": "opencv-jni-4.8.0-2-windowsx86-64debug.jar",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-jni/4.8.0-2/opencv-jni-4.8.0-2-windowsx86-64debug.jar"
+                },
+                {
+                    "type": "windowsx86-jar",
+                    "sha1": "16e91eeda96bff71759a23202d2e6b43a0aa1557",
+                    "sha256": "75e97fa59591f5b55f3194d71160133664cd566ba0a6a80acecc43913ec1bad5",
+                    "md5": "8484283602c86f6e1340789a702d0c02",
+                    "name": "opencv-jni-4.8.0-2-windowsx86.jar",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-jni/4.8.0-2/opencv-jni-4.8.0-2-windowsx86.jar"
+                },
+                {
+                    "type": "windowsx86debug-jar",
+                    "sha1": "e0db5d91bfed18eaec81d2231bc9a9a3f215342a",
+                    "sha256": "db88d69108117a828e5681eea08cdb000cbabfc38a1216da2e4fea1e1ccfd453",
+                    "md5": "e949f2add07c401e17d537e0b84084c1",
+                    "name": "opencv-jni-4.8.0-2-windowsx86debug.jar",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-jni/4.8.0-2/opencv-jni-4.8.0-2-windowsx86debug.jar"
+                },
+                {
+                    "type": "pom",
+                    "sha1": "fc929a4ea0c7e07dd0dd214b9f53a2c0ab2538e5",
+                    "sha256": "ac0b2131b9b774f856eba26dbc84c7df0ec110a400035f586326dc1b38ae62c5",
+                    "md5": "df45ce2e838d01d6b050c392d7ac95bd",
+                    "name": "opencv-jni-4.8.0-2.pom",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-jni/4.8.0-2/opencv-jni-4.8.0-2.pom"
+                },
+                {
+                    "type": "pom",
+                    "sha1": "a595fe46caed4ee87863956d9bc417dded4569e9",
+                    "sha256": "99f066a56f78149ee16d9991cec51aec07caf536bde0feed0ec23cb12a45824a",
+                    "md5": "72c8aaf4b4ecfaa8b1747d8e936733db",
+                    "name": "opencv-cpp-4.8.0-2.pom",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-cpp/4.8.0-2/opencv-cpp-4.8.0-2.pom"
+                },
+                {
+                    "type": "pom",
+                    "sha1": "62ce051074fa02dd5889ef78c2dbdcfb44f1dc8f",
+                    "sha256": "5452c0a4ab71d15b5f47d2910e51d8ee4004c74064de897ba80620f6eb7234b4",
+                    "md5": "0e3e94c944f7b05fd68120fbe85f4c6f",
+                    "name": "opencv-java-4.8.0-2.pom",
+                    "path": "edu/wpi/first/thirdparty/frc2024/opencv/opencv-java/4.8.0-2/opencv-java-4.8.0-2.pom"
+                }
+            ],
+            "excludedArtifacts": [],
+            "dependencies": []
+        }
+    ]
+}

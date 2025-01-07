@@ -321,7 +321,7 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
     )
 
     for (const vendordep of vendordeps) {
-        if (vendordep.fileName === "Phoenix5-frc2025-beta-latest.json") {
+        if (vendordep.fileName.includes("Phoenix5")) {
             needUpdate =
                 getVersions().PHOENIX_5 !=
                 JSON.parse(
@@ -329,7 +329,7 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
                         join(context.globalStorageUri.fsPath, "versions.json")
                     ).toString()
                 ).PHOENIX_5
-        } else if (vendordep.fileName === "Phoenix6-25.0.0-beta-3.json") {
+        } else if (vendordep.fileName.includes("Phoenix6")) {
             needUpdate =
                 getVersions().PHOENIX_6 !=
                 JSON.parse(
@@ -356,10 +356,10 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
                 mavenUrl += "/"
             }
 
-            if (vendordep.fileName === "Phoenix5-frc2025-beta-latest.json") {
+            if (vendordep.fileName.includes("Phoenix5")) {
                 pathSuffix = "-v5"
             } else if (
-                vendordep.fileName === "Phoenix6-frc2025-beta-latest.json"
+                vendordep.fileName.includes("Phoenix6")
             ) {
                 pathSuffix = "-v6"
             }

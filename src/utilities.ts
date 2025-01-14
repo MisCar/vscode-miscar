@@ -4,6 +4,7 @@ import { arch, platform as processPlatform } from "process"
 import * as vscode from "vscode"
 import PHOENIX_5_VENDORDEP from "./vendordeps/phoenix5"
 import PHOENIX_6_VENDORDEP from "./vendordeps/phoenix6"
+import PATH_PLANNER_VENDORDEP from "./vendordeps/pathPlanner"
 import REVLIB_VENDORDEP from "./vendordeps/revlib"
 import {
     FRC_YEAR,
@@ -58,6 +59,7 @@ export const getVersions = () => {
         TOOLCHAIN_GCC_VERSION,
         PHOENIX_5: PHOENIX_5_VENDORDEP.version,
         PHOENIX_6: PHOENIX_6_VENDORDEP.version,
+        PATH_PLANNER: PATH_PLANNER_VENDORDEP.version,
         REVLIB: REVLIB_VENDORDEP.version,
         LIBMISCAR,
     }

@@ -338,6 +338,11 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
                     ).toString()
                 ).PHOENIX_6
         } else if (vendordep.fileName == "REVLib.json") {
+            console.log(JSON.parse(
+                readFileSync(
+                    join(context.globalStorageUri.fsPath, "versions.json")
+                ).toString()
+            ).REVLIB)
             needUpdate =
                 getVersions().REVLIB !=
                 JSON.parse(
@@ -345,6 +350,15 @@ const createCompileFlags = async (context: vscode.ExtensionContext) => {
                         join(context.globalStorageUri.fsPath, "versions.json")
                     ).toString()
                 ).REVLIB
+
+        } else if (vendordep.fileName.includes("PathplannerLib")) {
+            needUpdate =
+                getVersions().PATH_PLANNER !=
+                JSON.parse(
+                    readFileSync(
+                        join(context.globalStorageUri.fsPath, "versions.json")
+                    ).toString()
+                ).PATH_PLANNER
         }
         stage = vendordep.name.toLowerCase()
 

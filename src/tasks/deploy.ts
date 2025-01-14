@@ -23,6 +23,7 @@ const runCommand = async (client: NodeSSH, command: string) => {
     commands.appendLine(command)
 }
 
+
 const raceFirstSuccess = (promises: Promise<any>[]) => {
     return Promise.all(promises.map(p =>
         p.then(

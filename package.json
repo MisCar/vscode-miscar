@@ -3,7 +3,7 @@
     "displayName": "MisCar",
     "description": "Faster FRC development",
     "publisher": "miscar",
-    "version": "2025.1.1",
+    "version": "2025.2",
     "license": "MIT",
     "icon": "icon.png",
     "engines": {
@@ -23,6 +23,7 @@
         "onCommand:miscar.test",
         "onCommand:miscar.deploy",
         "onCommand:miscar.fastDeploy",
+        "onCommand:miscar.deployPathPlanner",
         "onCommand:miscar.runSimulation",
         "onCommand:miscar.startTool",
         "onCommand:miscar.createCompileFlags",
@@ -57,6 +58,10 @@
                 "command": "miscar.fastDeploy",
                 "title": "MisCar: Fast Deploy",
                 "icon": "$(rocket)"
+            },
+            {
+                "command": "miscar.deployPathPlanner",
+                "title": "MisCar: Deploy PathPlanner"
             },
             {
                 "command": "miscar.runSimulation",

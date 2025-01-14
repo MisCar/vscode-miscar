@@ -4,6 +4,7 @@ import buildLocal from "./tasks/buildLocal"
 import buildRoboRIO from "./tasks/buildRoboRIO"
 import clearCompileFlags from "./tasks/clearCompileFlags"
 import createCompileFlags from "./tasks/createCompileFlags"
+import deployPathPlanner from "./tasks/deployPathPlanner"
 import createIndex from "./tasks/createIndex"
 import deploy from "./tasks/deploy"
 import newClass from "./tasks/newClass"
@@ -55,6 +56,8 @@ export const activate = (context: vscode.ExtensionContext) => {
         vscode.commands.registerCommand("miscar.runSimulation", runSimulation),
         vscode.commands.registerCommand("miscar.startTool", startTool),
         vscode.commands.registerCommand("miscar.newClass", newClass),
+        vscode.commands.registerCommand("miscar.deployPathPlanner", () =>
+            deployPathPlanner(status)),
         vscode.commands.registerCommand("miscar.createCompileFlags", () =>
             createCompileFlags(context)
         ),
